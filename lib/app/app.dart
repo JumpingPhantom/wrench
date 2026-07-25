@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:wrench/app/router.dart';
 import 'package:wrench/app/theme.dart';
 import 'package:wrench/app/util.dart';
-import 'package:wrench/core/widgets/bottom_navigation_bar.dart';
 
 class App extends StatelessWidget {
   const App({super.key});
@@ -18,16 +17,6 @@ class App extends StatelessWidget {
     return MaterialApp.router(
       theme: brightness == Brightness.light ? theme.light() : theme.dark(),
       routerConfig: router,
-      builder: (context, child) {
-        return Scaffold(
-          body: child,
-          bottomNavigationBar: BottomNavigationBarWidget(
-            onRouteChanged: (route) {
-              router.go(route);
-            },
-          ),
-        );
-      },
     );
   }
 }
