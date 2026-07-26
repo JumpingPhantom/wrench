@@ -1,5 +1,5 @@
-import 'package:wrench/features/repairs/data/models/proposal_task_model.dart';
-import 'package:wrench/features/repairs/data/sources/proposal_task_source.dart';
+import 'package:wrench/core/models/proposal_task_model.dart';
+import 'package:wrench/features/requests/data/sources/proposal_task_source.dart';
 
 class ProposalTaskRemoteSource implements ProposalTaskSource {
   @override

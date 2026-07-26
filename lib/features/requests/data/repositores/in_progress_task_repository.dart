@@ -1,7 +1,7 @@
-import 'package:wrench/features/repairs/data/models/in_progress_task_model.dart';
-import 'package:wrench/features/repairs/data/models/proposal_task_model.dart';
-import 'package:wrench/features/repairs/data/sources/in_progress_task_source.dart';
-import 'package:wrench/features/repairs/data/sources/proposal_task_source.dart';
+import 'package:wrench/core/models/in_progress_task_model.dart';
+import 'package:wrench/core/models/proposal_task_model.dart';
+import 'package:wrench/features/requests/data/sources/in_progress_task_source.dart';
+import 'package:wrench/features/requests/data/sources/proposal_task_source.dart';
 
 class InProgressTaskRepository {
   final InProgressTaskSource source;
@@ -16,8 +16,11 @@ class InProgressTaskRepository {
   Future<void> delete(InProgressTaskModel task) =>
       source.deleteInProgressTask(task);
 
-  Future<void> approve(ProposalTaskModel proposal, String approvedBy,
-      List<String> workers) async {
+  Future<void> approve(
+    ProposalTaskModel proposal,
+    String approvedBy,
+    List<String> workers,
+  ) async {
     final task = InProgressTaskModel(
       proposal: proposal,
       approvedBy: approvedBy,

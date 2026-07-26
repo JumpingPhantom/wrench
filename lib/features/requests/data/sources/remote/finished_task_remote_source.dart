@@ -1,5 +1,5 @@
-import 'package:wrench/features/repairs/data/models/finished_task_model.dart';
-import 'package:wrench/features/repairs/data/sources/finished_task_source.dart';
+import 'package:wrench/core/models/finished_task_model.dart';
+import 'package:wrench/features/requests/data/sources/finished_task_source.dart';
 
 class FinishedTaskRemoteSource implements FinishedTaskSource {
   @override

@@ -1,5 +1,5 @@
+import 'package:wrench/core/models/staged_task_model.dart';
 import 'package:wrench/core/utils/seed.dart';
-import 'package:wrench/features/repairs/data/models/staged_task_model.dart';
 
 abstract class StagedTaskSource {
   Future<List<StagedTaskModel>> getAllStagedTasks();

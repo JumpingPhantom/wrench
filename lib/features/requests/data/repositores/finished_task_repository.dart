@@ -1,16 +1,13 @@
-import 'package:wrench/features/repairs/data/models/finished_task_model.dart';
-import 'package:wrench/features/repairs/data/models/staged_task_model.dart';
-import 'package:wrench/features/repairs/data/sources/finished_task_source.dart';
-import 'package:wrench/features/repairs/data/sources/staged_task_source.dart';
+import 'package:wrench/core/models/finished_task_model.dart';
+import 'package:wrench/core/models/staged_task_model.dart';
+import 'package:wrench/features/requests/data/sources/finished_task_source.dart';
+import 'package:wrench/features/requests/data/sources/staged_task_source.dart';
 
 class FinishedTaskRepository {
   final FinishedTaskSource source;
   final StagedTaskSource stagedSource;
 
-  FinishedTaskRepository({
-    required this.source,
-    required this.stagedSource,
-  });
+  FinishedTaskRepository({required this.source, required this.stagedSource});
 
   Future<List<FinishedTaskModel>> getAll() => source.getAllFinishedTasks();
   Future<void> delete(FinishedTaskModel task) =>

@@ -1,5 +1,5 @@
+import 'package:wrench/core/models/rejected_task_model.dart';
 import 'package:wrench/core/utils/seed.dart';
-import 'package:wrench/features/repairs/data/models/rejected_task_model.dart';
 
 abstract class RejectedTaskSource {
   Future<List<RejectedTaskModel>> getAllRejectedTasks();

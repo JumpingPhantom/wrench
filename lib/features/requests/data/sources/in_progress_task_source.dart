@@ -1,5 +1,5 @@
+import 'package:wrench/core/models/in_progress_task_model.dart';
 import 'package:wrench/core/utils/seed.dart';
-import 'package:wrench/features/repairs/data/models/in_progress_task_model.dart';
 
 abstract class InProgressTaskSource {
   Future<List<InProgressTaskModel>> getAllInProgressTasks();

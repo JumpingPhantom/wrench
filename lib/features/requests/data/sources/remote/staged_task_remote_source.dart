@@ -1,5 +1,5 @@
-import 'package:wrench/features/repairs/data/models/staged_task_model.dart';
-import 'package:wrench/features/repairs/data/sources/staged_task_source.dart';
+import 'package:wrench/core/models/staged_task_model.dart';
+import 'package:wrench/features/requests/data/sources/staged_task_source.dart';
 
 class StagedTaskRemoteSource implements StagedTaskSource {
   @override

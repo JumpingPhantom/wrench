@@ -1,5 +1,5 @@
+import 'package:wrench/core/models/proposal_task_model.dart';
 import 'package:wrench/core/utils/seed.dart';
-import 'package:wrench/features/repairs/data/models/proposal_task_model.dart';
 
 abstract class ProposalTaskSource {
   Future<List<ProposalTaskModel>> getAllProposals();
@@ -15,14 +15,12 @@ class ProposalTaskLocalSource implements ProposalTaskSource {
 
   @override
   Future<void> saveProposal(ProposalTaskModel proposal) async {
-    final index = Seed.proposals.indexWhere(
-      (e) => e.title == proposal.title,
-    );
-    if (index >= 0) {
-      Seed.proposals[index] = proposal;
-    } else {
-      Seed.proposals.add(proposal);
-    }
+    // final index = Seed.proposals.indexWhere((e) => e.title == proposal.title);
+    // if (index >= 0) {
+    //   Seed.proposals[index] = proposal;
+    // } else {
+    //   Seed.proposals.add(proposal);
+    // }
   }
 
   @override

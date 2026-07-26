@@ -1,5 +1,5 @@
-import 'package:wrench/features/repairs/data/models/in_progress_task_model.dart';
-import 'package:wrench/features/repairs/data/sources/in_progress_task_source.dart';
+import 'package:wrench/core/models/in_progress_task_model.dart';
+import 'package:wrench/features/requests/data/sources/in_progress_task_source.dart';
 
 class InProgressTaskRemoteSource implements InProgressTaskSource {
   @override

@@ -1,5 +1,5 @@
+import 'package:wrench/core/models/finished_task_model.dart';
 import 'package:wrench/core/utils/seed.dart';
-import 'package:wrench/features/repairs/data/models/finished_task_model.dart';
 
 abstract class FinishedTaskSource {
   Future<List<FinishedTaskModel>> getAllFinishedTasks();

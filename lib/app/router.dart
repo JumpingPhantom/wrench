@@ -4,7 +4,7 @@ import 'package:wrench/core/widgets/subordinate_scaffold.dart';
 import 'package:wrench/core/widgets/supervisor_scaffold.dart';
 import 'package:wrench/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:wrench/features/home/presentation/screens/home_screen.dart';
-import 'package:wrench/features/repairs/presentation/screens/requests_screen.dart';
+import 'package:wrench/features/requests/presentation/screens/requests_screen.dart';
 import 'package:wrench/features/settings/presentation/screens/main_settings_screen.dart';
 
 final GoRouter router = GoRouter(

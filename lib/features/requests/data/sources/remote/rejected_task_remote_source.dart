@@ -1,5 +1,5 @@
-import 'package:wrench/features/repairs/data/models/rejected_task_model.dart';
-import 'package:wrench/features/repairs/data/sources/rejected_task_source.dart';
+import 'package:wrench/core/models/rejected_task_model.dart';
+import 'package:wrench/features/requests/data/sources/rejected_task_source.dart';
 
 class RejectedTaskRemoteSource implements RejectedTaskSource {
   @override

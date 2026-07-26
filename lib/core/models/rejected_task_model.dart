@@ -1,5 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:wrench/features/repairs/data/models/proposal_task_model.dart';
+import 'package:wrench/core/models/proposal_task_model.dart';
 
 part 'rejected_task_model.freezed.dart';
 part 'rejected_task_model.g.dart';

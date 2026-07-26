@@ -1,8 +1,8 @@
-import 'package:wrench/features/repairs/data/models/proposal_task_model.dart';
-import 'package:wrench/features/repairs/data/models/in_progress_task_model.dart';
-import 'package:wrench/features/repairs/data/models/staged_task_model.dart';
-import 'package:wrench/features/repairs/data/models/finished_task_model.dart';
-import 'package:wrench/features/repairs/data/models/rejected_task_model.dart';
+import 'package:wrench/core/models/finished_task_model.dart';
+import 'package:wrench/core/models/in_progress_task_model.dart';
+import 'package:wrench/core/models/proposal_task_model.dart';
+import 'package:wrench/core/models/rejected_task_model.dart';
+import 'package:wrench/core/models/staged_task_model.dart';
 
 class Seed {
   static final List<ProposalTaskModel> proposals = [
