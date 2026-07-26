@@ -34,6 +34,11 @@ migrate_working_dir/
 .pub/
 /build/
 /coverage/
+pubspec.lock
+
+# Diff files
+diff
+*.diff
 
 # Symbolication related
 app.*.symbols
