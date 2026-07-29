@@ -1,0 +1,225 @@
+{
+  "@@locale": "en",
+  "appTitle": "Wrench",
+  "@appTitle": {
+    "description": "The application title"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Home tab label"
+  },
+  "jobs": "Jobs",
+  "@jobs": {
+    "description": "Jobs tab label"
+  },
+  "analytics": "Analytics",
+  "@analytics": {
+    "description": "Analytics tab label"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings screen title"
+  },
+  "overview": "Overview",
+  "@overview": {
+    "description": "Overview section title"
+  },
+  "recentJobs": "Recent Jobs",
+  "@recentJobs": {
+    "description": "Recent jobs section title"
+  },
+  "viewAll": "View All",
+  "@viewAll": {
+    "description": "View all button text"
+  },
+  "pendingCount": "{count} Pending",
+  "@pendingCount": {
+    "description": "Pending jobs count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "inProgressCount": "{count} In Progress",
+  "@inProgressCount": {
+    "description": "In progress jobs count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "completedCount": "{count} Completed",
+  "@completedCount": {
+    "description": "Completed jobs count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "searchJobs": "Search jobs...",
+  "@searchJobs": {
+    "description": "Search bar hint text"
+  },
+  "all": "All",
+  "@all": {
+    "description": "Filter chip label for all items"
+  },
+  "proposed": "Proposed",
+  "@proposed": {
+    "description": "Job status: proposed"
+  },
+  "inProgress": "In Progress",
+  "@inProgress": {
+    "description": "Job status: in progress"
+  },
+  "staged": "Staged",
+  "@staged": {
+    "description": "Job status: staged"
+  },
+  "finished": "Finished",
+  "@finished": {
+    "description": "Job status: finished"
+  },
+  "rejected": "Rejected",
+  "@rejected": {
+    "description": "Job status: rejected"
+  },
+  "noJobsFound": "No jobs found",
+  "@noJobsFound": {
+    "description": "Empty state message"
+  },
+  "createPost": "Create Post",
+  "@createPost": {
+    "description": "Bottom sheet title for creating a post"
+  },
+  "title": "Title",
+  "@title": {
+    "description": "Title field label"
+  },
+  "enterShortTitle": "Enter a short title",
+  "@enterShortTitle": {
+    "description": "Title field hint text"
+  },
+  "description": "Description",
+  "@description": {
+    "description": "Description field label"
+  },
+  "writeContentHere": "Write your content here...",
+  "@writeContentHere": {
+    "description": "Description field hint text"
+  },
+  "takePhoto": "Take Photo",
+  "@takePhoto": {
+    "description": "Camera button tooltip"
+  },
+  "submit": "Submit",
+  "@submit": {
+    "description": "Submit button text"
+  },
+  "appearance": "Appearance",
+  "@appearance": {
+    "description": "Settings section title for appearance"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language setting label"
+  },
+  "theme": "Theme",
+  "@theme": {
+    "description": "Theme setting label"
+  },
+  "light": "Light",
+  "@light": {
+    "description": "Light theme option"
+  },
+  "dark": "Dark",
+  "@dark": {
+    "description": "Dark theme option"
+  },
+  "system": "System",
+  "@system": {
+    "description": "System theme option"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Language selection dialog title"
+  },
+  "about": "About",
+  "@about": {
+    "description": "About section title"
+  },
+  "version": "Version",
+  "@version": {
+    "description": "Version label"
+  },
+  "createJob": "New Job",
+  "@createJob": {
+    "description": "Create job page title"
+  },
+  "jobTitle": "Job title",
+  "@jobTitle": {
+    "description": "Job title field label"
+  },
+  "jobTitleHint": "e.g. Fix leaking pipe in Zone 4",
+  "@jobTitleHint": {
+    "description": "Job title field hint"
+  },
+  "describeTheIssue": "Describe the issue...",
+  "@describeTheIssue": {
+    "description": "Description field hint"
+  },
+  "addPhoto": "Add Photo",
+  "@addPhoto": {
+    "description": "Photo section label"
+  },
+  "addPhotoHint": "Tap to capture or attach a photo",
+  "@addPhotoHint": {
+    "description": "Photo section hint"
+  },
+  "retake": "Retake",
+  "@retake": {
+    "description": "Retake photo button"
+  },
+  "removePhoto": "Remove",
+  "@removePhoto": {
+    "description": "Remove photo button"
+  },
+  "camera": "Camera",
+  "@camera": {
+    "description": "Camera screen title"
+  },
+  "capture": "Capture",
+  "@capture": {
+    "description": "Capture photo button"
+  },
+  "usePhoto": "Use Photo",
+  "@usePhoto": {
+    "description": "Confirm captured photo"
+  },
+  "discard": "Discard",
+  "@discard": {
+    "description": "Discard changes"
+  },
+  "unsavedChanges": "Unsaved Changes",
+  "@unsavedChanges": {
+    "description": "Discard confirmation title"
+  },
+  "discardJobDraft": "Are you sure you want to discard this job?",
+  "@discardJobDraft": {
+    "description": "Discard confirmation message"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button"
+  },
+  "requiredField": "Required",
+  "@requiredField": {
+    "description": "Required field indicator"
+  }
+}

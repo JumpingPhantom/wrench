@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:wrench/l10n/app_localizations.dart';
 import 'package:wrench/core/utils/seed.dart';
 import 'package:wrench/features/home/presentation/widgets/job_item.dart';
-import 'package:wrench/features/jobs/presentation/screens/camera_screen.dart';
+import 'package:wrench/features/jobs/presentation/screens/create_job_screen.dart';
 
 class JobsScreen extends StatefulWidget {
   const JobsScreen({super.key});
@@ -15,13 +16,14 @@ class _JobsScreenState extends State<JobsScreen> {
   String? _selectedStatus;
 
   List<Map<String, String>> get _allJobs {
+    final l10n = AppLocalizations.of(context)!;
     final jobs = <Map<String, String>>[];
 
     for (final job in Seed.jobs) {
       jobs.add({
         'title': job.title,
         'location': 'Zone 1',
-        'status': 'Proposed',
+        'status': l10n.proposed,
         'time': '3h ago',
       });
     }
@@ -30,7 +32,7 @@ class _JobsScreenState extends State<JobsScreen> {
       jobs.add({
         'title': job.job.title,
         'location': 'Zone 2',
-        'status': 'In Progress',
+        'status': l10n.inProgress,
         'time': '1d ago',
       });
     }
@@ -39,7 +41,7 @@ class _JobsScreenState extends State<JobsScreen> {
       jobs.add({
         'title': job.job.job.title,
         'location': 'Zone 3',
-        'status': 'Staged',
+        'status': l10n.staged,
         'time': '2d ago',
       });
     }
@@ -48,7 +50,7 @@ class _JobsScreenState extends State<JobsScreen> {
       jobs.add({
         'title': job.job.job.job.title,
         'location': 'Zone 4',
-        'status': 'Finished',
+        'status': l10n.finished,
         'time': '3d ago',
       });
     }
@@ -57,7 +59,7 @@ class _JobsScreenState extends State<JobsScreen> {
       jobs.add({
         'title': job.job.title,
         'location': 'Zone 5',
-        'status': 'Rejected',
+        'status': l10n.rejected,
         'time': '4d ago',
       });
     }
@@ -84,103 +86,36 @@ class _JobsScreenState extends State<JobsScreen> {
     return jobs;
   }
 
-  void showCustomModalBottomSheet(BuildContext context) {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      useSafeArea: true,
-      shape: const RoundedRectangleBorder(
-        borderRadius: BorderRadius.vertical(top: Radius.circular(28)),
-      ),
-      builder: (context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            bottom: MediaQuery.of(context).viewInsets.bottom,
-          ),
-          child: SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Center(
-                    child: Container(
-                      width: 32,
-                      height: 4,
-                      margin: const EdgeInsets.only(bottom: 20),
-                      decoration: BoxDecoration(
-                        color: Theme.of(
-                          context,
-                        ).colorScheme.onSurfaceVariant.withOpacity(0.4),
-                        borderRadius: BorderRadius.circular(2),
-                      ),
-                    ),
-                  ),
-
-                  Text(
-                    'Create Post',
-                    style: Theme.of(context).textTheme.headlineSmall,
-                  ),
-                  const SizedBox(height: 20),
-
-                  const TextField(
-                    decoration: InputDecoration(
-                      labelText: 'Title',
-                      hintText: 'Enter a short title',
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-
-                  const TextField(
-                    maxLines: 4,
-                    keyboardType: TextInputType.multiline,
-                    decoration: InputDecoration(
-                      labelText: 'Description',
-                      hintText: 'Write your content here...',
-                      alignLabelWithHint: true,
-                      border: OutlineInputBorder(),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-
-                  Row(
-                    children: [
-                      IconButton.outlined(
-                        onPressed: () {
-                          showDialog(
-                            context: context,
-                            builder: (context) => CameraScreen(),
-                          );
-                        },
-                        icon: const Icon(Icons.photo_camera),
-                        tooltip: 'Take Photo',
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: FilledButton(
-                          onPressed: () {
-                            Navigator.pop(context);
-                          },
-                          child: const Text('Submit'),
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-        );
-      },
+  void _openCreateJob() async {
+    final result = await Navigator.push<Map<String, dynamic>>(
+      context,
+      MaterialPageRoute(builder: (_) => const CreateJobScreen()),
     );
+    if (result != null && mounted) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Job "${result['title']}" created'),
+          behavior: SnackBarBehavior.floating,
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        ),
+      );
+    }
   }
 
   @override
   Widget build(BuildContext context) {
     final jobs = _filteredJobs;
     final colorScheme = Theme.of(context).colorScheme;
+    final l10n = AppLocalizations.of(context)!;
+
+    final statusFilters = [
+      (label: l10n.all, value: null),
+      (label: l10n.proposed, value: l10n.proposed),
+      (label: l10n.inProgress, value: l10n.inProgress),
+      (label: l10n.staged, value: l10n.staged),
+      (label: l10n.finished, value: l10n.finished),
+      (label: l10n.rejected, value: l10n.rejected),
+    ];
 
     return Scaffold(
       body: Column(
@@ -189,7 +124,7 @@ class _JobsScreenState extends State<JobsScreen> {
             padding: const EdgeInsets.fromLTRB(16.0, 8.0, 16.0, 0.0),
             child: SearchBar(
               leading: Icon(Icons.search, color: colorScheme.onSurfaceVariant),
-              hintText: 'Search jobs...',
+              hintText: l10n.searchJobs,
               elevation: WidgetStateProperty.resolveWith(
                 (states) => states.contains(WidgetState.focused) ? 2.0 : 0.0,
               ),
@@ -203,70 +138,25 @@ class _JobsScreenState extends State<JobsScreen> {
           const SizedBox(height: 8.0),
           SizedBox(
             height: 40.0,
-            child: ListView(
+            child: ListView.builder(
               scrollDirection: Axis.horizontal,
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
-              children: [
-                FilterChip(
-                  label: const Text('All'),
-                  selected: _selectedStatus == null,
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedStatus = null;
-                    });
-                  },
-                ),
-                const SizedBox(width: 8.0),
-                FilterChip(
-                  label: const Text('Proposed'),
-                  selected: _selectedStatus == 'Proposed',
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedStatus = selected ? 'Proposed' : null;
-                    });
-                  },
-                ),
-                const SizedBox(width: 8.0),
-                FilterChip(
-                  label: const Text('In Progress'),
-                  selected: _selectedStatus == 'In Progress',
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedStatus = selected ? 'In Progress' : null;
-                    });
-                  },
-                ),
-                const SizedBox(width: 8.0),
-                FilterChip(
-                  label: const Text('Staged'),
-                  selected: _selectedStatus == 'Staged',
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedStatus = selected ? 'Staged' : null;
-                    });
-                  },
-                ),
-                const SizedBox(width: 8.0),
-                FilterChip(
-                  label: const Text('Finished'),
-                  selected: _selectedStatus == 'Finished',
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedStatus = selected ? 'Finished' : null;
-                    });
-                  },
-                ),
-                const SizedBox(width: 8.0),
-                FilterChip(
-                  label: const Text('Rejected'),
-                  selected: _selectedStatus == 'Rejected',
-                  onSelected: (selected) {
-                    setState(() {
-                      _selectedStatus = selected ? 'Rejected' : null;
-                    });
-                  },
-                ),
-              ],
+              itemCount: statusFilters.length,
+              itemBuilder: (context, index) {
+                final filter = statusFilters[index];
+                return Padding(
+                  padding: const EdgeInsets.only(right: 8.0),
+                  child: FilterChip(
+                    label: Text(filter.label),
+                    selected: _selectedStatus == filter.value,
+                    onSelected: (selected) {
+                      setState(() {
+                        _selectedStatus = selected ? filter.value : null;
+                      });
+                    },
+                  ),
+                );
+              },
             ),
           ),
           const SizedBox(height: 8.0),
@@ -283,7 +173,7 @@ class _JobsScreenState extends State<JobsScreen> {
                         ),
                         const SizedBox(height: 16.0),
                         Text(
-                          'No jobs found',
+                          l10n.noJobsFound,
                           style: Theme.of(context).textTheme.bodyLarge
                               ?.copyWith(color: colorScheme.onSurfaceVariant),
                         ),
@@ -306,12 +196,10 @@ class _JobsScreenState extends State<JobsScreen> {
           ),
         ],
       ),
-
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          showCustomModalBottomSheet(context);
-        },
-        child: const Icon(Icons.add),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _openCreateJob,
+        icon: const Icon(Icons.add),
+        label: Text(l10n.createJob),
       ),
     );
   }

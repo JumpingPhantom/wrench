@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wrench/l10n/app_localizations.dart';
 import 'package:go_router/go_router.dart';
 
 class SupervisorScaffold extends StatelessWidget {
@@ -16,14 +17,16 @@ class SupervisorScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: SafeArea(child: child),
       appBar: AppBar(
-        leading: Icon(Icons.person),
-        title: Text('Wrench'),
+        leading: const Icon(Icons.person),
+        title: Text(l10n.appTitle),
         actions: [
           IconButton(
-            icon: Icon(Icons.settings),
+            icon: const Icon(Icons.settings),
             onPressed: () {
               context.go('/settings');
             },
@@ -33,15 +36,15 @@ class SupervisorScaffold extends StatelessWidget {
       bottomNavigationBar: NavigationBar(
         onDestinationSelected: (index) => context.go(_routes[index]),
         selectedIndex: _currentIndex(context),
-        destinations: const [
-          NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
+        destinations: [
+          NavigationDestination(icon: const Icon(Icons.home), label: l10n.home),
           NavigationDestination(
-            icon: Icon(Icons.assignment),
-            label: 'Jobs',
+            icon: const Icon(Icons.assignment),
+            label: l10n.jobs,
           ),
           NavigationDestination(
-            icon: Icon(Icons.analytics),
-            label: 'Analytics',
+            icon: const Icon(Icons.analytics),
+            label: l10n.analytics,
           ),
         ],
       ),
