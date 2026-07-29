@@ -1,10 +1,9 @@
-import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wrench/core/widgets/subordinate_scaffold.dart';
 import 'package:wrench/core/widgets/supervisor_scaffold.dart';
 import 'package:wrench/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:wrench/features/home/presentation/screens/home_screen.dart';
-import 'package:wrench/features/requests/presentation/screens/requests_screen.dart';
+import 'package:wrench/features/jobs/presentation/screens/jobs_screen.dart';
 import 'package:wrench/features/settings/presentation/screens/main_settings_screen.dart';
 
 final GoRouter router = GoRouter(
@@ -19,61 +18,18 @@ final GoRouter router = GoRouter(
             : SubordinateScaffold();
       },
       routes: [
+        GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
         GoRoute(
-          path: '/',
-          pageBuilder: (context, state) => CustomTransitionPage(
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(
-                      opacity: CurveTween(
-                        curve: Curves.easeInOutCirc,
-                      ).animate(animation),
-                      child: child,
-                    ),
-            child: const HomeScreen(),
-          ),
-        ),
-        GoRoute(
-          path: '/requests',
-          pageBuilder: (context, state) => CustomTransitionPage(
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(
-                      opacity: CurveTween(
-                        curve: Curves.easeInOutCirc,
-                      ).animate(animation),
-                      child: child,
-                    ),
-            child: const RequestsScreen(),
-          ),
+          path: '/jobs',
+          builder: (context, state) => const JobsScreen(),
         ),
         GoRoute(
           path: '/analytics',
-          pageBuilder: (context, state) => CustomTransitionPage(
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(
-                      opacity: CurveTween(
-                        curve: Curves.easeInOutCirc,
-                      ).animate(animation),
-                      child: child,
-                    ),
-            child: const AnalyticsScreen(),
-          ),
+          builder: (context, state) => const AnalyticsScreen(),
         ),
         GoRoute(
           path: '/settings',
-          pageBuilder: (context, state) => CustomTransitionPage(
-            transitionsBuilder:
-                (context, animation, secondaryAnimation, child) =>
-                    FadeTransition(
-                      opacity: CurveTween(
-                        curve: Curves.easeInOutCirc,
-                      ).animate(animation),
-                      child: child,
-                    ),
-            child: const MainSettingsScreen(),
-          ),
+          builder: (context, state) => const MainSettingsScreen(),
         ),
       ],
     ),

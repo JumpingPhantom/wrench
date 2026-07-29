@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:wrench/features/home/presentation/widgets/overview_title.dart';
-import 'package:wrench/features/home/presentation/widgets/recent_requests_body.dart';
-import 'package:wrench/features/home/presentation/widgets/recent_requests_header.dart';
-import 'package:wrench/features/home/presentation/widgets/requests_count.dart';
+import 'package:wrench/features/home/presentation/widgets/recent_jobs_body.dart';
+import 'package:wrench/features/home/presentation/widgets/recent_jobs_header.dart';
+import 'package:wrench/features/home/presentation/widgets/jobs_count.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final List<Map<String, String>> requests = [
+    final List<Map<String, String>> jobs = [
       {
         'title': 'Broken Pipe - Main Line',
         'location': 'Zone 4 • Sector B',
@@ -41,11 +41,11 @@ class HomeScreen extends StatelessWidget {
         padding: const EdgeInsets.symmetric(vertical: 16.0),
         children: [
           OverviewTitle(),
-          RequestsCount(),
+          JobsCount(),
           const SizedBox(height: 16.0),
-          RecentRequestsHeader(),
+          RecentJobsHeader(),
           const SizedBox(height: 8.0),
-          RecentRequestsBody(requests: requests),
+          RecentJobsBody(jobs: jobs),
         ],
       ),
     );

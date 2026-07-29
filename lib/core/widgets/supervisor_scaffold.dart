@@ -6,7 +6,7 @@ class SupervisorScaffold extends StatelessWidget {
 
   final Widget child;
 
-  static const _routes = ['/', '/requests', '/analytics'];
+  static const _routes = ['/', '/jobs', '/analytics'];
 
   int _currentIndex(BuildContext context) {
     final location = GoRouterState.of(context).matchedLocation;
@@ -37,17 +37,13 @@ class SupervisorScaffold extends StatelessWidget {
           NavigationDestination(icon: Icon(Icons.home), label: 'Home'),
           NavigationDestination(
             icon: Icon(Icons.assignment),
-            label: 'Requests',
+            label: 'Jobs',
           ),
           NavigationDestination(
             icon: Icon(Icons.analytics),
             label: 'Analytics',
           ),
         ],
-      ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {},
-        child: Icon(Icons.camera),
       ),
     );
   }
