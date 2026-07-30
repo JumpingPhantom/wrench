@@ -3,6 +3,8 @@ import 'package:wrench/core/widgets/subordinate_scaffold.dart';
 import 'package:wrench/core/widgets/supervisor_scaffold.dart';
 import 'package:wrench/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:wrench/features/home/presentation/screens/home_screen.dart';
+import 'package:wrench/features/jobs/presentation/screens/camera_screen.dart';
+import 'package:wrench/features/jobs/presentation/screens/create_job_screen.dart';
 import 'package:wrench/features/jobs/presentation/screens/jobs_screen.dart';
 import 'package:wrench/features/settings/presentation/screens/main_settings_screen.dart';
 
@@ -32,6 +34,14 @@ final GoRouter router = GoRouter(
           builder: (context, state) => const MainSettingsScreen(),
         ),
       ],
+    ),
+    GoRoute(
+      path: '/jobs/new',
+      builder: (context, state) => const CreateJobScreen(),
+    ),
+    GoRoute(
+      path: '/jobs/new/camera',
+      builder: (context, state) => const CameraScreen(),
     ),
   ],
 );

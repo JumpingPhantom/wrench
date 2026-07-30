@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 import 'package:wrench/core/utils/seed.dart';
 import 'package:wrench/features/home/presentation/widgets/job_item.dart';
-import 'package:wrench/features/jobs/presentation/screens/create_job_screen.dart';
 
 class JobsScreen extends StatefulWidget {
   const JobsScreen({super.key});
@@ -87,10 +87,7 @@ class _JobsScreenState extends State<JobsScreen> {
   }
 
   void _openCreateJob() async {
-    final result = await Navigator.push<Map<String, dynamic>>(
-      context,
-      MaterialPageRoute(builder: (_) => const CreateJobScreen()),
-    );
+    final result = await context.push<Map<String, dynamic>>('/jobs/new');
     if (result != null && mounted) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
