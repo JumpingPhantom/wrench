@@ -1,33 +1,28 @@
 import 'package:flutter/material.dart';
+import 'package:wrench/l10n/app_localizations.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wrench/app/router.dart';
 import 'package:wrench/app/theme.dart';
 import 'package:wrench/app/util.dart';
-import 'package:wrench/core/widgets/bottom_navigation_bar.dart';
+import 'package:wrench/core/providers/settings_provider.dart';
 
-class App extends StatelessWidget {
+class App extends ConsumerWidget {
   const App({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final brightness = View.of(context).platformDispatcher.platformBrightness;
-
+  Widget build(BuildContext context, WidgetRef ref) {
+    final settings = ref.watch(settingsProvider);
     final textTheme = createTextTheme(context, 'Inter', 'Inter');
-
     final theme = MaterialTheme(textTheme);
 
     return MaterialApp.router(
-      theme: brightness == Brightness.light ? theme.light() : theme.dark(),
+      theme: theme.light(),
+      darkTheme: theme.dark(),
+      themeMode: settings.themeMode,
+      locale: settings.locale,
+      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      supportedLocales: AppLocalizations.supportedLocales,
       routerConfig: router,
-      builder: (context, child) {
-        return Scaffold(
-          body: child,
-          bottomNavigationBar: BottomNavigationBarWidget(
-            onRouteChanged: (route) {
-              router.go(route);
-            },
-          ),
-        );
-      },
     );
   }
 }
