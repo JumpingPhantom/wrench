@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:wrench/core/models/job.dart';
 import 'package:wrench/features/home/presentation/widgets/job_item.dart';
 
 class RecentJobsBody extends StatelessWidget {
   const RecentJobsBody({super.key, required this.jobs});
 
-  final List<Map<String, String>> jobs;
+  final List<Job> jobs;
 
   @override
   Widget build(BuildContext context) {

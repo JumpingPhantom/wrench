@@ -1,5 +1,4 @@
 import 'package:go_router/go_router.dart';
-import 'package:wrench/core/widgets/subordinate_scaffold.dart';
 import 'package:wrench/core/widgets/supervisor_scaffold.dart';
 import 'package:wrench/features/analytics/presentation/screens/analytics_screen.dart';
 import 'package:wrench/features/home/presentation/screens/home_screen.dart';
@@ -13,18 +12,16 @@ final GoRouter router = GoRouter(
     ShellRoute(
       builder: (context, state, child) {
         //FIXME: figure out this later
-        bool isSupervisor = true;
+        // bool isSupervisor;
 
-        return isSupervisor
-            ? SupervisorScaffold(child: child)
-            : SubordinateScaffold();
+        // return isSupervisor
+        //     ? SupervisorScaffold(child: child)
+        //     : SubordinateScaffold();
+        return SupervisorScaffold(child: child);
       },
       routes: [
         GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
-        GoRoute(
-          path: '/jobs',
-          builder: (context, state) => const JobsScreen(),
-        ),
+        GoRoute(path: '/jobs', builder: (context, state) => const JobsScreen()),
         GoRoute(
           path: '/analytics',
           builder: (context, state) => const AnalyticsScreen(),

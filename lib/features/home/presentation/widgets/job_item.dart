@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:wrench/core/models/job.dart';
+import 'package:wrench/core/utils/date_time_ext.dart';
 
 class JobItem extends StatelessWidget {
   const JobItem({super.key, required this.job});
 
-  final Map<String, String> job;
+  final Job job;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +51,7 @@ class JobItem extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            job['title']!,
+                            job.title,
                             style: Theme.of(context).textTheme.titleSmall
                                 ?.copyWith(fontWeight: FontWeight.bold),
                             maxLines: 1,
@@ -68,7 +70,7 @@ class JobItem extends StatelessWidget {
                               const SizedBox(width: 4.0),
                               Expanded(
                                 child: Text(
-                                  job['location']!,
+                                  job.location,
                                   style: Theme.of(context).textTheme.bodySmall,
                                   maxLines: 1,
                                   overflow: TextOverflow.ellipsis,
@@ -84,7 +86,7 @@ class JobItem extends StatelessWidget {
                         children: [
                           Chip(
                             label: Text(
-                              job['status']!,
+                              job.status,
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
                             padding: EdgeInsets.zero,
@@ -93,7 +95,7 @@ class JobItem extends StatelessWidget {
                                 MaterialTapTargetSize.shrinkWrap,
                           ),
                           Text(
-                            job['time']!,
+                            job.createdAt.toRelativeTime(),
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         ],

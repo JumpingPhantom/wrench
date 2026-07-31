@@ -1,12 +1,12 @@
-import 'package:wrench/core/models/job_model.dart';
-import 'package:wrench/features/jobs/data/sources/job_source.dart';
+import 'package:wrench/core/models/job.dart';
+import 'package:wrench/features/jobs/data/sources/source.dart';
 
 class JobRepository {
-  final JobSource source;
+  final Source _source;
 
-  JobRepository({required this.source});
+  JobRepository({required Source source}) : _source = source;
 
-  Future<List<JobModel>> getAll() => source.getAllJobs();
-  Future<void> save(JobModel job) => source.saveJob(job);
-  Future<void> delete(JobModel job) => source.deleteJob(job);
+  Future<List<Job>> getAll() => _source.getAllJobs();
+  Future<void> save(Job job) => _source.saveJob(job);
+  Future<void> delete(Job job) => _source.deleteJob(job);
 }
