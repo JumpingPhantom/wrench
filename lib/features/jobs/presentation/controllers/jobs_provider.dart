@@ -17,3 +17,9 @@ final jobsProvider = FutureProvider<List<Job>>((ref) {
   final repository = ref.watch(_repositoryProvider);
   return repository.getAll();
 });
+
+Future<void> saveJob(WidgetRef ref, Job job) async {
+  final repository = ref.read(_repositoryProvider);
+  await repository.save(job);
+  ref.invalidate(jobsProvider);
+}

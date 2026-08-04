@@ -134,7 +134,9 @@ class PhotoAction extends StatelessWidget {
               Icon(
                 icon,
                 size: 18,
-                color: isDestructive ? colorScheme.error : colorScheme.onSurface,
+                color: isDestructive
+                    ? colorScheme.error
+                    : colorScheme.onSurface,
               ),
               const SizedBox(width: 4),
               Text(

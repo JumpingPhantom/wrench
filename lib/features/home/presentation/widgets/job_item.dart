@@ -1,21 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:wrench/core/models/job.dart';
 import 'package:wrench/core/utils/date_time_ext.dart';
+import 'package:wrench/l10n/app_localizations.dart';
 
 class JobItem extends StatelessWidget {
-  const JobItem({super.key, required this.job});
+  const JobItem({super.key, required this.job, this.onTap});
 
   final Job job;
+  final VoidCallback? onTap;
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       clipBehavior: Clip.antiAlias,
       child: IntrinsicHeight(
         child: InkWell(
-          onTap: () {
-            // TODO: Navigate to job details
-          },
+          onTap: onTap,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -86,7 +88,7 @@ class JobItem extends StatelessWidget {
                         children: [
                           Chip(
                             label: Text(
-                              job.status,
+                              job.statusLabel(l10n),
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
                             padding: EdgeInsets.zero,
@@ -95,7 +97,7 @@ class JobItem extends StatelessWidget {
                                 MaterialTapTargetSize.shrinkWrap,
                           ),
                           Text(
-                            job.createdAt.toRelativeTime(),
+                            job.createdAt.toRelativeTime(l10n),
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         ],

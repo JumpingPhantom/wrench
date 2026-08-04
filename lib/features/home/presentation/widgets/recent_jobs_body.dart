@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wrench/core/models/job.dart';
 import 'package:wrench/features/home/presentation/widgets/job_item.dart';
 
@@ -17,7 +18,10 @@ class RecentJobsBody extends StatelessWidget {
         final job = jobs[index];
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
-          child: JobItem(job: job),
+          child: JobItem(
+            job: job,
+            onTap: () => context.push('/jobs/${job.id}', extra: job),
+          ),
         );
       },
     );

@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:wrench/l10n/app_localizations.dart';
 
 part "job.freezed.dart";
 part "job.g.dart";
@@ -24,6 +25,14 @@ sealed class Job with _$Job {
     _Staged() => "Staged",
     _Finished() => "Finished",
     _Cancelled() => "Cancelled",
+  };
+
+  String statusLabel(AppLocalizations l10n) => switch (state) {
+    _Draft() => l10n.draft,
+    _InProgress() => l10n.inProgress,
+    _Staged() => l10n.staged,
+    _Finished() => l10n.finished,
+    _Cancelled() => l10n.cancelled,
   };
 
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);

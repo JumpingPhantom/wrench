@@ -221,5 +221,113 @@
   "requiredField": "Required",
   "@requiredField": {
     "description": "Required field indicator"
+  },
+  "draft": "Draft",
+  "@draft": {
+    "description": "Job status: draft"
+  },
+  "cancelled": "Cancelled",
+  "@cancelled": {
+    "description": "Job status: cancelled"
+  },
+  "justNow": "Just now",
+  "@justNow": {
+    "description": "Relative time: less than 1 minute ago"
+  },
+  "minutesAgo": "{count}m ago",
+  "@minutesAgo": {
+    "description": "Relative time: minutes ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
+  "hoursAgo": "{count}h ago",
+  "@hoursAgo": {
+    "description": "Relative time: hours ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "daysAgo": "{count}d ago",
+  "@daysAgo": {
+    "description": "Relative time: days ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
+  "weeksAgo": "{count}w ago",
+  "@weeksAgo": {
+    "description": "Relative time: weeks ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "monthsAgo": "{count}mo ago",
+  "@monthsAgo": {
+    "description": "Relative time: months ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "jobDetails": "Job Details",
+  "@jobDetails": {
+    "description": "Job details screen title"
+  },
+  "createdBy": "Created by {name}",
+  "@createdBy": {
+    "description": "Job creator name",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "location": "Location",
+  "@location": {
+    "description": "Location field label"
+  },
+  "locationHint": "e.g. Zone 4, Building A",
+  "@locationHint": {
+    "description": "Location field hint"
+  },
+  "pending": "Pending",
+  "@pending": {
+    "description": "Job filter: pending (draft, in progress, staged)"
+  },
+  "loginSubtitle": "Sign in to continue",
+  "@loginSubtitle": {
+    "description": "Login screen subtitle"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "Login button text"
+  },
+  "invalidEmail": "Please enter a valid email",
+  "@invalidEmail": {
+    "description": "Invalid email validation message"
   }
 }

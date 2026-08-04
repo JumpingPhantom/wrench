@@ -12,6 +12,7 @@ class App extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final settings = ref.watch(settingsProvider);
+    final router = ref.watch(routerProvider);
     final textTheme = createTextTheme(context, 'Inter', 'Inter');
     final theme = MaterialTheme(textTheme);
 

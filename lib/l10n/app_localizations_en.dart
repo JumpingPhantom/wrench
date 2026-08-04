@@ -166,4 +166,70 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get requiredField => 'Required';
+
+  @override
+  String get draft => 'Draft';
+
+  @override
+  String get cancelled => 'Cancelled';
+
+  @override
+  String get justNow => 'Just now';
+
+  @override
+  String minutesAgo(int count) {
+    return '${count}m ago';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return '${count}h ago';
+  }
+
+  @override
+  String daysAgo(int count) {
+    return '${count}d ago';
+  }
+
+  @override
+  String weeksAgo(int count) {
+    return '${count}w ago';
+  }
+
+  @override
+  String monthsAgo(int count) {
+    return '${count}mo ago';
+  }
+
+  @override
+  String get jobDetails => 'Job Details';
+
+  @override
+  String createdBy(String name) {
+    return 'Created by $name';
+  }
+
+  @override
+  String get location => 'Location';
+
+  @override
+  String get locationHint => 'e.g. Zone 4, Building A';
+
+  @override
+  String get pending => 'Pending';
+
+  @override
+  String get loginSubtitle => 'Sign in to continue';
+
+  @override
+  String get email => 'Email';
+
+  @override
+  String get password => 'Password';
+
+  @override
+  String get login => 'Login';
+
+  @override
+  String get invalidEmail => 'Please enter a valid email';
 }

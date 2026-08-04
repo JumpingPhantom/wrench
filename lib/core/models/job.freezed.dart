@@ -83,7 +83,7 @@ as String?,
 @override
 @pragma('vm:prefer-inline')
 $JobStateCopyWith<$Res> get state {
-
+  
   return $JobStateCopyWith<$Res>(_self.state, (value) {
     return _then(_self.copyWith(state: value));
   });
@@ -219,7 +219,7 @@ return $default(_that.id,_that.title,_that.description,_that.location,_that.crea
 @JsonSerializable()
 
 class _Job extends Job {
-  _Job({required this.id, required this.title, required this.description, required this.location, required this.createdAt, required this.createdBy, required this.state, this.mediaUrl}): super._();
+   _Job({required this.id, required this.title, required this.description, required this.location, required this.createdAt, required this.createdBy, required this.state, this.mediaUrl}): super._();
   factory _Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
 
 @override final  String id;
@@ -300,7 +300,7 @@ as String?,
 @override
 @pragma('vm:prefer-inline')
 $JobStateCopyWith<$Res> get state {
-
+  
   return $JobStateCopyWith<$Res>(_self.state, (value) {
     return _then(_self.copyWith(state: value));
   });
@@ -331,7 +331,7 @@ JobState _$JobStateFromJson(
           return _Cancelled.fromJson(
             json
           );
-
+        
           default:
             throw CheckedFromJsonException(
   json,
@@ -340,7 +340,7 @@ JobState _$JobStateFromJson(
   'Invalid union type "${json['runtimeType']}"!'
 );
         }
-
+      
 }
 
 /// @nodoc

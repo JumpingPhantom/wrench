@@ -403,6 +403,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Required'**
   String get requiredField;
+
+  /// Job status: draft
+  ///
+  /// In en, this message translates to:
+  /// **'Draft'**
+  String get draft;
+
+  /// Job status: cancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled'**
+  String get cancelled;
+
+  /// Relative time: less than 1 minute ago
+  ///
+  /// In en, this message translates to:
+  /// **'Just now'**
+  String get justNow;
+
+  /// Relative time: minutes ago
+  ///
+  /// In en, this message translates to:
+  /// **'{count}m ago'**
+  String minutesAgo(int count);
+
+  /// Relative time: hours ago
+  ///
+  /// In en, this message translates to:
+  /// **'{count}h ago'**
+  String hoursAgo(int count);
+
+  /// Relative time: days ago
+  ///
+  /// In en, this message translates to:
+  /// **'{count}d ago'**
+  String daysAgo(int count);
+
+  /// Relative time: weeks ago
+  ///
+  /// In en, this message translates to:
+  /// **'{count}w ago'**
+  String weeksAgo(int count);
+
+  /// Relative time: months ago
+  ///
+  /// In en, this message translates to:
+  /// **'{count}mo ago'**
+  String monthsAgo(int count);
+
+  /// Job details screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Job Details'**
+  String get jobDetails;
+
+  /// Job creator name
+  ///
+  /// In en, this message translates to:
+  /// **'Created by {name}'**
+  String createdBy(String name);
+
+  /// Location field label
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get location;
+
+  /// Location field hint
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Zone 4, Building A'**
+  String get locationHint;
+
+  /// Job filter: pending (draft, in progress, staged)
+  ///
+  /// In en, this message translates to:
+  /// **'Pending'**
+  String get pending;
+
+  /// Login screen subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Sign in to continue'**
+  String get loginSubtitle;
+
+  /// Email field label
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get email;
+
+  /// Password field label
+  ///
+  /// In en, this message translates to:
+  /// **'Password'**
+  String get password;
+
+  /// Login button text
+  ///
+  /// In en, this message translates to:
+  /// **'Login'**
+  String get login;
+
+  /// Invalid email validation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a valid email'**
+  String get invalidEmail;
 }
 
 class _AppLocalizationsDelegate

@@ -166,4 +166,70 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get requiredField => 'مطلوب';
+
+  @override
+  String get draft => 'مسودة';
+
+  @override
+  String get cancelled => 'ملغاة';
+
+  @override
+  String get justNow => 'الآن';
+
+  @override
+  String minutesAgo(int count) {
+    return 'منذ $count د';
+  }
+
+  @override
+  String hoursAgo(int count) {
+    return 'منذ $count س';
+  }
+
+  @override
+  String daysAgo(int count) {
+    return 'منذ $count ي';
+  }
+
+  @override
+  String weeksAgo(int count) {
+    return 'منذ $count أ';
+  }
+
+  @override
+  String monthsAgo(int count) {
+    return 'منذ $count ش';
+  }
+
+  @override
+  String get jobDetails => 'تفاصيل العمل';
+
+  @override
+  String createdBy(String name) {
+    return 'أنشأه $name';
+  }
+
+  @override
+  String get location => 'الموقع';
+
+  @override
+  String get locationHint => 'مثال: المنطقة 4، المبنى أ';
+
+  @override
+  String get pending => 'قيد الانتظار';
+
+  @override
+  String get loginSubtitle => 'تسجيل الدخول للمتابعة';
+
+  @override
+  String get email => 'البريد الإلكتروني';
+
+  @override
+  String get password => 'كلمة المرور';
+
+  @override
+  String get login => 'تسجيل الدخول';
+
+  @override
+  String get invalidEmail => 'يرجى إدخال بريد إلكتروني صالح';
 }
