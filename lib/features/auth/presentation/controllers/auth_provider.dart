@@ -11,7 +11,6 @@ class AuthNotifier extends Notifier<AuthState> {
     state = const AuthState.loading();
 
     // TODO: Replace with actual authentication logic
-    // This is a placeholder that simulates authentication
     await Future.delayed(const Duration(seconds: 1));
 
     if (email.isEmpty || password.isEmpty) {
@@ -19,7 +18,6 @@ class AuthNotifier extends Notifier<AuthState> {
       return;
     }
 
-    // Simulate successful login
     state = const AuthState.authenticated(userId: 'user-123');
   }
 

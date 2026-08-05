@@ -15,9 +15,7 @@ class JobsCount extends ConsumerWidget {
         .watch(jobsProvider)
         .when(
           data: (jobs) {
-            final pendingCount = jobs
-                .where((j) => j.status == 'Staged')
-                .length;
+            final pendingCount = jobs.where((j) => j.status == 'Staged').length;
             final inProgressCount = jobs
                 .where((j) => j.status == 'In Progress')
                 .length;

@@ -44,7 +44,10 @@ class JobDetailScreen extends StatelessWidget {
             Row(
               children: [
                 Chip(
-                  label: Text(job.statusLabel(l10n), style: textTheme.labelSmall),
+                  label: Text(
+                    job.statusLabel(l10n),
+                    style: textTheme.labelSmall,
+                  ),
                   padding: EdgeInsets.zero,
                   visualDensity: VisualDensity.compact,
                   materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,

@@ -37,9 +37,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
   List<Job> _applyFilters(List<Job> jobs) {
     var result = jobs;
     if (_selectedFilter == JobFilter.pending) {
-      result = result
-          .where((job) => job.status == 'Staged')
-          .toList();
+      result = result.where((job) => job.status == 'Staged').toList();
     } else if (_selectedFilter != JobFilter.all) {
       result = result
           .where((job) => job.status == _selectedFilter.statusCode)

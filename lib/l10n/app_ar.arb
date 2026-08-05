@@ -1,72 +1,333 @@
 {
   "@@locale": "ar",
   "appTitle": "رنج",
+  "@appTitle": {
+    "description": "The application title"
+  },
   "home": "الرئيسية",
+  "@home": {
+    "description": "Home tab label"
+  },
   "jobs": "المهام",
+  "@jobs": {
+    "description": "Jobs tab label"
+  },
   "analytics": "التحليلات",
+  "@analytics": {
+    "description": "Analytics tab label"
+  },
   "settings": "الإعدادات",
+  "@settings": {
+    "description": "Settings screen title"
+  },
   "overview": "نظرة عامة",
+  "@overview": {
+    "description": "Overview section title"
+  },
   "recentJobs": "المهام الأخيرة",
+  "@recentJobs": {
+    "description": "Recent jobs section title"
+  },
   "viewAll": "عرض الكل",
+  "@viewAll": {
+    "description": "View all button text"
+  },
   "pendingCount": "{count} معلقة",
+  "@pendingCount": {
+    "description": "Pending jobs count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
   "inProgressCount": "{count} قيد التنفيذ",
+  "@inProgressCount": {
+    "description": "In progress jobs count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
   "completedCount": "{count} مكتملة",
+  "@completedCount": {
+    "description": "Completed jobs count",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
   "searchJobs": "بحث في المهام...",
+  "@searchJobs": {
+    "description": "Search bar hint text"
+  },
   "all": "الكل",
+  "@all": {
+    "description": "Filter chip label for all items"
+  },
   "proposed": "مقترحة",
+  "@proposed": {
+    "description": "Job status: proposed"
+  },
   "inProgress": "قيد التنفيذ",
+  "@inProgress": {
+    "description": "Job status: in progress"
+  },
   "staged": "مُعدّة",
+  "@staged": {
+    "description": "Job status: staged"
+  },
   "finished": "مكتملة",
+  "@finished": {
+    "description": "Job status: finished"
+  },
   "rejected": "مرفوضة",
+  "@rejected": {
+    "description": "Job status: rejected"
+  },
   "noJobsFound": "لم يتم العثور على مهام",
+  "@noJobsFound": {
+    "description": "Empty state message"
+  },
   "createPost": "إنشاء منشور",
+  "@createPost": {
+    "description": "Bottom sheet title for creating a post"
+  },
   "title": "العنوان",
+  "@title": {
+    "description": "Title field label"
+  },
   "enterShortTitle": "أدخل عنواناً قصيراً",
+  "@enterShortTitle": {
+    "description": "Title field hint text"
+  },
   "description": "الوصف",
+  "@description": {
+    "description": "Description field label"
+  },
   "writeContentHere": "اكتب محتواك هنا...",
+  "@writeContentHere": {
+    "description": "Description field hint text"
+  },
   "takePhoto": "التقط صورة",
+  "@takePhoto": {
+    "description": "Camera button tooltip"
+  },
   "submit": "إرسال",
+  "@submit": {
+    "description": "Submit button text"
+  },
   "appearance": "المظهر",
+  "@appearance": {
+    "description": "Settings section title for appearance"
+  },
   "language": "اللغة",
+  "@language": {
+    "description": "Language setting label"
+  },
   "theme": "السمة",
+  "@theme": {
+    "description": "Theme setting label"
+  },
   "light": "فاتح",
+  "@light": {
+    "description": "Light theme option"
+  },
   "dark": "داكن",
+  "@dark": {
+    "description": "Dark theme option"
+  },
   "system": "النظام",
+  "@system": {
+    "description": "System theme option"
+  },
   "selectLanguage": "اختر اللغة",
+  "@selectLanguage": {
+    "description": "Language selection dialog title"
+  },
   "about": "حول",
+  "@about": {
+    "description": "About section title"
+  },
   "version": "الإصدار",
+  "@version": {
+    "description": "Version label"
+  },
   "createJob": "عمل جديد",
+  "@createJob": {
+    "description": "Create job page title"
+  },
   "jobTitle": "عنوان العمل",
+  "@jobTitle": {
+    "description": "Job title field label"
+  },
   "jobTitleHint": "مثال: إصلاح أنبوب متسرب في المنطقة 4",
+  "@jobTitleHint": {
+    "description": "Job title field hint"
+  },
   "describeTheIssue": "صف المشكلة...",
+  "@describeTheIssue": {
+    "description": "Description field hint"
+  },
   "addPhoto": "إضافة صورة",
+  "@addPhoto": {
+    "description": "Photo section label"
+  },
   "addPhotoHint": "اضغط للتقاط أو إرفاق صورة",
+  "@addPhotoHint": {
+    "description": "Photo section hint"
+  },
   "retake": "إعادة التقاط",
+  "@retake": {
+    "description": "Retake photo button"
+  },
   "removePhoto": "إزالة",
+  "@removePhoto": {
+    "description": "Remove photo button"
+  },
   "camera": "الكاميرا",
+  "@camera": {
+    "description": "Camera screen title"
+  },
   "capture": "التقاط",
+  "@capture": {
+    "description": "Capture photo button"
+  },
   "usePhoto": "استخدام الصورة",
+  "@usePhoto": {
+    "description": "Confirm captured photo"
+  },
   "discard": "تجاهل",
+  "@discard": {
+    "description": "Discard changes"
+  },
   "unsavedChanges": "تغييرات غير محفوظة",
+  "@unsavedChanges": {
+    "description": "Discard confirmation title"
+  },
   "discardJobDraft": "هل أنت متأكد أنك تريد تجاهل هذا العمل؟",
+  "@discardJobDraft": {
+    "description": "Discard confirmation message"
+  },
   "cancel": "إلغاء",
+  "@cancel": {
+    "description": "Cancel button"
+  },
   "requiredField": "مطلوب",
+  "@requiredField": {
+    "description": "Required field indicator"
+  },
   "draft": "مسودة",
+  "@draft": {
+    "description": "Job status: draft"
+  },
   "cancelled": "ملغاة",
+  "@cancelled": {
+    "description": "Job status: cancelled"
+  },
   "justNow": "الآن",
+  "@justNow": {
+    "description": "Relative time: less than 1 minute ago"
+  },
   "minutesAgo": "منذ {count} د",
+  "@minutesAgo": {
+    "description": "Relative time: minutes ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "5"
+      }
+    }
+  },
   "hoursAgo": "منذ {count} س",
+  "@hoursAgo": {
+    "description": "Relative time: hours ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
   "daysAgo": "منذ {count} ي",
+  "@daysAgo": {
+    "description": "Relative time: days ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
   "weeksAgo": "منذ {count} أ",
+  "@weeksAgo": {
+    "description": "Relative time: weeks ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
   "monthsAgo": "منذ {count} ش",
+  "@monthsAgo": {
+    "description": "Relative time: months ago",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
   "jobDetails": "تفاصيل العمل",
+  "@jobDetails": {
+    "description": "Job details screen title"
+  },
   "createdBy": "أنشأه {name}",
+  "@createdBy": {
+    "description": "Job creator name",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
   "location": "الموقع",
+  "@location": {
+    "description": "Location field label"
+  },
   "locationHint": "مثال: المنطقة 4، المبنى أ",
+  "@locationHint": {
+    "description": "Location field hint"
+  },
   "pending": "قيد الانتظار",
+  "@pending": {
+    "description": "Job filter: pending (draft, in progress, staged)"
+  },
   "loginSubtitle": "تسجيل الدخول للمتابعة",
+  "@loginSubtitle": {
+    "description": "Login screen subtitle"
+  },
   "email": "البريد الإلكتروني",
+  "@email": {
+    "description": "Email field label"
+  },
   "password": "كلمة المرور",
+  "@password": {
+    "description": "Password field label"
+  },
   "login": "تسجيل الدخول",
-  "invalidEmail": "يرجى إدخال بريد إلكتروني صالح"
+  "@login": {
+    "description": "Login button text"
+  },
+  "invalidEmail": "يرجى إدخال بريد إلكتروني صالح",
+  "@invalidEmail": {
+    "description": "Invalid email validation message"
+  }
 }
