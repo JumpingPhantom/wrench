@@ -18,9 +18,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get jobs => 'Jobs';
 
   @override
-  String get analytics => 'Analytics';
-
-  @override
   String get settings => 'Settings';
 
   @override

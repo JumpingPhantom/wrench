@@ -1,6 +1,7 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:wrench/core/models/job.dart';
-import 'package:wrench/core/utils/date_time_ext.dart';
+import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/utils.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
 class JobItem extends StatelessWidget {
@@ -8,6 +9,15 @@ class JobItem extends StatelessWidget {
 
   final Job job;
   final VoidCallback? onTap;
+
+  Widget _placeholderImage(BuildContext context) {
+    return Container(
+      width: 100.0,
+      height: 100.0,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      child: const Icon(Icons.image),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -25,21 +35,14 @@ class JobItem extends StatelessWidget {
                 width: 4.0,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              Image.asset(
-                'image_3c24ac.png',
+              CachedNetworkImage(
+                imageUrl: job.mediaUrl ?? "",
                 width: 100.0,
                 height: 100.0,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 100.0,
-                    height: 100.0,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainerHighest,
-                    child: const Icon(Icons.image),
-                  );
-                },
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) =>
+                    _placeholderImage(context),
               ),
 
               Expanded(

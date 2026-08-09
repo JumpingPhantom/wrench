@@ -1,15 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:wrench/core/models/job.dart';
-import 'package:wrench/core/utils/date_time_ext.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/utils.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
-class JobDetailScreen extends StatelessWidget {
+class JobDetailScreen extends ConsumerWidget {
   const JobDetailScreen({super.key, required this.job});
 
   final Job job;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final l10n = AppLocalizations.of(context)!;
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;

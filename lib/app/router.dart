@@ -1,11 +1,9 @@
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wrench/core/models/job.dart';
-import 'package:wrench/core/widgets/supervisor_scaffold.dart';
-import 'package:wrench/features/analytics/presentation/screens/analytics_screen.dart';
+import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/presentation/screens/main_scaffold.dart';
 import 'package:wrench/features/auth/presentation/screens/login_screen.dart';
 import 'package:wrench/features/auth/presentation/controllers/auth_provider.dart';
-import 'package:wrench/features/auth/data/models/auth_state.dart';
 import 'package:wrench/features/home/presentation/screens/home_screen.dart';
 import 'package:wrench/features/jobs/presentation/screens/camera_screen.dart';
 import 'package:wrench/features/jobs/presentation/screens/create_job_screen.dart';
@@ -14,12 +12,12 @@ import 'package:wrench/features/jobs/presentation/screens/jobs_screen.dart';
 import 'package:wrench/features/settings/presentation/screens/main_settings_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
-  final authState = ref.watch(authProvider);
+  final authState = ref.watch(authProvider.notifier);
 
   return GoRouter(
     initialLocation: '/',
     redirect: (context, state) {
-      final isAuthenticated = authState is AuthAuthenticated;
+      final isAuthenticated = authState.isAuthenticated();
       final isLoginRoute = state.matchedLocation == '/login';
 
       if (!isAuthenticated && !isLoginRoute) {
@@ -36,7 +34,7 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(path: '/login', builder: (context, state) => const LoginScreen()),
       ShellRoute(
         builder: (context, state, child) {
-          return SupervisorScaffold(child: child);
+          return MainScaffold(child: child);
         },
         routes: [
           GoRoute(path: '/', builder: (context, state) => const HomeScreen()),
@@ -46,10 +44,6 @@ final routerProvider = Provider<GoRouter>((ref) {
               final filterParam = state.uri.queryParameters['filter'];
               return JobsScreen(initialFilter: filterParam);
             },
-          ),
-          GoRoute(
-            path: '/analytics',
-            builder: (context, state) => const AnalyticsScreen(),
           ),
           GoRoute(
             path: '/settings',

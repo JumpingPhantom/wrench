@@ -116,12 +116,6 @@ abstract class AppLocalizations {
   /// **'Jobs'**
   String get jobs;
 
-  /// Analytics tab label
-  ///
-  /// In en, this message translates to:
-  /// **'Analytics'**
-  String get analytics;
-
   /// Settings screen title
   ///
   /// In en, this message translates to:

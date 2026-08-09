@@ -42,7 +42,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     final authState = ref.watch(authProvider);
     final colorScheme = Theme.of(context).colorScheme;
 
-    ref.listen<AuthState>(authProvider, (previous, next) {
+    ref.listen<AppAuthState>(authProvider, (previous, next) {
       next.whenOrNull(
         authenticated: (_) => context.go('/'),
         error: (message) {

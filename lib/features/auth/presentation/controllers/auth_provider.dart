@@ -1,31 +1,49 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wrench/core/network/supabase_client.dart';
 import 'package:wrench/features/auth/data/models/auth_state.dart';
 
-class AuthNotifier extends Notifier<AuthState> {
+class AuthNotifier extends Notifier<AppAuthState> {
   @override
-  AuthState build() {
-    return const AuthState.initial();
+  AppAuthState build() {
+    return const AppAuthState.initial();
+  }
+
+  bool isAuthenticated() {
+    return client.auth.currentUser != null;
   }
 
   Future<void> login({required String email, required String password}) async {
-    state = const AuthState.loading();
-
-    // TODO: Replace with actual authentication logic
-    await Future.delayed(const Duration(seconds: 1));
+    state = const AppAuthState.loading();
 
     if (email.isEmpty || password.isEmpty) {
-      state = const AuthState.error(message: 'Email and password are required');
+      state = const AppAuthState.error(
+        message: 'Email and password are required',
+      );
       return;
     }
 
-    state = const AuthState.authenticated(userId: 'user-123');
+    try {
+      await client.auth.signInWithPassword(email: email, password: password);
+    } on AuthException catch (e) {
+      state = AppAuthState.error(message: e.message);
+      return;
+    }
+
+    state = AppAuthState.authenticated(userId: client.auth.currentUser!.id);
   }
 
   void logout() {
-    state = const AuthState.initial();
+    client.auth.signOut();
+    state = const AppAuthState.initial();
+  }
+
+  void authenticate() {
+    if (!isAuthenticated()) return;
+    state = AppAuthState.authenticated(userId: client.auth.currentUser!.id);
   }
 }
 
-final authProvider = NotifierProvider<AuthNotifier, AuthState>(() {
+final authProvider = NotifierProvider<AuthNotifier, AppAuthState>(() {
   return AuthNotifier();
 });

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wrench/features/jobs/presentation/controllers/jobs_provider.dart';
+import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
 class JobsCount extends ConsumerWidget {

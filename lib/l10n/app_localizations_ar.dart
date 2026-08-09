@@ -18,9 +18,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get jobs => 'المهام';
 
   @override
-  String get analytics => 'التحليلات';
-
-  @override
   String get settings => 'الإعدادات';
 
   @override

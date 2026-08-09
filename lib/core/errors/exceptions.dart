@@ -30,3 +30,10 @@ class OperationException extends AppException {
   @override
   String get message => "Operation error: ${super.message}";
 }
+
+class ConfigurationException extends AppException {
+  ConfigurationException({required super.message});
+
+  @override
+  String get message => "Configuration error: ${super.message}";
+}

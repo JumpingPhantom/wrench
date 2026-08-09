@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:wrench/core/models/job.dart';
+import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/features/home/presentation/widgets/job_item.dart';
-import 'package:wrench/features/jobs/presentation/controllers/jobs_provider.dart';
+import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_filter_bar.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 

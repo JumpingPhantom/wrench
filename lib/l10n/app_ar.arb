@@ -12,10 +12,6 @@
   "@jobs": {
     "description": "Jobs tab label"
   },
-  "analytics": "التحليلات",
-  "@analytics": {
-    "description": "Analytics tab label"
-  },
   "settings": "الإعدادات",
   "@settings": {
     "description": "Settings screen title"

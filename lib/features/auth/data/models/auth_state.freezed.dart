@@ -12,7 +12,7 @@ part of 'auth_state.dart';
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
-mixin _$AuthState {
+mixin _$AppAuthState {
 
 
 
@@ -20,7 +20,7 @@ mixin _$AuthState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthState);
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AppAuthState);
 }
 
 
@@ -29,20 +29,20 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AuthState()';
+  return 'AppAuthState()';
 }
 
 
 }
 
 /// @nodoc
-class $AuthStateCopyWith<$Res>  {
-$AuthStateCopyWith(AuthState _, $Res Function(AuthState) __);
+class $AppAuthStateCopyWith<$Res>  {
+$AppAuthStateCopyWith(AppAuthState _, $Res Function(AppAuthState) __);
 }
 
 
-/// Adds pattern-matching-related methods to [AuthState].
-extension AuthStatePatterns on AuthState {
+/// Adds pattern-matching-related methods to [AppAuthState].
+extension AppAuthStatePatterns on AppAuthState {
 /// A variant of `map` that fallback to returning `orElse`.
 ///
 /// It is equivalent to doing:
@@ -192,7 +192,7 @@ return error(_that.message);case _:
 /// @nodoc
 
 
-class AuthInitial implements AuthState {
+class AuthInitial implements AppAuthState {
   const AuthInitial();
   
 
@@ -212,7 +212,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AuthState.initial()';
+  return 'AppAuthState.initial()';
 }
 
 
@@ -224,7 +224,7 @@ String toString() {
 /// @nodoc
 
 
-class AuthLoading implements AuthState {
+class AuthLoading implements AppAuthState {
   const AuthLoading();
   
 
@@ -244,7 +244,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'AuthState.loading()';
+  return 'AppAuthState.loading()';
 }
 
 
@@ -256,13 +256,13 @@ String toString() {
 /// @nodoc
 
 
-class AuthAuthenticated implements AuthState {
+class AuthAuthenticated implements AppAuthState {
   const AuthAuthenticated({required this.userId});
   
 
  final  String userId;
 
-/// Create a copy of AuthState
+/// Create a copy of AppAuthState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
@@ -281,14 +281,14 @@ int get hashCode => Object.hash(runtimeType,userId);
 
 @override
 String toString() {
-  return 'AuthState.authenticated(userId: $userId)';
+  return 'AppAuthState.authenticated(userId: $userId)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $AuthAuthenticatedCopyWith<$Res> implements $AuthStateCopyWith<$Res> {
+abstract mixin class $AuthAuthenticatedCopyWith<$Res> implements $AppAuthStateCopyWith<$Res> {
   factory $AuthAuthenticatedCopyWith(AuthAuthenticated value, $Res Function(AuthAuthenticated) _then) = _$AuthAuthenticatedCopyWithImpl;
 @useResult
 $Res call({
@@ -307,7 +307,7 @@ class _$AuthAuthenticatedCopyWithImpl<$Res>
   final AuthAuthenticated _self;
   final $Res Function(AuthAuthenticated) _then;
 
-/// Create a copy of AuthState
+/// Create a copy of AppAuthState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? userId = null,}) {
   return _then(AuthAuthenticated(
@@ -322,13 +322,13 @@ as String,
 /// @nodoc
 
 
-class AuthError implements AuthState {
+class AuthError implements AppAuthState {
   const AuthError({required this.message});
   
 
  final  String message;
 
-/// Create a copy of AuthState
+/// Create a copy of AppAuthState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
 @pragma('vm:prefer-inline')
@@ -347,14 +347,14 @@ int get hashCode => Object.hash(runtimeType,message);
 
 @override
 String toString() {
-  return 'AuthState.error(message: $message)';
+  return 'AppAuthState.error(message: $message)';
 }
 
 
 }
 
 /// @nodoc
-abstract mixin class $AuthErrorCopyWith<$Res> implements $AuthStateCopyWith<$Res> {
+abstract mixin class $AuthErrorCopyWith<$Res> implements $AppAuthStateCopyWith<$Res> {
   factory $AuthErrorCopyWith(AuthError value, $Res Function(AuthError) _then) = _$AuthErrorCopyWithImpl;
 @useResult
 $Res call({
@@ -373,7 +373,7 @@ class _$AuthErrorCopyWithImpl<$Res>
   final AuthError _self;
   final $Res Function(AuthError) _then;
 
-/// Create a copy of AuthState
+/// Create a copy of AppAuthState
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
   return _then(AuthError(
