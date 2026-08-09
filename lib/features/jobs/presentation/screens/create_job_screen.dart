@@ -16,8 +16,10 @@ class CreateJobScreen extends StatefulWidget {
 class _CreateJobScreenState extends State<CreateJobScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
+  final _locationController = TextEditingController();
   final _titleFocus = FocusNode();
   final _descriptionFocus = FocusNode();
+  final _locationFocus = FocusNode();
   File? _photo;
   bool _submitted = false;
 
@@ -25,14 +27,17 @@ class _CreateJobScreenState extends State<CreateJobScreen> {
   void dispose() {
     _titleController.dispose();
     _descriptionController.dispose();
+    _locationController.dispose();
     _titleFocus.dispose();
     _descriptionFocus.dispose();
+    _locationFocus.dispose();
     super.dispose();
   }
 
   bool get _isValid =>
       _titleController.text.trim().isNotEmpty &&
-      _descriptionController.text.trim().isNotEmpty;
+      _descriptionController.text.trim().isNotEmpty &&
+      _locationController.text.trim().isNotEmpty;
 
   Future<void> _openCamera() async {
     final result = await context.push<File>('/jobs/new/camera');
@@ -55,11 +60,11 @@ class _CreateJobScreenState extends State<CreateJobScreen> {
         content: Text(l10n.discardJobDraft),
         actions: [
           TextButton(
-            onPressed: () => Navigator.pop(context, false),
+            onPressed: () => context.pop(false),
             child: Text(l10n.cancel),
           ),
           FilledButton(
-            onPressed: () => Navigator.pop(context, true),
+            onPressed: () => context.pop(true),
             child: Text(l10n.discard),
           ),
         ],
@@ -71,12 +76,17 @@ class _CreateJobScreenState extends State<CreateJobScreen> {
   void _submit() {
     setState(() => _submitted = true);
     if (!_isValid) {
-      _titleFocus.requestFocus();
+      if (_titleController.text.trim().isEmpty) {
+        _titleFocus.requestFocus();
+      } else if (_locationController.text.trim().isEmpty) {
+        _locationFocus.requestFocus();
+      }
       return;
     }
     context.pop({
       'title': _titleController.text.trim(),
       'description': _descriptionController.text.trim(),
+      'location': _locationController.text.trim(),
       'photo': _photo,
     });
   }
@@ -108,10 +118,7 @@ class _CreateJobScreenState extends State<CreateJobScreen> {
           actions: [
             Padding(
               padding: const EdgeInsets.only(right: 8),
-              child: FilledButton(
-                onPressed: _submit,
-                child: Text(l10n.submit),
-              ),
+              child: FilledButton(onPressed: _submit, child: Text(l10n.submit)),
             ),
           ],
         ),
@@ -135,6 +142,14 @@ class _CreateJobScreenState extends State<CreateJobScreen> {
                   controller: _descriptionController,
                   focusNode: _descriptionFocus,
                   l10n: l10n,
+                ),
+                const SizedBox(height: 24),
+                LocationField(
+                  controller: _locationController,
+                  focusNode: _locationFocus,
+                  submitted: _submitted,
+                  l10n: l10n,
+                  onChanged: (_) => setState(() {}),
                 ),
                 const SizedBox(height: 28),
                 PhotoSection(

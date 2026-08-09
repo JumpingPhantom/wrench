@@ -1,12 +1,10 @@
-import 'package:wrench/core/models/job.dart';
-import 'package:wrench/core/utils/dummy_db.dart';
-import 'package:wrench/features/home/data/sources/source.dart';
+import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/features/home/data/sources/home_source.dart';
 
-class LocalHomeSource implements Source {
+class LocalHomeSource implements HomeSource {
   @override
   Future<List<Job>> getRecentJobs() {
-    final sortedJobs = DummyDb.instance.allJobs.take(4).toList()
-      ..sort((a, b) => b.createdAt.compareTo(a.createdAt));
-    return Future.value(sortedJobs);
+    // TODO: implement getRecentJobs
+    throw UnimplementedError();
   }
 }

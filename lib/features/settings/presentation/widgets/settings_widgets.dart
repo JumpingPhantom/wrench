@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
 class SectionHeader extends StatelessWidget {
@@ -22,7 +23,11 @@ class SectionHeader extends StatelessWidget {
 }
 
 class ThemeTile extends StatelessWidget {
-  const ThemeTile({super.key, required this.currentMode, required this.onChanged});
+  const ThemeTile({
+    super.key,
+    required this.currentMode,
+    required this.onChanged,
+  });
 
   final ThemeMode currentMode;
   final ValueChanged<ThemeMode> onChanged;
@@ -60,7 +65,11 @@ class ThemeTile extends StatelessWidget {
 }
 
 class LanguageTile extends StatelessWidget {
-  const LanguageTile({super.key, required this.currentCode, required this.onChanged});
+  const LanguageTile({
+    super.key,
+    required this.currentCode,
+    required this.onChanged,
+  });
 
   final String currentCode;
   final ValueChanged<String> onChanged;
@@ -100,15 +109,21 @@ class LanguageTile extends StatelessWidget {
                   style: Theme.of(context).textTheme.titleMedium,
                 ),
               ),
-              ...languages.map(
-                (lang) => RadioListTile<String>(
-                  title: Text('${lang.label} (${lang.nativeLabel})'),
-                  value: lang.code,
-                  groupValue: currentCode,
-                  onChanged: (value) {
-                    if (value != null) onChanged(value);
-                    Navigator.pop(context);
-                  },
+              RadioGroup<String>(
+                groupValue: currentCode,
+                onChanged: (value) {
+                  if (value != null) onChanged(value);
+                  context.pop();
+                },
+                child: Column(
+                  children: languages
+                      .map(
+                        (lang) => RadioListTile<String>(
+                          title: Text('${lang.label} (${lang.nativeLabel})'),
+                          value: lang.code,
+                        ),
+                      )
+                      .toList(),
                 ),
               ),
               const SizedBox(height: 8),

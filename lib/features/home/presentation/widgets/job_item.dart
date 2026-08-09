@@ -1,21 +1,33 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:wrench/core/models/job.dart';
-import 'package:wrench/core/utils/date_time_ext.dart';
+import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/utils.dart';
+import 'package:wrench/l10n/app_localizations.dart';
 
 class JobItem extends StatelessWidget {
-  const JobItem({super.key, required this.job});
+  const JobItem({super.key, required this.job, this.onTap});
 
   final Job job;
+  final VoidCallback? onTap;
+
+  Widget _placeholderImage(BuildContext context) {
+    return Container(
+      width: 100.0,
+      height: 100.0,
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
+      child: const Icon(Icons.image),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Card(
       clipBehavior: Clip.antiAlias,
       child: IntrinsicHeight(
         child: InkWell(
-          onTap: () {
-            // TODO: Navigate to job details
-          },
+          onTap: onTap,
           child: Row(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -23,21 +35,14 @@ class JobItem extends StatelessWidget {
                 width: 4.0,
                 color: Theme.of(context).colorScheme.primary,
               ),
-              Image.asset(
-                'image_3c24ac.png',
+              CachedNetworkImage(
+                imageUrl: job.mediaUrl ?? "",
                 width: 100.0,
                 height: 100.0,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    width: 100.0,
-                    height: 100.0,
-                    color: Theme.of(
-                      context,
-                    ).colorScheme.surfaceContainerHighest,
-                    child: const Icon(Icons.image),
-                  );
-                },
+                placeholder: (context, url) => CircularProgressIndicator(),
+                errorWidget: (context, url, error) =>
+                    _placeholderImage(context),
               ),
 
               Expanded(
@@ -86,7 +91,7 @@ class JobItem extends StatelessWidget {
                         children: [
                           Chip(
                             label: Text(
-                              job.status,
+                              job.statusLabel(l10n),
                               style: Theme.of(context).textTheme.labelSmall,
                             ),
                             padding: EdgeInsets.zero,
@@ -95,7 +100,7 @@ class JobItem extends StatelessWidget {
                                 MaterialTapTargetSize.shrinkWrap,
                           ),
                           Text(
-                            job.createdAt.toRelativeTime(),
+                            job.createdAt.toRelativeTime(l10n),
                             style: Theme.of(context).textTheme.labelSmall,
                           ),
                         ],

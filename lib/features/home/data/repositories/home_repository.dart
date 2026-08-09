@@ -1,8 +1,8 @@
-import 'package:wrench/core/models/job.dart';
-import 'package:wrench/features/home/data/sources/source.dart';
+import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/features/home/data/sources/home_source.dart';
 
 class HomeRepository {
-  final Source _source;
+  final HomeSource _source;
 
   HomeRepository(this._source);
 

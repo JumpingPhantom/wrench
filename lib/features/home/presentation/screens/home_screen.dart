@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:wrench/core/models/job.dart';
+import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/features/home/presentation/controllers/home_provider.dart';
 import 'package:wrench/features/home/presentation/widgets/overview_title.dart';
 import 'package:wrench/features/home/presentation/widgets/recent_jobs_body.dart';

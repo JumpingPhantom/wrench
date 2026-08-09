@@ -165,7 +165,11 @@ class CameraBottomBar extends StatelessWidget {
 }
 
 class CaptureButton extends StatelessWidget {
-  const CaptureButton({super.key, required this.isBusy, required this.onPressed});
+  const CaptureButton({
+    super.key,
+    required this.isBusy,
+    required this.onPressed,
+  });
 
   final bool isBusy;
   final VoidCallback onPressed;
