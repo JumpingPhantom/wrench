@@ -1,3 +1,4 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/data/sources/jobs_source.dart';
 import 'package:wrench/core/network/supabase_client.dart';
@@ -13,7 +14,8 @@ class RemoteJobsSource implements JobsSource {
 
   @override
   Future<void> saveJob(Job job) async {
-    throw UnimplementedError('Supabase not yet configured');
+    print("${job.toJson()}");
+    throw UnimplementedError();
   }
 
   @override
