@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_form_fields.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_photo_section.dart';
@@ -83,12 +84,25 @@ class _CreateJobScreenState extends State<CreateJobScreen> {
       }
       return;
     }
-    context.pop({
-      'title': _titleController.text.trim(),
-      'description': _descriptionController.text.trim(),
-      'location': _locationController.text.trim(),
-      'photo': _photo,
-    });
+
+    context.pop<Job>(
+      Job(
+        title: _titleController.text.trim(),
+        description: _descriptionController.text.trim(),
+        location: _locationController.text.trim(),
+        mediaUrl: "", // TODO: replace with uploaded media URL
+        createdAt: DateTime.now(),
+        createdBy: "", //TODO: replace with current session user id
+        state: JobState.draft(),
+      ),
+    );
+
+    // context.pop({
+    //   'title': _titleController.text.trim(),
+    //   'description': _descriptionController.text.trim(),
+    //   'location': _locationController.text.trim(),
+    //   'photo': _photo,
+    // });
   }
 
   @override
