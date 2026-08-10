@@ -57,18 +57,8 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
   }
 
   Future<void> _openCreateJob(BuildContext context) async {
-    final result = await context.push<Map<String, dynamic>>('/jobs/new');
+    final result = await context.push<Job>('/jobs/new');
     if (result == null || !mounted) return;
-
-    final job = Job(
-      title: result['title'] as String,
-      description: result['description'] as String,
-      location: result['location'] as String,
-      createdAt: DateTime.now(),
-      createdBy: 'Current User',
-      state: JobState.draft(),
-      mediaUrl: null,
-    );
 
     await ref.read(jobsProvider.notifier).saveJob(job);
   }
