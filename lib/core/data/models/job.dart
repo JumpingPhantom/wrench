@@ -9,7 +9,7 @@ sealed class Job with _$Job {
   Job._();
 
   factory Job({
-    required String id,
+    @JsonKey(includeIfNull: false) String? id,
     required String title,
     required String description,
     required String location,

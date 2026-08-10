@@ -61,7 +61,6 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     if (result == null || !mounted) return;
 
     final job = Job(
-      id: DateTime.now().millisecondsSinceEpoch.toString(),
       title: result['title'] as String,
       description: result['description'] as String,
       location: result['location'] as String,
@@ -71,7 +70,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
       mediaUrl: null,
     );
 
-    await saveJob(ref, job);
+    await ref.read(jobsProvider.notifier).saveJob(job);
   }
 
   @override
