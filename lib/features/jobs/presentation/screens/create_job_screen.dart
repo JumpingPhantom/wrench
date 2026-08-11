@@ -1,20 +1,22 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/presentation/controllers/users_provider.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_form_fields.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_photo_section.dart';
 
-class CreateJobScreen extends StatefulWidget {
+class CreateJobScreen extends ConsumerStatefulWidget {
   const CreateJobScreen({super.key});
 
   @override
-  State<CreateJobScreen> createState() => _CreateJobScreenState();
+  ConsumerState<CreateJobScreen> createState() => _CreateJobScreenState();
 }
 
-class _CreateJobScreenState extends State<CreateJobScreen> {
+class _CreateJobScreenState extends ConsumerState<CreateJobScreen> {
   final _titleController = TextEditingController();
   final _descriptionController = TextEditingController();
   final _locationController = TextEditingController();
@@ -42,6 +44,7 @@ class _CreateJobScreenState extends State<CreateJobScreen> {
 
   Future<void> _openCamera() async {
     final result = await context.push<File>('/jobs/new/camera');
+
     if (result != null && mounted) {
       setState(() => _photo = result);
     }
@@ -76,6 +79,7 @@ class _CreateJobScreenState extends State<CreateJobScreen> {
 
   void _submit() {
     setState(() => _submitted = true);
+
     if (!_isValid) {
       if (_titleController.text.trim().isEmpty) {
         _titleFocus.requestFocus();
@@ -85,24 +89,21 @@ class _CreateJobScreenState extends State<CreateJobScreen> {
       return;
     }
 
+    final currentUser = ref.watch(usersProvider.notifier).currentUserId;
+
+    if (currentUser == null) return;
+
     context.pop<Job>(
       Job(
         title: _titleController.text.trim(),
         description: _descriptionController.text.trim(),
         location: _locationController.text.trim(),
-        mediaUrl: "", // TODO: replace with uploaded media URL
+        mediaUrl: _photo?.path,
         createdAt: DateTime.now(),
-        createdBy: "", //TODO: replace with current session user id
+        createdBy: currentUser,
         state: JobState.draft(),
       ),
     );
-
-    // context.pop({
-    //   'title': _titleController.text.trim(),
-    //   'description': _descriptionController.text.trim(),
-    //   'location': _locationController.text.trim(),
-    //   'photo': _photo,
-    // });
   }
 
   @override

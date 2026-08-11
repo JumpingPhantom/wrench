@@ -23,4 +23,6 @@ class RemoteUsersSource extends UsersSource {
 
     return users;
   }
+
+  String? get currentUserId => client.auth.currentUser?.id;
 }

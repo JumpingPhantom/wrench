@@ -8,4 +8,5 @@ class UsersRepository {
 
   Future<List<User>> getUsers() => source.getUsers();
   Future<User?> getUserById(String id) => source.getUserById(id);
+  String? get currentUserId => source.currentUserId;
 }
