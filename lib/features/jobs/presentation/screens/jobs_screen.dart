@@ -60,7 +60,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     final result = await context.push<Job>('/jobs/new');
     if (result == null || !mounted) return;
 
-    await ref.read(jobsProvider.notifier).saveJob(job);
+    await ref.read(jobsProvider.notifier).saveJob(result);
   }
 
   @override

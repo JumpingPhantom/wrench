@@ -13,8 +13,8 @@ class JobsNotifier extends AsyncNotifier<List<Job>> {
   late final JobsRepository _jobsRepository;
 
   @override
-  FutureOr<List<Job>> build() {
-    _jobsRepository = ref.watch(_jobsRepositoryProvider);
+  Future<List<Job>> build() async {
+    _jobsRepository = ref.read(_jobsRepositoryProvider);
     return _jobsRepository.getAll();
   }
 
@@ -29,6 +29,6 @@ class JobsNotifier extends AsyncNotifier<List<Job>> {
   }
 }
 
-final jobsProvider = AsyncNotifierProvider<JobsNotifier, List<Job>>(() {
-  return JobsNotifier();
-});
+final jobsProvider = AsyncNotifierProvider<JobsNotifier, List<Job>>(
+  () => JobsNotifier(),
+);
