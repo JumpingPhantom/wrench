@@ -9,11 +9,18 @@ import 'package:wrench/core/network/supabase_client.dart';
 class RemoteJobsSource implements JobsSource {
   @override
   Future<List<Job>> getAllJobs() async {
-    AppLogger.info("RemoteJobsSource: getting jobs...");
+    final List<Job> jobs;
 
-    final query = await client.from("jobs").select("*");
-    final jobs = query.map((res) => Job.fromJson(res)).toList();
-    return jobs;
+    try {
+      final query = await client.from("jobs").select("*");
+      jobs = query.map((res) => Job.fromJson(res)).toList();
+
+      AppLogger.info("RemRemoteJobsSource: $jobs");
+      return jobs;
+    } on PostgrestException catch (e) {
+      AppLogger.error(e.message);
+      rethrow;
+    }
   }
 
   @override

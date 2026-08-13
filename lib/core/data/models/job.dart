@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
@@ -9,13 +11,13 @@ sealed class Job with _$Job {
   Job._();
 
   factory Job({
-    @JsonKey(includeIfNull: false) String? id,
+    @JsonKey(includeIfNull: false) int? id,
     required String title,
     required String description,
     required String location,
     required DateTime createdAt,
     required String createdBy,
-    required JobState state,
+    @_JobStateConverter() required JobState state,
     String? mediaUrl,
   }) = _Job;
 
@@ -63,4 +65,73 @@ sealed class JobState with _$JobState {
 
   factory JobState.fromJson(Map<String, dynamic> json) =>
       _$JobStateFromJson(json);
+}
+
+class _JobStateConverter implements JsonConverter<JobState, String> {
+  const _JobStateConverter();
+
+  @override
+  JobState fromJson(String json) {
+    final decoded = jsonDecode(json) as Map<String, dynamic>;
+    final status = decoded['status'] as String?;
+    final payload = (decoded['payload'] as Map<String, dynamic>?) ?? const {};
+
+    return switch (status) {
+      'draft' => const JobState.draft(),
+      'in_progress' => JobState.inProgress(
+        startedBy: payload['started_by'] as String,
+        startedAt: DateTime.parse(payload['started_at'] as String),
+        workers: (payload['workers'] as List<dynamic>?)?.cast<String>(),
+      ),
+      'staged' => JobState.staged(
+        stagedAt: DateTime.parse(payload['staged_at'] as String),
+      ),
+      'finished' => JobState.finished(
+        approvedBy: payload['approved_by'] as String,
+        finishedAt: DateTime.parse(payload['finished_at'] as String),
+      ),
+      'cancelled' => JobState.cancelled(
+        reason: payload['reason'] as String,
+        cancelledAt: DateTime.parse(payload['cancelled_at'] as String),
+        cancelledBy: payload['cancelled_by'] as String,
+      ),
+      _ => throw FormatException('Unknown job status: $status'),
+    };
+  }
+
+  @override
+  String toJson(JobState state) {
+    final body = switch (state) {
+      _Draft() => {'status': 'draft', 'payload': <String, dynamic>{}},
+      _InProgress(:final startedBy, :final startedAt, :final workers) => {
+        'status': 'in_progress',
+        'payload': {
+          'started_by': startedBy,
+          'started_at': startedAt.toIso8601String(),
+          'workers': ?workers,
+        },
+      },
+      _Staged(:final stagedAt) => {
+        'status': 'staged',
+        'payload': {'staged_at': stagedAt.toIso8601String()},
+      },
+      _Finished(:final approvedBy, :final finishedAt) => {
+        'status': 'finished',
+        'payload': {
+          'approved_by': approvedBy,
+          'finished_at': finishedAt.toIso8601String(),
+        },
+      },
+      _Cancelled(:final reason, :final cancelledAt, :final cancelledBy) => {
+        'status': 'cancelled',
+        'payload': {
+          'reason': reason,
+          'cancelled_at': cancelledAt.toIso8601String(),
+          'cancelled_by': cancelledBy,
+        },
+      },
+    };
+
+    return jsonEncode(body);
+  }
 }

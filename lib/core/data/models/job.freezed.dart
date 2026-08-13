@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Job {
 
-@JsonKey(includeIfNull: false) String? get id; String get title; String get description; String get location; DateTime get createdAt; String get createdBy; JobState get state; String? get mediaUrl;
+@JsonKey(includeIfNull: false) int? get id; String get title; String get description; String get location; DateTime get createdAt; String get createdBy;@_JobStateConverter() JobState get state; String? get mediaUrl;
 /// Create a copy of Job
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -48,7 +48,7 @@ abstract mixin class $JobCopyWith<$Res>  {
   factory $JobCopyWith(Job value, $Res Function(Job) _then) = _$JobCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(includeIfNull: false) String? id, String title, String description, String location, DateTime createdAt, String createdBy, JobState state, String? mediaUrl
+@JsonKey(includeIfNull: false) int? id, String title, String description, String location, DateTime createdAt, String createdBy,@_JobStateConverter() JobState state, String? mediaUrl
 });
 
 
@@ -68,7 +68,7 @@ class _$JobCopyWithImpl<$Res>
 @pragma('vm:prefer-inline') @override $Res call({Object? id = freezed,Object? title = null,Object? description = null,Object? location = null,Object? createdAt = null,Object? createdBy = null,Object? state = null,Object? mediaUrl = freezed,}) {
   return _then(_self.copyWith(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as int?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
@@ -166,7 +166,7 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(includeIfNull: false)  String? id,  String title,  String description,  String location,  DateTime createdAt,  String createdBy,  JobState state,  String? mediaUrl)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(includeIfNull: false)  int? id,  String title,  String description,  String location,  DateTime createdAt,  String createdBy, @_JobStateConverter()  JobState state,  String? mediaUrl)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Job() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.location,_that.createdAt,_that.createdBy,_that.state,_that.mediaUrl);case _:
@@ -187,7 +187,7 @@ return $default(_that.id,_that.title,_that.description,_that.location,_that.crea
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(includeIfNull: false)  String? id,  String title,  String description,  String location,  DateTime createdAt,  String createdBy,  JobState state,  String? mediaUrl)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(includeIfNull: false)  int? id,  String title,  String description,  String location,  DateTime createdAt,  String createdBy, @_JobStateConverter()  JobState state,  String? mediaUrl)  $default,) {final _that = this;
 switch (_that) {
 case _Job():
 return $default(_that.id,_that.title,_that.description,_that.location,_that.createdAt,_that.createdBy,_that.state,_that.mediaUrl);}
@@ -204,7 +204,7 @@ return $default(_that.id,_that.title,_that.description,_that.location,_that.crea
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(includeIfNull: false)  String? id,  String title,  String description,  String location,  DateTime createdAt,  String createdBy,  JobState state,  String? mediaUrl)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(includeIfNull: false)  int? id,  String title,  String description,  String location,  DateTime createdAt,  String createdBy, @_JobStateConverter()  JobState state,  String? mediaUrl)?  $default,) {final _that = this;
 switch (_that) {
 case _Job() when $default != null:
 return $default(_that.id,_that.title,_that.description,_that.location,_that.createdAt,_that.createdBy,_that.state,_that.mediaUrl);case _:
@@ -219,16 +219,16 @@ return $default(_that.id,_that.title,_that.description,_that.location,_that.crea
 @JsonSerializable()
 
 class _Job extends Job {
-   _Job({@JsonKey(includeIfNull: false) this.id, required this.title, required this.description, required this.location, required this.createdAt, required this.createdBy, required this.state, this.mediaUrl}): super._();
+   _Job({@JsonKey(includeIfNull: false) this.id, required this.title, required this.description, required this.location, required this.createdAt, required this.createdBy, @_JobStateConverter() required this.state, this.mediaUrl}): super._();
   factory _Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
 
-@override@JsonKey(includeIfNull: false) final  String? id;
+@override@JsonKey(includeIfNull: false) final  int? id;
 @override final  String title;
 @override final  String description;
 @override final  String location;
 @override final  DateTime createdAt;
 @override final  String createdBy;
-@override final  JobState state;
+@override@_JobStateConverter() final  JobState state;
 @override final  String? mediaUrl;
 
 /// Create a copy of Job
@@ -264,7 +264,7 @@ abstract mixin class _$JobCopyWith<$Res> implements $JobCopyWith<$Res> {
   factory _$JobCopyWith(_Job value, $Res Function(_Job) _then) = __$JobCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(includeIfNull: false) String? id, String title, String description, String location, DateTime createdAt, String createdBy, JobState state, String? mediaUrl
+@JsonKey(includeIfNull: false) int? id, String title, String description, String location, DateTime createdAt, String createdBy,@_JobStateConverter() JobState state, String? mediaUrl
 });
 
 
@@ -284,7 +284,7 @@ class __$JobCopyWithImpl<$Res>
 @override @pragma('vm:prefer-inline') $Res call({Object? id = freezed,Object? title = null,Object? description = null,Object? location = null,Object? createdAt = null,Object? createdBy = null,Object? state = null,Object? mediaUrl = freezed,}) {
   return _then(_Job(
 id: freezed == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
-as String?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
+as int?,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,description: null == description ? _self.description : description // ignore: cast_nullable_to_non_nullable
 as String,location: null == location ? _self.location : location // ignore: cast_nullable_to_non_nullable
 as String,createdAt: null == createdAt ? _self.createdAt : createdAt // ignore: cast_nullable_to_non_nullable
