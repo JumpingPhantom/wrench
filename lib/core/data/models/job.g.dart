@@ -7,13 +7,13 @@ part of 'job.dart';
 // **************************************************************************
 
 _Job _$JobFromJson(Map<String, dynamic> json) => _Job(
-  id: json['id'] as String?,
+  id: (json['id'] as num?)?.toInt(),
   title: json['title'] as String,
   description: json['description'] as String,
   location: json['location'] as String,
   createdAt: DateTime.parse(json['createdAt'] as String),
   createdBy: json['createdBy'] as String,
-  state: JobState.fromJson(json['state'] as Map<String, dynamic>),
+  state: const _JobStateConverter().fromJson(json['state'] as String),
   mediaUrl: json['mediaUrl'] as String?,
 );
 
@@ -24,7 +24,7 @@ Map<String, dynamic> _$JobToJson(_Job instance) => <String, dynamic>{
   'location': instance.location,
   'createdAt': instance.createdAt.toIso8601String(),
   'createdBy': instance.createdBy,
-  'state': instance.state,
+  'state': const _JobStateConverter().toJson(instance.state),
   'mediaUrl': instance.mediaUrl,
 };
 
