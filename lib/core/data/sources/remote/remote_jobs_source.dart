@@ -44,6 +44,39 @@ class RemoteJobsSource implements JobsSource {
     }
   }
 
+  @override
+  Future<Job> updateJob(Job job) async {
+    final id = job.id;
+
+    if (id == null) {
+      throw OperationException(
+        message: "Cannot update a job that has never been saved",
+      );
+    }
+
+    // Only the mutable columns are sent. Identity and provenance are fixed at
+    // creation, and replaying them here would collide with any row-level
+    // policy that (correctly) forbids reassigning a job's author.
+    final payload = job.toJson()
+      ..remove("id")
+      ..remove("created_at")
+      ..remove("created_by");
+
+    try {
+      final row = await client
+          .from("jobs")
+          .update(payload)
+          .eq("id", id)
+          .select()
+          .single();
+
+      return Job.fromJson(row);
+    } on PostgrestException catch (e, stackTrace) {
+      AppLogger.error("Failed to update job $id", e, stackTrace);
+      throw NetworkException(message: e.message, stackTrace: stackTrace);
+    }
+  }
+
   /// Uploads the captured file and returns its **bucket-relative** object path.
   ///
   /// [StorageFileApi.upload] returns a bucket-prefixed key ("media/images/..."),

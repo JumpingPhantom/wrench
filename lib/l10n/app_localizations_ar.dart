@@ -251,4 +251,71 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get notSignedIn => 'يجب تسجيل الدخول لإنشاء مهمة';
+
+  @override
+  String get startJob => 'بدء المهمة';
+
+  @override
+  String get submitForApproval => 'إرسال للاعتماد';
+
+  @override
+  String get approveJob => 'اعتماد';
+
+  @override
+  String get cancelJob => 'إلغاء المهمة';
+
+  @override
+  String get keepJob => 'الاحتفاظ بالمهمة';
+
+  @override
+  String get cancelJobPrompt =>
+      'لا يمكن التراجع عن إلغاء المهمة. يرجى ذكر السبب.';
+
+  @override
+  String get cancelReasonLabel => 'السبب';
+
+  @override
+  String get cancelReasonHint => 'مثال: تم الإبلاغ عنها بالخطأ';
+
+  @override
+  String get reasonRequired => 'يجب إدخال سبب';
+
+  @override
+  String get jobUpdateFailed => 'تعذّر تحديث المهمة. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get cancellationReason => 'سبب الإلغاء';
+
+  @override
+  String startedBy(String name) {
+    return 'بدأها $name';
+  }
+
+  @override
+  String approvedBy(String name) {
+    return 'اعتمدها $name';
+  }
+
+  @override
+  String cancelledBy(String name) {
+    return 'ألغاها $name';
+  }
+
+  @override
+  String get profile => 'الملف الشخصي';
+
+  @override
+  String get roleSupervisor => 'مشرف';
+
+  @override
+  String get roleWorker => 'عامل';
+
+  @override
+  String get profileComingSoon => 'إعدادات الحساب قادمة قريبًا.';
+
+  @override
+  String get close => 'إغلاق';
+
+  @override
+  String get viewPhoto => 'عرض الصورة';
 }

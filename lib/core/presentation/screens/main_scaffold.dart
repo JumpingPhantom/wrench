@@ -22,7 +22,11 @@ class MainScaffold extends StatelessWidget {
     return Scaffold(
       body: SafeArea(child: child),
       appBar: AppBar(
-        leading: const Icon(Icons.person),
+        leading: IconButton(
+          icon: const Icon(Icons.person),
+          tooltip: l10n.profile,
+          onPressed: () => context.push('/profile'),
+        ),
         title: Text(l10n.appTitle),
         actions: [
           IconButton(

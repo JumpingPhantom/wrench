@@ -8,5 +8,6 @@ class JobsRepository {
 
   Future<List<Job>> getAll() => source.getAllJobs();
   Future<void> save(Job job) => source.saveJob(job);
+  Future<Job> update(Job job) => source.updateJob(job);
   Future<void> delete(Job job) => source.deleteJob(job);
 }

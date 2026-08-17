@@ -1,4 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Flutter only declares this in the debug and profile manifests, which
+         cover hot reload. Release builds need it declared here or every request
+         to Supabase fails with no permission prompt to explain why. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <application
         android:label="wrench"
         android:name="${applicationName}"

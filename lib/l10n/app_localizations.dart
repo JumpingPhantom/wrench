@@ -547,6 +547,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You need to be signed in to create a job'**
   String get notSignedIn;
+
+  /// Action that moves a draft job into progress
+  ///
+  /// In en, this message translates to:
+  /// **'Start Job'**
+  String get startJob;
+
+  /// Action that stages an in-progress job for a supervisor to review
+  ///
+  /// In en, this message translates to:
+  /// **'Submit for Approval'**
+  String get submitForApproval;
+
+  /// Action that marks a staged job as finished
+  ///
+  /// In en, this message translates to:
+  /// **'Approve'**
+  String get approveJob;
+
+  /// Action that cancels a job outright
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Job'**
+  String get cancelJob;
+
+  /// Dismisses the cancellation dialog without cancelling
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Job'**
+  String get keepJob;
+
+  /// Body of the job cancellation confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelling a job can\'t be undone. Please give a reason.'**
+  String get cancelJobPrompt;
+
+  /// Label of the cancellation reason field
+  ///
+  /// In en, this message translates to:
+  /// **'Reason'**
+  String get cancelReasonLabel;
+
+  /// Hint of the cancellation reason field
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. Reported in error'**
+  String get cancelReasonHint;
+
+  /// Validation message when a cancellation reason is left empty
+  ///
+  /// In en, this message translates to:
+  /// **'A reason is required'**
+  String get reasonRequired;
+
+  /// Error shown when a job state transition fails to save
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t update the job. Please try again.'**
+  String get jobUpdateFailed;
+
+  /// Label above the stored reason on a cancelled job
+  ///
+  /// In en, this message translates to:
+  /// **'Cancellation reason'**
+  String get cancellationReason;
+
+  /// Who moved the job into progress
+  ///
+  /// In en, this message translates to:
+  /// **'Started by {name}'**
+  String startedBy(String name);
+
+  /// Who approved the finished job
+  ///
+  /// In en, this message translates to:
+  /// **'Approved by {name}'**
+  String approvedBy(String name);
+
+  /// Who cancelled the job
+  ///
+  /// In en, this message translates to:
+  /// **'Cancelled by {name}'**
+  String cancelledBy(String name);
+
+  /// Profile screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profile;
+
+  /// User role: supervisor
+  ///
+  /// In en, this message translates to:
+  /// **'Supervisor'**
+  String get roleSupervisor;
+
+  /// User role: worker
+  ///
+  /// In en, this message translates to:
+  /// **'Worker'**
+  String get roleWorker;
+
+  /// Placeholder text on the not-yet-built profile screen
+  ///
+  /// In en, this message translates to:
+  /// **'Account settings are coming soon.'**
+  String get profileComingSoon;
+
+  /// Closes the full-screen photo viewer
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get close;
+
+  /// Accessibility label for the tappable job photo
+  ///
+  /// In en, this message translates to:
+  /// **'View photo'**
+  String get viewPhoto;
 }
 
 class _AppLocalizationsDelegate

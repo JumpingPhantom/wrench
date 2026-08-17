@@ -350,6 +350,104 @@
   "@cameraUnavailable": {
     "description": "Shown when no camera could be opened on the device"
   },
+  "startJob": "بدء المهمة",
+  "@startJob": {
+    "description": "Action that moves a draft job into progress"
+  },
+  "submitForApproval": "إرسال للاعتماد",
+  "@submitForApproval": {
+    "description": "Action that stages an in-progress job for a supervisor to review"
+  },
+  "approveJob": "اعتماد",
+  "@approveJob": {
+    "description": "Action that marks a staged job as finished"
+  },
+  "cancelJob": "إلغاء المهمة",
+  "@cancelJob": {
+    "description": "Action that cancels a job outright"
+  },
+  "keepJob": "الاحتفاظ بالمهمة",
+  "@keepJob": {
+    "description": "Dismisses the cancellation dialog without cancelling"
+  },
+  "cancelJobPrompt": "لا يمكن التراجع عن إلغاء المهمة. يرجى ذكر السبب.",
+  "@cancelJobPrompt": {
+    "description": "Body of the job cancellation confirmation dialog"
+  },
+  "cancelReasonLabel": "السبب",
+  "@cancelReasonLabel": {
+    "description": "Label of the cancellation reason field"
+  },
+  "cancelReasonHint": "مثال: تم الإبلاغ عنها بالخطأ",
+  "@cancelReasonHint": {
+    "description": "Hint of the cancellation reason field"
+  },
+  "reasonRequired": "يجب إدخال سبب",
+  "@reasonRequired": {
+    "description": "Validation message when a cancellation reason is left empty"
+  },
+  "jobUpdateFailed": "تعذّر تحديث المهمة. يرجى المحاولة مرة أخرى.",
+  "@jobUpdateFailed": {
+    "description": "Error shown when a job state transition fails to save"
+  },
+  "cancellationReason": "سبب الإلغاء",
+  "@cancellationReason": {
+    "description": "Label above the stored reason on a cancelled job"
+  },
+  "startedBy": "بدأها {name}",
+  "@startedBy": {
+    "description": "Who moved the job into progress",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "approvedBy": "اعتمدها {name}",
+  "@approvedBy": {
+    "description": "Who approved the finished job",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "cancelledBy": "ألغاها {name}",
+  "@cancelledBy": {
+    "description": "Who cancelled the job",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "profile": "الملف الشخصي",
+  "@profile": {
+    "description": "Profile screen title"
+  },
+  "roleSupervisor": "مشرف",
+  "@roleSupervisor": {
+    "description": "User role: supervisor"
+  },
+  "roleWorker": "عامل",
+  "@roleWorker": {
+    "description": "User role: worker"
+  },
+  "profileComingSoon": "إعدادات الحساب قادمة قريبًا.",
+  "@profileComingSoon": {
+    "description": "Placeholder text on the not-yet-built profile screen"
+  },
+  "close": "إغلاق",
+  "@close": {
+    "description": "Closes the full-screen photo viewer"
+  },
+  "viewPhoto": "عرض الصورة",
+  "@viewPhoto": {
+    "description": "Accessibility label for the tappable job photo"
+  },
   "notSignedIn": "يجب تسجيل الدخول لإنشاء مهمة",
   "@notSignedIn": {
     "description": "Error shown when submitting a job without an active session"
