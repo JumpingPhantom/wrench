@@ -1,52 +1,74 @@
-// ignore_for_file: empty_catches, unused_catch_clause
-
 import 'dart:io';
 
+import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/data/sources/jobs_source.dart';
+import 'package:wrench/core/errors/exceptions.dart';
+import 'package:wrench/core/logging/app_logger.dart';
 import 'package:wrench/core/network/supabase_client.dart';
 
 class RemoteJobsSource implements JobsSource {
+  static const mediaBucket = "media";
+
   @override
   Future<List<Job>> getAllJobs() async {
-    final List<Job> jobs;
-
     try {
-      final query = await client.from("jobs").select("*");
-      jobs = query.map((res) => Job.fromJson(res)).toList();
+      final rows = await client
+          .from("jobs")
+          .select("*")
+          .order("created_at", ascending: false);
 
-      return jobs;
-    } on PostgrestException catch (e) {
-      rethrow;
+      return rows.map(Job.fromJson).toList();
+    } on PostgrestException catch (e, stackTrace) {
+      AppLogger.error("Failed to load jobs", e, stackTrace);
+      throw NetworkException(message: e.message, stackTrace: stackTrace);
     }
   }
 
   @override
   Future<void> saveJob(Job job) async {
-    final mediaUrl = job.mediaUrl;
+    final localPath = job.mediaUrl;
 
-    if (mediaUrl != null) {
-      final file = File(mediaUrl);
-      final fileName = "${DateTime.now().millisecondsSinceEpoch}";
-      final filePath = "images/$fileName";
-      final String fileRef;
-
-      try {
-        fileRef = await client.storage.from("media").upload(filePath, file);
-        job = job.copyWith(mediaUrl: fileRef);
-      } on StorageException catch (e) {
-        // TODO: handle the case of failure and show a toast explaining what happened
-      }
+    // Upload before inserting: a job row pointing at media that never made it
+    // to storage is worse than no row at all, since nothing retries it later.
+    if (localPath != null) {
+      job = job.copyWith(mediaUrl: await _uploadMedia(localPath));
     }
 
     try {
       await client.from("jobs").insert(job.toJson());
-    } on PostgrestException catch (e) {}
+    } on PostgrestException catch (e, stackTrace) {
+      AppLogger.error("Failed to save job", e, stackTrace);
+      throw NetworkException(message: e.message, stackTrace: stackTrace);
+    }
+  }
+
+  /// Uploads the captured file and returns its **bucket-relative** object path.
+  ///
+  /// [StorageFileApi.upload] returns a bucket-prefixed key ("media/images/..."),
+  /// but every read path — `createSignedUrl` in particular — prefixes the
+  /// bucket itself. Storing the returned key would double the prefix and make
+  /// the media unreadable, so the path we uploaded to is what gets persisted.
+  Future<String> _uploadMedia(String localPath) async {
+    final objectPath =
+        "images/${DateTime.now().millisecondsSinceEpoch}"
+        "${p.extension(localPath)}";
+
+    try {
+      await client.storage
+          .from(mediaBucket)
+          .upload(objectPath, File(localPath));
+
+      return objectPath;
+    } on StorageException catch (e, stackTrace) {
+      AppLogger.error("Failed to upload job media", e, stackTrace);
+      throw OperationException(message: e.message, stackTrace: stackTrace);
+    }
   }
 
   @override
   Future<void> deleteJob(Job job) async {
-    throw UnimplementedError('Supabase not yet configured');
+    throw UnimplementedError("deleteJob is not implemented yet");
   }
 }

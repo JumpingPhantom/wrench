@@ -89,9 +89,15 @@ class _CreateJobScreenState extends ConsumerState<CreateJobScreen> {
       return;
     }
 
-    final currentUser = ref.watch(currentUserIdProvider);
+    final currentUser = ref.read(currentUserIdProvider);
 
-    if (currentUser == null) return;
+    if (currentUser == null) {
+      final l10n = AppLocalizations.of(context)!;
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(l10n.notSignedIn)));
+      return;
+    }
 
     context.pop<Job>(
       Job(

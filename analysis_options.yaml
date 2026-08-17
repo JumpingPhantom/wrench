@@ -1,4 +1,8 @@
 include: package:flutter_lints/flutter.yaml
 
-plugins:
-  riverpod_lint: ^3.1.6
+# riverpod_lint is intentionally absent. It ships through custom_lint, which
+# pins analyzer <=8.x, while json_serializable in this project requires
+# analyzer >=10. The two cannot resolve together, so a `plugins: riverpod_lint`
+# block here silently does nothing rather than enforcing anything — verified by
+# checking that a known violation (avoid_public_notifier_properties) produced no
+# diagnostic. Revisit once custom_lint supports analyzer 10+.

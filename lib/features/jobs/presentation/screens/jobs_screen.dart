@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/features/home/presentation/widgets/job_item.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_filter_bar.dart';
@@ -35,32 +36,37 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
   }
 
   List<Job> _applyFilters(List<Job> jobs) {
-    var result = jobs;
-    if (_selectedFilter == JobFilter.pending) {
-      result = result.where((job) => job.status == 'Staged').toList();
-    } else if (_selectedFilter != JobFilter.all) {
-      result = result
-          .where((job) => job.status == _selectedFilter.statusCode)
-          .toList();
-    }
-    if (_searchQuery.isNotEmpty) {
-      final query = _searchQuery.toLowerCase();
-      result = result
-          .where(
-            (job) =>
-                job.title.toLowerCase().contains(query) ||
-                job.location.toLowerCase().contains(query),
-          )
-          .toList();
-    }
-    return result;
+    final query = _searchQuery.trim().toLowerCase();
+
+    return jobs.where((job) {
+      if (!_selectedFilter.matches(job)) return false;
+      if (query.isEmpty) return true;
+
+      return job.title.toLowerCase().contains(query) ||
+          job.location.toLowerCase().contains(query);
+    }).toList();
   }
 
-  Future<void> _openCreateJob(BuildContext context) async {
-    final result = await context.push<Job>('/jobs/new');
-    if (result == null || !mounted) return;
+  Future<void> _openCreateJob() async {
+    final job = await context.push<Job>('/jobs/new');
+    if (job == null || !mounted) return;
 
-    await ref.read(jobsProvider.notifier).saveJob(result);
+    final l10n = AppLocalizations.of(context)!;
+
+    try {
+      await ref.read(jobsProvider.notifier).saveJob(job);
+    } on OperationException {
+      _showError(l10n.photoUploadFailed);
+    } on AppException {
+      _showError(l10n.jobSaveFailed);
+    }
+  }
+
+  void _showError(String message) {
+    if (!mounted) return;
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -111,7 +117,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
         ],
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () => _openCreateJob(context),
+        onPressed: _openCreateJob,
         icon: const Icon(Icons.add),
         label: Text(l10n.createJob),
       ),

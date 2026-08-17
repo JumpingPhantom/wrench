@@ -4,6 +4,10 @@ import 'package:wrench/l10n/app_localizations.dart';
 part "job.freezed.dart";
 part "job.g.dart";
 
+/// Discriminator for [JobState], for code that needs to compare or group jobs
+/// without unpacking each state's payload.
+enum JobStatus { draft, inProgress, staged, finished, cancelled }
+
 @freezed
 sealed class Job with _$Job {
   Job._();
@@ -19,20 +23,23 @@ sealed class Job with _$Job {
     String? mediaUrl,
   }) = _Job;
 
-  String get status => switch (state) {
-    _Draft() => "Draft",
-    _InProgress() => "In Progress",
-    _Staged() => "Staged",
-    _Finished() => "Finished",
-    _Cancelled() => "Cancelled",
+  /// The current [state] flattened to a value that can be compared and
+  /// switched on. Callers filtering or counting jobs use this rather than
+  /// [statusLabel], which returns translated text meant only for display.
+  JobStatus get status => switch (state) {
+    _Draft() => JobStatus.draft,
+    _InProgress() => JobStatus.inProgress,
+    _Staged() => JobStatus.staged,
+    _Finished() => JobStatus.finished,
+    _Cancelled() => JobStatus.cancelled,
   };
 
-  String statusLabel(AppLocalizations l10n) => switch (state) {
-    _Draft() => l10n.draft,
-    _InProgress() => l10n.inProgress,
-    _Staged() => l10n.staged,
-    _Finished() => l10n.finished,
-    _Cancelled() => l10n.cancelled,
+  String statusLabel(AppLocalizations l10n) => switch (status) {
+    JobStatus.draft => l10n.draft,
+    JobStatus.inProgress => l10n.inProgress,
+    JobStatus.staged => l10n.staged,
+    JobStatus.finished => l10n.finished,
+    JobStatus.cancelled => l10n.cancelled,
   };
 
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
