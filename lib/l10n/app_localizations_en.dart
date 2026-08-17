@@ -229,4 +229,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get invalidEmail => 'Please enter a valid email';
+
+  @override
+  String get unknownUser => 'Unknown user';
+
+  @override
+  String get jobNotFound => 'This job is no longer available';
+
+  @override
+  String get jobSaveFailed => 'Couldn\'t save the job. Please try again.';
+
+  @override
+  String get photoUploadFailed =>
+      'Couldn\'t upload the photo. Please try again.';
+
+  @override
+  String get photoCaptureFailed =>
+      'Couldn\'t take the photo. Please try again.';
+
+  @override
+  String get cameraUnavailable => 'Camera unavailable';
+
+  @override
+  String get notSignedIn => 'You need to be signed in to create a job';
 }

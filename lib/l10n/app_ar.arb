@@ -304,7 +304,7 @@
   },
   "pending": "قيد الانتظار",
   "@pending": {
-    "description": "Job filter: pending (draft, in progress, staged)"
+    "description": "Job filter: pending (jobs staged and awaiting approval)"
   },
   "loginSubtitle": "تسجيل الدخول للمتابعة",
   "@loginSubtitle": {
@@ -325,5 +325,33 @@
   "invalidEmail": "يرجى إدخال بريد إلكتروني صالح",
   "@invalidEmail": {
     "description": "Invalid email validation message"
+  },
+  "unknownUser": "مستخدم غير معروف",
+  "@unknownUser": {
+    "description": "Fallback when a job's creator cannot be resolved to a profile"
+  },
+  "jobNotFound": "هذه المهمة لم تعد متاحة",
+  "@jobNotFound": {
+    "description": "Shown when a job detail page is opened for a job that cannot be found"
+  },
+  "jobSaveFailed": "تعذّر حفظ المهمة. يرجى المحاولة مرة أخرى.",
+  "@jobSaveFailed": {
+    "description": "Error shown when saving a job to the backend fails"
+  },
+  "photoUploadFailed": "تعذّر رفع الصورة. يرجى المحاولة مرة أخرى.",
+  "@photoUploadFailed": {
+    "description": "Error shown when uploading job media to storage fails"
+  },
+  "photoCaptureFailed": "تعذّر التقاط الصورة. يرجى المحاولة مرة أخرى.",
+  "@photoCaptureFailed": {
+    "description": "Error shown when the camera fails to capture an image"
+  },
+  "cameraUnavailable": "الكاميرا غير متاحة",
+  "@cameraUnavailable": {
+    "description": "Shown when no camera could be opened on the device"
+  },
+  "notSignedIn": "يجب تسجيل الدخول لإنشاء مهمة",
+  "@notSignedIn": {
+    "description": "Error shown when submitting a job without an active session"
   }
 }

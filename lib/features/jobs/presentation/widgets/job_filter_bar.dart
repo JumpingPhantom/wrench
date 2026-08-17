@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
 enum JobFilter {
@@ -20,14 +21,18 @@ enum JobFilter {
     cancelled => l10n.cancelled,
   };
 
-  String? get statusCode => switch (this) {
-    all => null,
-    pending => null,
-    draft => 'Draft',
-    inProgress => 'In Progress',
-    staged => 'Staged',
-    finished => 'Finished',
-    cancelled => 'Cancelled',
+  /// Whether [job] belongs under this filter.
+  ///
+  /// Matching goes through [JobStatus] rather than the translated label, so
+  /// filtering keeps working in every locale.
+  bool matches(Job job) => switch (this) {
+    all => true,
+    pending => job.status == JobStatus.staged,
+    draft => job.status == JobStatus.draft,
+    inProgress => job.status == JobStatus.inProgress,
+    staged => job.status == JobStatus.staged,
+    finished => job.status == JobStatus.finished,
+    cancelled => job.status == JobStatus.cancelled,
   };
 }
 

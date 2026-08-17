@@ -1,13 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wrench/core/data/models/job.dart';
-import 'package:wrench/core/presentation/controllers/media_provider.dart';
+import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/core/presentation/controllers/users_provider.dart';
+import 'package:wrench/core/presentation/widgets/job_image.dart';
 import 'package:wrench/core/utils.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
+/// Resolves which job to show before handing off to [_JobDetailView].
+///
+/// Navigating from a list passes the job directly, but the route can also be
+/// entered without one (a restored route, a deep link), so the id from the path
+/// is used to look the job up in the already-loaded list.
 class JobDetailScreen extends ConsumerWidget {
-  const JobDetailScreen({super.key, required this.job});
+  const JobDetailScreen({super.key, required this.jobId, this.job});
+
+  final int? jobId;
+  final Job? job;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = AppLocalizations.of(context)!;
+
+    if (job != null) return _JobDetailView(job: job!);
+
+    if (jobId == null) return _Message(text: l10n.jobNotFound, l10n: l10n);
+
+    return ref
+        .watch(jobsProvider)
+        .when(
+          data: (jobs) {
+            final matches = jobs.where((j) => j.id == jobId);
+
+            return matches.isEmpty
+                ? _Message(text: l10n.jobNotFound, l10n: l10n)
+                : _JobDetailView(job: matches.first);
+          },
+          loading: () =>
+              _Message(l10n: l10n, child: const CircularProgressIndicator()),
+          error: (_, _) => _Message(text: l10n.jobNotFound, l10n: l10n),
+        );
+  }
+}
+
+class _Message extends StatelessWidget {
+  const _Message({required this.l10n, this.text, this.child});
+
+  final AppLocalizations l10n;
+  final String? text;
+  final Widget? child;
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text(l10n.jobDetails)),
+      body: Center(child: child ?? Text(text!)),
+    );
+  }
+}
+
+class _JobDetailView extends ConsumerWidget {
+  const _JobDetailView({required this.job});
 
   final Job job;
 
@@ -17,8 +70,6 @@ class JobDetailScreen extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
-    final mediaUrl = ref.watch(mediaUrlProvider(job.mediaUrl));
-
     return Scaffold(
       appBar: AppBar(title: Text(l10n.jobDetails)),
       body: SingleChildScrollView(
@@ -26,26 +77,13 @@ class JobDetailScreen extends ConsumerWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            if (job.mediaUrl != null)
+            if (job.mediaUrl != null) ...[
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: mediaUrl.when(
-                  data: (data) {
-                    if (data != null) {
-                      return Image.network(
-                        data,
-                        width: double.infinity,
-                        height: 200,
-                        fit: BoxFit.cover,
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                  loading: () => CircularProgressIndicator(),
-                  error: (e, st) => const SizedBox.shrink(),
-                ),
+                child: JobImage(path: job.mediaUrl, height: 200),
               ),
-            if (job.mediaUrl != null) const SizedBox(height: 16),
+              const SizedBox(height: 16),
+            ],
             Text(
               job.title,
               style: textTheme.headlineSmall?.copyWith(
@@ -78,17 +116,7 @@ class JobDetailScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             _DetailRow(
               icon: Icons.person_outline,
-              label: ref
-                  .watch(usersProvider)
-                  .when(
-                    data: (users) {
-                      return users
-                          .firstWhere((u) => u.id == job.createdBy)
-                          .fullName;
-                    },
-                    loading: () => "loading",
-                    error: (e, st) => "error",
-                  ),
+              label: l10n.createdBy(_creatorName(ref, l10n)),
             ),
             const SizedBox(height: 24),
             Text(
@@ -103,6 +131,18 @@ class JobDetailScreen extends ConsumerWidget {
         ),
       ),
     );
+  }
+
+  /// The creator's display name, falling back to a placeholder when the
+  /// profile is still loading or cannot be resolved at all.
+  String _creatorName(WidgetRef ref, AppLocalizations l10n) {
+    return ref
+        .watch(userByIdProvider(job.createdBy))
+        .when(
+          data: (user) => user?.fullName ?? l10n.unknownUser,
+          loading: () => "…",
+          error: (_, _) => l10n.unknownUser,
+        );
   }
 }
 

@@ -470,7 +470,7 @@ abstract class AppLocalizations {
   /// **'e.g. Zone 4, Building A'**
   String get locationHint;
 
-  /// Job filter: pending (draft, in progress, staged)
+  /// Job filter: pending (jobs staged and awaiting approval)
   ///
   /// In en, this message translates to:
   /// **'Pending'**
@@ -505,6 +505,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Please enter a valid email'**
   String get invalidEmail;
+
+  /// Fallback when a job's creator cannot be resolved to a profile
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown user'**
+  String get unknownUser;
+
+  /// Shown when a job detail page is opened for a job that cannot be found
+  ///
+  /// In en, this message translates to:
+  /// **'This job is no longer available'**
+  String get jobNotFound;
+
+  /// Error shown when saving a job to the backend fails
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t save the job. Please try again.'**
+  String get jobSaveFailed;
+
+  /// Error shown when uploading job media to storage fails
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t upload the photo. Please try again.'**
+  String get photoUploadFailed;
+
+  /// Error shown when the camera fails to capture an image
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t take the photo. Please try again.'**
+  String get photoCaptureFailed;
+
+  /// Shown when no camera could be opened on the device
+  ///
+  /// In en, this message translates to:
+  /// **'Camera unavailable'**
+  String get cameraUnavailable;
+
+  /// Error shown when submitting a job without an active session
+  ///
+  /// In en, this message translates to:
+  /// **'You need to be signed in to create a job'**
+  String get notSignedIn;
 }
 
 class _AppLocalizationsDelegate

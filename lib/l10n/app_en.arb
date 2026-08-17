@@ -304,7 +304,7 @@
   },
   "pending": "Pending",
   "@pending": {
-    "description": "Job filter: pending (draft, in progress, staged)"
+    "description": "Job filter: pending (jobs staged and awaiting approval)"
   },
   "loginSubtitle": "Sign in to continue",
   "@loginSubtitle": {
@@ -325,5 +325,33 @@
   "invalidEmail": "Please enter a valid email",
   "@invalidEmail": {
     "description": "Invalid email validation message"
+  },
+  "unknownUser": "Unknown user",
+  "@unknownUser": {
+    "description": "Fallback when a job's creator cannot be resolved to a profile"
+  },
+  "jobNotFound": "This job is no longer available",
+  "@jobNotFound": {
+    "description": "Shown when a job detail page is opened for a job that cannot be found"
+  },
+  "jobSaveFailed": "Couldn't save the job. Please try again.",
+  "@jobSaveFailed": {
+    "description": "Error shown when saving a job to the backend fails"
+  },
+  "photoUploadFailed": "Couldn't upload the photo. Please try again.",
+  "@photoUploadFailed": {
+    "description": "Error shown when uploading job media to storage fails"
+  },
+  "photoCaptureFailed": "Couldn't take the photo. Please try again.",
+  "@photoCaptureFailed": {
+    "description": "Error shown when the camera fails to capture an image"
+  },
+  "cameraUnavailable": "Camera unavailable",
+  "@cameraUnavailable": {
+    "description": "Shown when no camera could be opened on the device"
+  },
+  "notSignedIn": "You need to be signed in to create a job",
+  "@notSignedIn": {
+    "description": "Error shown when submitting a job without an active session"
   }
 }

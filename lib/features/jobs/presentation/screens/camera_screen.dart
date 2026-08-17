@@ -1,9 +1,12 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:camera/camera.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:wrench/core/logging/app_logger.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 import 'package:wrench/features/jobs/presentation/widgets/camera_overlay.dart';
 
@@ -38,11 +41,34 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   Future<void> _initCamera() async {
-    final cameras = await availableCameras();
-    if (cameras.isEmpty || !mounted) return;
-    _controller = CameraController(cameras.first, ResolutionPreset.high);
-    await _controller!.initialize();
-    if (mounted) setState(() => _isInitialized = true);
+    try {
+      final cameras = await availableCameras();
+      if (cameras.isEmpty || !mounted) return;
+
+      final controller = CameraController(cameras.first, ResolutionPreset.high);
+      await controller.initialize();
+
+      if (!mounted) {
+        // The screen was popped mid-initialisation; nothing will dispose this
+        // controller for us.
+        await controller.dispose();
+        return;
+      }
+
+      setState(() {
+        _controller = controller;
+        _isInitialized = true;
+      });
+    } on CameraException catch (e, stackTrace) {
+      AppLogger.error("Failed to initialise camera", e, stackTrace);
+      if (mounted) _showError(AppLocalizations.of(context)!.cameraUnavailable);
+    }
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
   }
 
   @override
@@ -63,14 +89,24 @@ class _CameraScreenState extends State<CameraScreen>
   Future<void> _capture() async {
     if (_controller == null || _isBusy) return;
     setState(() => _isBusy = true);
+
     try {
-      _flashAnimController.forward(from: 0).then((_) {
-        if (mounted) _flashAnimController.reset();
-      });
+      unawaited(
+        _flashAnimController.forward(from: 0).then((_) {
+          if (mounted) _flashAnimController.reset();
+        }),
+      );
+
       final file = await _controller!.takePicture();
       if (mounted) setState(() => _captured = file);
-    } catch (_) {}
-    if (mounted) setState(() => _isBusy = false);
+    } on CameraException catch (e, stackTrace) {
+      AppLogger.error("Failed to capture photo", e, stackTrace);
+      if (mounted) {
+        _showError(AppLocalizations.of(context)!.photoCaptureFailed);
+      }
+    } finally {
+      if (mounted) setState(() => _isBusy = false);
+    }
   }
 
   Future<void> _retake() async {
@@ -84,10 +120,14 @@ class _CameraScreenState extends State<CameraScreen>
   }
 
   Future<void> _pickFromGallery() async {
-    final picker = ImagePicker();
-    final file = await picker.pickImage(source: ImageSource.gallery);
-    if (file != null && mounted) {
-      context.pop(File(file.path));
+    try {
+      final file = await ImagePicker().pickImage(source: ImageSource.gallery);
+      if (file != null && mounted) context.pop(File(file.path));
+    } on PlatformException catch (e, stackTrace) {
+      AppLogger.error("Failed to pick image from gallery", e, stackTrace);
+      if (mounted) {
+        _showError(AppLocalizations.of(context)!.photoCaptureFailed);
+      }
     }
   }
 

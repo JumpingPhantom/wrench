@@ -62,8 +62,15 @@ final routerProvider = Provider<GoRouter>((ref) {
       GoRoute(
         path: '/jobs/:id',
         builder: (context, state) {
-          final job = state.extra as Job;
-          return JobDetailScreen(job: job);
+          // `extra` is only present when navigating from a list; it is lost on
+          // a restored or deep-linked route, so the id is the reliable input
+          // and the job travels as an optimisation.
+          final extra = state.extra;
+
+          return JobDetailScreen(
+            jobId: int.tryParse(state.pathParameters['id'] ?? ''),
+            job: extra is Job ? extra : null,
+          );
         },
       ),
     ],

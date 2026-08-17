@@ -229,4 +229,26 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get invalidEmail => 'يرجى إدخال بريد إلكتروني صالح';
+
+  @override
+  String get unknownUser => 'مستخدم غير معروف';
+
+  @override
+  String get jobNotFound => 'هذه المهمة لم تعد متاحة';
+
+  @override
+  String get jobSaveFailed => 'تعذّر حفظ المهمة. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get photoUploadFailed => 'تعذّر رفع الصورة. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get photoCaptureFailed =>
+      'تعذّر التقاط الصورة. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get cameraUnavailable => 'الكاميرا غير متاحة';
+
+  @override
+  String get notSignedIn => 'يجب تسجيل الدخول لإنشاء مهمة';
 }
