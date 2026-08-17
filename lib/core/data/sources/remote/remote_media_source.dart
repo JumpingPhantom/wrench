@@ -4,6 +4,8 @@ import 'package:wrench/core/data/sources/remote/remote_jobs_source.dart';
 import 'package:wrench/core/logging/app_logger.dart';
 import 'package:wrench/core/network/supabase_client.dart';
 
+/// Supabase-backed [MediaSource]: signs objects held in
+/// [RemoteJobsSource.mediaBucket] for temporary read access.
 class RemoteMediaSource extends MediaSource {
   /// Long enough to cover a browsing session, so images already on screen do
   /// not break while the user is still looking at them.

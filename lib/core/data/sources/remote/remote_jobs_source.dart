@@ -8,10 +8,17 @@ import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/logging/app_logger.dart';
 import 'package:wrench/core/network/supabase_client.dart';
 
+/// Supabase-backed [JobsSource]: rows in the `jobs` table, media in
+/// [mediaBucket].
+///
+/// Which rows come back is decided by row-level security rather than by any
+/// filter here, so the queries below never scope by user themselves.
 class RemoteJobsSource implements JobsSource {
   static const mediaBucket = "media";
   static const _recentJobsLimit = 4;
 
+  /// Reads the whole table in one request — there is no pagination yet, so
+  /// every caller pays for the full history.
   @override
   Future<List<Job>> getAllJobs() async {
     try {
@@ -27,6 +34,8 @@ class RemoteJobsSource implements JobsSource {
     }
   }
 
+  /// Applies [_recentJobsLimit] in the query rather than after the fact, so the
+  /// request stays the same size however long the history gets.
   @override
   Future<List<Job>> getRecentJobs() async {
     try {
@@ -45,6 +54,8 @@ class RemoteJobsSource implements JobsSource {
     }
   }
 
+  /// Inserts [job], rewriting [Job.mediaUrl] from the local capture path to the
+  /// stored object path on the way through.
   @override
   Future<void> saveJob(Job job) async {
     final localPath = job.mediaUrl;
@@ -63,6 +74,8 @@ class RemoteJobsSource implements JobsSource {
     }
   }
 
+  /// Sends only the mutable columns; media is not re-uploaded here, so an
+  /// update cannot replace a job's photo.
   @override
   Future<Job> updateJob(Job job) async {
     final id = job.id;
@@ -119,6 +132,8 @@ class RemoteJobsSource implements JobsSource {
     }
   }
 
+  /// Not implemented: jobs are cancelled through [updateJob] rather than
+  /// removed, and nothing in the app deletes one yet.
   @override
   Future<void> deleteJob(Job job) async {
     throw UnimplementedError("deleteJob is not implemented yet");

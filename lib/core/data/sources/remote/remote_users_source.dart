@@ -6,7 +6,11 @@ import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/logging/app_logger.dart';
 import 'package:wrench/core/network/supabase_client.dart';
 
+/// Supabase-backed [UsersSource]: profiles from the `profiles` table, identity
+/// from the auth session.
 class RemoteUsersSource extends UsersSource {
+  /// Reads every readable row of `profiles`; row-level security, not this
+  /// query, decides which those are.
   @override
   Future<List<User>> getUsers() async {
     try {
@@ -19,6 +23,8 @@ class RemoteUsersSource extends UsersSource {
     }
   }
 
+  /// Read straight off the cached session, so this is synchronous and never
+  /// hits the network.
   @override
   String? get currentUserId => client.auth.currentUser?.id;
 }
