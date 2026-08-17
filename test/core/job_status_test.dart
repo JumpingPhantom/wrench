@@ -2,31 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_filter_bar.dart';
 
-Job jobWith(JobState state) => Job(
-  id: 1,
-  title: "test",
-  description: "test",
-  location: "test",
-  createdAt: DateTime.utc(2026, 1, 1),
-  createdBy: "user-1",
-  state: state,
-);
-
-final draft = const JobState.draft();
-final inProgress = JobState.inProgress(
-  startedBy: "user-1",
-  startedAt: DateTime.utc(2026, 1, 2),
-);
-final staged = JobState.staged(stagedAt: DateTime.utc(2026, 1, 3));
-final finished = JobState.finished(
-  approvedBy: "user-2",
-  finishedAt: DateTime.utc(2026, 1, 4),
-);
-final cancelled = JobState.cancelled(
-  reason: "duplicate",
-  cancelledAt: DateTime.utc(2026, 1, 5),
-  cancelledBy: "user-2",
-);
+import 'job_fixtures.dart';
 
 void main() {
   group("Job.status", () {
@@ -41,7 +17,7 @@ void main() {
 
   group("JobFilter.matches", () {
     test("'all' admits every status", () {
-      for (final state in [draft, inProgress, staged, finished, cancelled]) {
+      for (final state in allStates) {
         expect(JobFilter.all.matches(jobWith(state)), isTrue);
       }
     });
@@ -55,13 +31,7 @@ void main() {
         JobFilter.cancelled: JobStatus.cancelled,
       };
 
-      final jobs = [
-        draft,
-        inProgress,
-        staged,
-        finished,
-        cancelled,
-      ].map(jobWith).toList();
+      final jobs = allStates.map(jobWith).toList();
 
       pairs.forEach((filter, status) {
         final matched = jobs.where(filter.matches).toList();
@@ -81,7 +51,7 @@ void main() {
 
   group("JobState serialisation", () {
     test("round-trips every state through JSON", () {
-      for (final state in [draft, inProgress, staged, finished, cancelled]) {
+      for (final state in allStates) {
         final job = jobWith(state);
         expect(Job.fromJson(job.toJson()), job, reason: "$state");
       }

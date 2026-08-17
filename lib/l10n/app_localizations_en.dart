@@ -252,4 +252,71 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notSignedIn => 'You need to be signed in to create a job';
+
+  @override
+  String get startJob => 'Start Job';
+
+  @override
+  String get submitForApproval => 'Submit for Approval';
+
+  @override
+  String get approveJob => 'Approve';
+
+  @override
+  String get cancelJob => 'Cancel Job';
+
+  @override
+  String get keepJob => 'Keep Job';
+
+  @override
+  String get cancelJobPrompt =>
+      'Cancelling a job can\'t be undone. Please give a reason.';
+
+  @override
+  String get cancelReasonLabel => 'Reason';
+
+  @override
+  String get cancelReasonHint => 'e.g. Reported in error';
+
+  @override
+  String get reasonRequired => 'A reason is required';
+
+  @override
+  String get jobUpdateFailed => 'Couldn\'t update the job. Please try again.';
+
+  @override
+  String get cancellationReason => 'Cancellation reason';
+
+  @override
+  String startedBy(String name) {
+    return 'Started by $name';
+  }
+
+  @override
+  String approvedBy(String name) {
+    return 'Approved by $name';
+  }
+
+  @override
+  String cancelledBy(String name) {
+    return 'Cancelled by $name';
+  }
+
+  @override
+  String get profile => 'Profile';
+
+  @override
+  String get roleSupervisor => 'Supervisor';
+
+  @override
+  String get roleWorker => 'Worker';
+
+  @override
+  String get profileComingSoon => 'Account settings are coming soon.';
+
+  @override
+  String get close => 'Close';
+
+  @override
+  String get viewPhoto => 'View photo';
 }

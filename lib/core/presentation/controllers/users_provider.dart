@@ -31,3 +31,13 @@ final userByIdProvider = Provider.family<AsyncValue<User?>, String>((ref, id) {
 final currentUserIdProvider = Provider<String?>((ref) {
   return ref.watch(_repositoryProvider).currentUserId;
 });
+
+/// The signed-in user's profile, or null when nobody is signed in or the
+/// session's id has no matching row in `profiles`.
+final currentUserProvider = Provider<AsyncValue<User?>>((ref) {
+  final id = ref.watch(currentUserIdProvider);
+
+  if (id == null) return const AsyncData(null);
+
+  return ref.watch(userByIdProvider(id));
+});

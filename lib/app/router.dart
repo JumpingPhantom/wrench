@@ -9,6 +9,7 @@ import 'package:wrench/features/jobs/presentation/screens/camera_screen.dart';
 import 'package:wrench/features/jobs/presentation/screens/create_job_screen.dart';
 import 'package:wrench/features/jobs/presentation/screens/job_detail_screen.dart';
 import 'package:wrench/features/jobs/presentation/screens/jobs_screen.dart';
+import 'package:wrench/features/profile/presentation/screens/profile_screen.dart';
 import 'package:wrench/features/settings/presentation/screens/main_settings_screen.dart';
 
 final routerProvider = Provider<GoRouter>((ref) {
@@ -50,6 +51,13 @@ final routerProvider = Provider<GoRouter>((ref) {
             builder: (context, state) => const MainSettingsScreen(),
           ),
         ],
+      ),
+      // Outside the shell deliberately: it is pushed from the app bar rather
+      // than selected from the nav bar, so it wants a back button and no
+      // destination highlighted underneath it.
+      GoRoute(
+        path: '/profile',
+        builder: (context, state) => const ProfileScreen(),
       ),
       GoRoute(
         path: '/jobs/new',

@@ -353,5 +353,103 @@
   "notSignedIn": "You need to be signed in to create a job",
   "@notSignedIn": {
     "description": "Error shown when submitting a job without an active session"
+  },
+  "startJob": "Start Job",
+  "@startJob": {
+    "description": "Action that moves a draft job into progress"
+  },
+  "submitForApproval": "Submit for Approval",
+  "@submitForApproval": {
+    "description": "Action that stages an in-progress job for a supervisor to review"
+  },
+  "approveJob": "Approve",
+  "@approveJob": {
+    "description": "Action that marks a staged job as finished"
+  },
+  "cancelJob": "Cancel Job",
+  "@cancelJob": {
+    "description": "Action that cancels a job outright"
+  },
+  "keepJob": "Keep Job",
+  "@keepJob": {
+    "description": "Dismisses the cancellation dialog without cancelling"
+  },
+  "cancelJobPrompt": "Cancelling a job can't be undone. Please give a reason.",
+  "@cancelJobPrompt": {
+    "description": "Body of the job cancellation confirmation dialog"
+  },
+  "cancelReasonLabel": "Reason",
+  "@cancelReasonLabel": {
+    "description": "Label of the cancellation reason field"
+  },
+  "cancelReasonHint": "e.g. Reported in error",
+  "@cancelReasonHint": {
+    "description": "Hint of the cancellation reason field"
+  },
+  "reasonRequired": "A reason is required",
+  "@reasonRequired": {
+    "description": "Validation message when a cancellation reason is left empty"
+  },
+  "jobUpdateFailed": "Couldn't update the job. Please try again.",
+  "@jobUpdateFailed": {
+    "description": "Error shown when a job state transition fails to save"
+  },
+  "cancellationReason": "Cancellation reason",
+  "@cancellationReason": {
+    "description": "Label above the stored reason on a cancelled job"
+  },
+  "startedBy": "Started by {name}",
+  "@startedBy": {
+    "description": "Who moved the job into progress",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "approvedBy": "Approved by {name}",
+  "@approvedBy": {
+    "description": "Who approved the finished job",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "cancelledBy": "Cancelled by {name}",
+  "@cancelledBy": {
+    "description": "Who cancelled the job",
+    "placeholders": {
+      "name": {
+        "type": "String",
+        "example": "John"
+      }
+    }
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile screen title"
+  },
+  "roleSupervisor": "Supervisor",
+  "@roleSupervisor": {
+    "description": "User role: supervisor"
+  },
+  "roleWorker": "Worker",
+  "@roleWorker": {
+    "description": "User role: worker"
+  },
+  "profileComingSoon": "Account settings are coming soon.",
+  "@profileComingSoon": {
+    "description": "Placeholder text on the not-yet-built profile screen"
+  },
+  "close": "Close",
+  "@close": {
+    "description": "Closes the full-screen photo viewer"
+  },
+  "viewPhoto": "View photo",
+  "@viewPhoto": {
+    "description": "Accessibility label for the tappable job photo"
   }
 }
