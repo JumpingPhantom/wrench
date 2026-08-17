@@ -23,6 +23,7 @@ class JobsNotifier extends AsyncNotifier<List<Job>> {
   Future<void> saveJob(Job job) async {
     await _jobsRepository.save(job);
     state = await AsyncValue.guard(() => _jobsRepository.getAll());
+    ref.invalidate(recentJobsProvider);
   }
 
   /// Advances [job] through [action] and records who did it.
@@ -52,15 +53,27 @@ class JobsNotifier extends AsyncNotifier<List<Job>> {
               if (existing.id == updated.id) updated else existing,
           ]);
 
+    ref.invalidate(recentJobsProvider);
+
     return updated;
   }
 
   Future<void> delete(Job job) async {
     await _jobsRepository.delete(job);
     state = await AsyncValue.guard(() => _jobsRepository.getAll());
+    ref.invalidate(recentJobsProvider);
   }
 }
 
 final jobsProvider = AsyncNotifierProvider<JobsNotifier, List<Job>>(
   () => JobsNotifier(),
 );
+
+/// The newest jobs, for overview surfaces that only show a short list.
+///
+/// This is a server-side limited query rather than a slice of [jobsProvider],
+/// so it stays cheap on accounts with a long history. [JobsNotifier] refreshes
+/// it after every mutation, which is why no screen has to.
+final recentJobsProvider = FutureProvider<List<Job>>((ref) {
+  return ref.watch(_jobsRepositoryProvider).getRecent();
+});

@@ -10,6 +10,7 @@ import 'package:wrench/core/network/supabase_client.dart';
 
 class RemoteJobsSource implements JobsSource {
   static const mediaBucket = "media";
+  static const _recentJobsLimit = 4;
 
   @override
   Future<List<Job>> getAllJobs() async {
@@ -22,6 +23,24 @@ class RemoteJobsSource implements JobsSource {
       return rows.map(Job.fromJson).toList();
     } on PostgrestException catch (e, stackTrace) {
       AppLogger.error("Failed to load jobs", e, stackTrace);
+      throw NetworkException(message: e.message, stackTrace: stackTrace);
+    }
+  }
+
+  @override
+  Future<List<Job>> getRecentJobs() async {
+    try {
+      // Postgres makes no ordering guarantee without an explicit ORDER BY, so
+      // the limit below would otherwise return an arbitrary four rows.
+      final rows = await client
+          .from("jobs")
+          .select("*")
+          .order("created_at", ascending: false)
+          .limit(_recentJobsLimit);
+
+      return rows.map(Job.fromJson).toList();
+    } on PostgrestException catch (e, stackTrace) {
+      AppLogger.error("Failed to load recent jobs", e, stackTrace);
       throw NetworkException(message: e.message, stackTrace: stackTrace);
     }
   }

@@ -3,9 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/errors/exceptions.dart';
-import 'package:wrench/features/home/presentation/controllers/home_provider.dart';
-import 'package:wrench/features/home/presentation/widgets/job_item.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
+import 'package:wrench/features/home/presentation/widgets/job_item.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_filter_bar.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
@@ -56,9 +55,6 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
 
     try {
       await ref.read(jobsProvider.notifier).saveJob(job);
-      // Home keeps its own copy of the list, so it would not show the new job
-      // until the next cold start.
-      ref.invalidate(homeProvider);
     } on OperationException {
       _showError(l10n.photoUploadFailed);
     } on AppException {

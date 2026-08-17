@@ -7,7 +7,6 @@ import 'package:wrench/core/presentation/controllers/users_provider.dart';
 import 'package:wrench/core/presentation/widgets/job_image.dart';
 import 'package:wrench/core/presentation/widgets/job_image_viewer.dart';
 import 'package:wrench/core/utils.dart';
-import 'package:wrench/features/home/presentation/controllers/home_provider.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
 /// Resolves which job to show before handing off to [_JobDetailView].
@@ -106,10 +105,6 @@ class _JobDetailViewState extends ConsumerState<_JobDetailView> {
       await ref
           .read(jobsProvider.notifier)
           .applyAction(job, action, reason: reason);
-
-      // Home reads its own copy of the list, so without this its counters and
-      // recent-jobs card keep showing the status this job just left.
-      ref.invalidate(homeProvider);
     } on AppException {
       _showError(l10n.jobUpdateFailed);
     } finally {

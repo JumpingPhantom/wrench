@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wrench/core/data/models/job.dart';
-import 'package:wrench/features/home/presentation/controllers/home_provider.dart';
+import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/features/home/presentation/widgets/overview_title.dart';
 import 'package:wrench/features/home/presentation/widgets/recent_jobs_body.dart';
 import 'package:wrench/features/home/presentation/widgets/recent_jobs_header.dart';
@@ -12,7 +12,7 @@ class HomeScreen extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    AsyncValue<List<Job>> jobs = ref.watch(homeProvider);
+    AsyncValue<List<Job>> jobs = ref.watch(recentJobsProvider);
 
     return switch (jobs) {
       AsyncData(:final value) => Scaffold(
