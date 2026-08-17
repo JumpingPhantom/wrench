@@ -41,12 +41,19 @@ sealed class Job with _$Job {
     _Cancelled() => JobStatus.cancelled,
   };
 
-  String statusLabel(AppLocalizations l10n) => switch (status) {
-    JobStatus.draft => l10n.draft,
-    JobStatus.inProgress => l10n.inProgress,
-    JobStatus.staged => l10n.staged,
-    JobStatus.finished => l10n.finished,
-    JobStatus.cancelled => l10n.cancelled,
+  String statusLabel(AppLocalizations l10n) => status.label(l10n);
+
+  /// When the job entered its current [state], or null for a draft, which is
+  /// where every job starts and so records no move of its own.
+  ///
+  /// Only the current state carries a timestamp — a job is a state, not an
+  /// event log — so this cannot be used to reconstruct earlier steps.
+  DateTime? get stateChangedAt => switch (state) {
+    _Draft() => null,
+    _InProgress(:final startedAt) => startedAt,
+    _Staged(:final stagedAt) => stagedAt,
+    _Finished(:final finishedAt) => finishedAt,
+    _Cancelled(:final cancelledAt) => cancelledAt,
   };
 
   /// Whoever put the job into its current state, when that state records it.
@@ -125,12 +132,57 @@ sealed class Job with _$Job {
   factory Job.fromJson(Map<String, dynamic> json) => _$JobFromJson(json);
 }
 
+extension JobStatusColumn on JobStatus {
+  /// The value this status is stored under, in `state->>status`.
+  ///
+  /// Shared by the converter below and by any query that filters on status, so
+  /// the wire format is written down once. Changing one of these renames a
+  /// column value and needs a migration, not just an edit here.
+  String get storedName => switch (this) {
+    JobStatus.draft => "draft",
+    JobStatus.inProgress => "in_progress",
+    JobStatus.staged => "staged",
+    JobStatus.finished => "finished",
+    JobStatus.cancelled => "cancelled",
+  };
+
+  /// Parses a stored value back, or null if it names no status the app knows.
+  static JobStatus? fromStored(String? stored) {
+    for (final status in JobStatus.values) {
+      if (status.storedName == stored) return status;
+    }
+    return null;
+  }
+}
+
+extension JobStatusLabel on JobStatus {
+  String label(AppLocalizations l10n) => switch (this) {
+    JobStatus.draft => l10n.draft,
+    JobStatus.inProgress => l10n.inProgress,
+    JobStatus.staged => l10n.staged,
+    JobStatus.finished => l10n.finished,
+    JobStatus.cancelled => l10n.cancelled,
+  };
+}
+
 extension JobActionLabel on JobAction {
   String label(AppLocalizations l10n) => switch (this) {
     JobAction.start => l10n.startJob,
     JobAction.stage => l10n.submitForApproval,
     JobAction.approve => l10n.approveJob,
     JobAction.cancel => l10n.cancelJob,
+  };
+
+  /// The status a job lands in once this action is applied.
+  ///
+  /// Kept beside [Job.apply], which is what actually performs the move, so the
+  /// two cannot drift: a screen offering an action can name and colour it after
+  /// the state it produces without repeating the transition table.
+  JobStatus get outcome => switch (this) {
+    JobAction.start => JobStatus.inProgress,
+    JobAction.stage => JobStatus.staged,
+    JobAction.approve => JobStatus.finished,
+    JobAction.cancel => JobStatus.cancelled,
   };
 }
 
@@ -170,35 +222,38 @@ class _JobStateConverter
     final status = json['status'] as String?;
     final payload = (json['payload'] as Map<String, dynamic>?) ?? const {};
 
-    return switch (status) {
-      'draft' => const JobState.draft(),
-      'in_progress' => JobState.inProgress(
+    return switch (JobStatusColumn.fromStored(status)) {
+      JobStatus.draft => const JobState.draft(),
+      JobStatus.inProgress => JobState.inProgress(
         startedBy: payload['started_by'] as String,
         startedAt: DateTime.parse(payload['started_at'] as String),
         workers: (payload['workers'] as List<dynamic>?)?.cast<String>(),
       ),
-      'staged' => JobState.staged(
+      JobStatus.staged => JobState.staged(
         stagedAt: DateTime.parse(payload['staged_at'] as String),
       ),
-      'finished' => JobState.finished(
+      JobStatus.finished => JobState.finished(
         approvedBy: payload['approved_by'] as String,
         finishedAt: DateTime.parse(payload['finished_at'] as String),
       ),
-      'cancelled' => JobState.cancelled(
+      JobStatus.cancelled => JobState.cancelled(
         reason: payload['reason'] as String,
         cancelledAt: DateTime.parse(payload['cancelled_at'] as String),
         cancelledBy: payload['cancelled_by'] as String,
       ),
-      _ => throw FormatException('Unknown job status: $status'),
+      null => throw FormatException('Unknown job status: $status'),
     };
   }
 
   @override
   Map<String, dynamic> toJson(JobState state) {
     final body = switch (state) {
-      _Draft() => {'status': 'draft', 'payload': <String, dynamic>{}},
+      _Draft() => {
+        'status': JobStatus.draft.storedName,
+        'payload': <String, dynamic>{},
+      },
       _InProgress(:final startedBy, :final startedAt, :final workers) => {
-        'status': 'in_progress',
+        'status': JobStatus.inProgress.storedName,
         'payload': {
           'started_by': startedBy,
           'started_at': startedAt.toIso8601String(),
@@ -206,18 +261,18 @@ class _JobStateConverter
         },
       },
       _Staged(:final stagedAt) => {
-        'status': 'staged',
+        'status': JobStatus.staged.storedName,
         'payload': {'staged_at': stagedAt.toIso8601String()},
       },
       _Finished(:final approvedBy, :final finishedAt) => {
-        'status': 'finished',
+        'status': JobStatus.finished.storedName,
         'payload': {
           'approved_by': approvedBy,
           'finished_at': finishedAt.toIso8601String(),
         },
       },
       _Cancelled(:final reason, :final cancelledAt, :final cancelledBy) => {
-        'status': 'cancelled',
+        'status': JobStatus.cancelled.storedName,
         'payload': {
           'reason': reason,
           'cancelled_at': cancelledAt.toIso8601String(),

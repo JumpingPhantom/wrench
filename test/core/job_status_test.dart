@@ -41,11 +41,18 @@ void main() {
       });
     });
 
-    test("'pending' means staged and awaiting approval", () {
-      expect(JobFilter.pending.matches(jobWith(staged)), isTrue);
-      expect(JobFilter.pending.matches(jobWith(draft)), isFalse);
-      expect(JobFilter.pending.matches(jobWith(inProgress)), isFalse);
-      expect(JobFilter.pending.matches(jobWith(finished)), isFalse);
+    test("every status is offered by exactly one filter", () {
+      final selected = JobFilter.values
+          .map((filter) => filter.status)
+          .whereType<JobStatus>()
+          .toList();
+
+      expect(selected.toSet(), JobStatus.values.toSet());
+      expect(
+        selected,
+        hasLength(JobStatus.values.length),
+        reason: "two filters select the same status: $selected",
+      );
     });
   });
 

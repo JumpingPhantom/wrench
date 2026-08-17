@@ -6,10 +6,17 @@ import 'package:wrench/core/errors/exceptions.dart';
 const _kThemeKey = 'theme_mode';
 const _kLocaleKey = 'locale_code';
 
-class SettingsNotifier extends AsyncNotifier<SettingsState> {
-  SharedPreferencesAsync prefs;
+/// The store settings are kept in.
+///
+/// A provider rather than a constructor argument so a test can stand in for it
+/// without building a [SharedPreferencesAsync], whose constructor asserts that
+/// a platform implementation is registered.
+final sharedPreferencesProvider = Provider<SharedPreferencesAsync>((ref) {
+  return SharedPreferencesAsync();
+});
 
-  SettingsNotifier({required this.prefs});
+class SettingsNotifier extends AsyncNotifier<SettingsState> {
+  SharedPreferencesAsync get prefs => ref.read(sharedPreferencesProvider);
 
   @override
   Future<SettingsState> build() async {
@@ -68,5 +75,5 @@ class SettingsState {
 }
 
 final settingsProvider = AsyncNotifierProvider<SettingsNotifier, SettingsState>(
-  () => SettingsNotifier(prefs: SharedPreferencesAsync()),
+  SettingsNotifier.new,
 );

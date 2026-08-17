@@ -319,4 +319,41 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewPhoto => 'View photo';
+
+  @override
+  String get progress => 'Progress';
+
+  @override
+  String get details => 'Details';
+
+  @override
+  String get created => 'Created';
+
+  @override
+  String get noJobsFoundHint =>
+      'Try another filter, or a different search term.';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get retry => 'Retry';
+
+  @override
+  String get nextStep => 'Next step';
+
+  @override
+  String get endOfList => 'That\'s all of them';
+
+  @override
+  String get yourJobs => 'Your jobs';
+
+  @override
+  String get account => 'Account';
+
+  @override
+  String get signOut => 'Sign out';
+
+  @override
+  String get signOutPrompt => 'You\'ll need to sign in again to see your jobs.';
 }

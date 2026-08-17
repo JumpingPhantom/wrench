@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wrench/core/data/models/job.dart';
-import 'package:wrench/features/home/presentation/widgets/job_item.dart';
+import 'package:wrench/core/presentation/widgets/job_item.dart';
 
 class RecentJobsBody extends StatelessWidget {
   const RecentJobsBody({super.key, required this.jobs});

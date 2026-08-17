@@ -667,6 +667,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View photo'**
   String get viewPhoto;
+
+  /// Section heading above the job lifecycle track on the detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'Progress'**
+  String get progress;
+
+  /// Section heading above a job's location, creator and actor rows
+  ///
+  /// In en, this message translates to:
+  /// **'Details'**
+  String get details;
+
+  /// Label for when a job was first created, followed by a relative time
+  ///
+  /// In en, this message translates to:
+  /// **'Created'**
+  String get created;
+
+  /// Hint under the empty state on the jobs screen
+  ///
+  /// In en, this message translates to:
+  /// **'Try another filter, or a different search term.'**
+  String get noJobsFoundHint;
+
+  /// Title of the error state shown when the jobs list fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
+  /// Button that reloads the jobs list after a failure
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get retry;
+
+  /// Label above the button that advances a job to its next state
+  ///
+  /// In en, this message translates to:
+  /// **'Next step'**
+  String get nextStep;
+
+  /// Shown at the foot of the jobs list once every page has loaded
+  ///
+  /// In en, this message translates to:
+  /// **'That\'s all of them'**
+  String get endOfList;
+
+  /// Profile section heading above the signed-in user's job counts
+  ///
+  /// In en, this message translates to:
+  /// **'Your jobs'**
+  String get yourJobs;
+
+  /// Profile section heading above settings and sign out
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get account;
+
+  /// Signs the current user out of the app
+  ///
+  /// In en, this message translates to:
+  /// **'Sign out'**
+  String get signOut;
+
+  /// Body of the sign-out confirmation dialog
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll need to sign in again to see your jobs.'**
+  String get signOutPrompt;
 }
 
 class _AppLocalizationsDelegate

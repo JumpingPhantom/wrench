@@ -1,0 +1,87 @@
+import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/data/sources/jobs_source.dart';
+
+/// An in-memory [JobsSource] that pages, filters and searches the way the real
+/// one is expected to, so a test can drive the notifier without a backend.
+///
+/// It also records what it was asked for, which is how a test tells a query
+/// that reached the source from one the screen quietly answered itself.
+class FakeJobsSource implements JobsSource {
+  FakeJobsSource(this.jobs);
+
+  List<Job> jobs;
+
+  /// One entry per page request, in order.
+  final List<({int offset, int limit, JobStatus? status, String? search})>
+  requests = [];
+
+  int get reads => requests.length;
+
+  @override
+  Future<List<Job>> getJobsPage({
+    required int offset,
+    required int limit,
+    JobStatus? status,
+    String? search,
+  }) async {
+    requests.add((
+      offset: offset,
+      limit: limit,
+      status: status,
+      search: search,
+    ));
+
+    final term = search?.trim().toLowerCase() ?? "";
+
+    final matching = jobs.where((job) {
+      if (status != null && job.status != status) return false;
+      if (term.isEmpty) return true;
+
+      return job.title.toLowerCase().contains(term) ||
+          job.location.toLowerCase().contains(term);
+    }).toList();
+
+    if (offset >= matching.length) return [];
+
+    return matching.sublist(offset, (offset + limit).clamp(0, matching.length));
+  }
+
+  @override
+  Future<List<Job>> getRecentJobs() async => jobs.take(4).toList();
+
+  @override
+  Future<Job?> getJob(int id) async {
+    for (final job in jobs) {
+      if (job.id == id) return job;
+    }
+    return null;
+  }
+
+  @override
+  Future<Map<JobStatus, int>> getStatusCounts({String? createdBy}) async {
+    final counts = {for (final status in JobStatus.values) status: 0};
+
+    for (final job in jobs) {
+      if (createdBy != null && job.createdBy != createdBy) continue;
+      counts[job.status] = counts[job.status]! + 1;
+    }
+
+    return counts;
+  }
+
+  @override
+  Future<void> saveJob(Job job) async => jobs = [job, ...jobs];
+
+  @override
+  Future<Job> updateJob(Job job) async {
+    jobs = [
+      for (final existing in jobs)
+        if (existing.id == job.id) job else existing,
+    ];
+    return job;
+  }
+
+  @override
+  Future<void> deleteJob(Job job) async =>
+      jobs = jobs.where((existing) => existing.id != job.id).toList();
+}

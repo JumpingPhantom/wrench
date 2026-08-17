@@ -451,5 +451,53 @@
   "viewPhoto": "View photo",
   "@viewPhoto": {
     "description": "Accessibility label for the tappable job photo"
+  },
+  "progress": "Progress",
+  "@progress": {
+    "description": "Section heading above the job lifecycle track on the detail screen"
+  },
+  "details": "Details",
+  "@details": {
+    "description": "Section heading above a job's location, creator and actor rows"
+  },
+  "created": "Created",
+  "@created": {
+    "description": "Label for when a job was first created, followed by a relative time"
+  },
+  "noJobsFoundHint": "Try another filter, or a different search term.",
+  "@noJobsFoundHint": {
+    "description": "Hint under the empty state on the jobs screen"
+  },
+  "somethingWentWrong": "Something went wrong",
+  "@somethingWentWrong": {
+    "description": "Title of the error state shown when the jobs list fails to load"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Button that reloads the jobs list after a failure"
+  },
+  "nextStep": "Next step",
+  "@nextStep": {
+    "description": "Label above the button that advances a job to its next state"
+  },
+  "endOfList": "That's all of them",
+  "@endOfList": {
+    "description": "Shown at the foot of the jobs list once every page has loaded"
+  },
+  "yourJobs": "Your jobs",
+  "@yourJobs": {
+    "description": "Profile section heading above the signed-in user's job counts"
+  },
+  "account": "Account",
+  "@account": {
+    "description": "Profile section heading above settings and sign out"
+  },
+  "signOut": "Sign out",
+  "@signOut": {
+    "description": "Signs the current user out of the app"
+  },
+  "signOutPrompt": "You'll need to sign in again to see your jobs.",
+  "@signOutPrompt": {
+    "description": "Body of the sign-out confirmation dialog"
   }
 }

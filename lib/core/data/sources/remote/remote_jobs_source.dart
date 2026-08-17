@@ -17,19 +17,91 @@ class RemoteJobsSource implements JobsSource {
   static const mediaBucket = "media";
   static const _recentJobsLimit = 4;
 
-  /// Reads the whole table in one request — there is no pagination yet, so
-  /// every caller pays for the full history.
+  /// Reads one window of the table, narrowed by status and search before it
+  /// leaves the database.
   @override
-  Future<List<Job>> getAllJobs() async {
+  Future<List<Job>> getJobsPage({
+    required int offset,
+    required int limit,
+    JobStatus? status,
+    String? search,
+  }) async {
     try {
-      final rows = await client
-          .from("jobs")
-          .select("*")
-          .order("created_at", ascending: false);
+      var query = client.from("jobs").select("*");
+
+      if (status != null) {
+        query = query.eq("state->>status", status.storedName);
+      }
+
+      final term = _searchTerm(search);
+
+      if (term != null) {
+        query = query.or("title.ilike.%$term%,location.ilike.%$term%");
+      }
+
+      final rows = await query
+          .order("created_at", ascending: false)
+          .range(offset, offset + limit - 1);
 
       return rows.map(Job.fromJson).toList();
     } on PostgrestException catch (e, stackTrace) {
-      AppLogger.error("Failed to load jobs", e, stackTrace);
+      AppLogger.error("Failed to load jobs page at $offset", e, stackTrace);
+      throw NetworkException(message: e.message, stackTrace: stackTrace);
+    }
+  }
+
+  /// Strips what `or()` reads as syntax before the term reaches it.
+  ///
+  /// The filter is assembled as a string, so a comma would start a new
+  /// condition, a parenthesis would close the group, and `%` would widen the
+  /// match — a search for "a,b" must not turn into a query the user did not
+  /// ask for. Returns null when nothing searchable is left.
+  String? _searchTerm(String? search) {
+    final term = search?.replaceAll(RegExp(r'[,()%*\\]'), " ").trim();
+    return term == null || term.isEmpty ? null : term;
+  }
+
+  @override
+  Future<Job?> getJob(int id) async {
+    try {
+      final row = await client
+          .from("jobs")
+          .select("*")
+          .eq("id", id)
+          .maybeSingle();
+
+      return row == null ? null : Job.fromJson(row);
+    } on PostgrestException catch (e, stackTrace) {
+      AppLogger.error("Failed to load job $id", e, stackTrace);
+      throw NetworkException(message: e.message, stackTrace: stackTrace);
+    }
+  }
+
+  /// Tallies statuses over a single column.
+  ///
+  /// One request returning just `state` beats five head-counts with a filter
+  /// each, and the column is small enough that the saving is worth the rows.
+  @override
+  Future<Map<JobStatus, int>> getStatusCounts({String? createdBy}) async {
+    try {
+      var query = client.from("jobs").select("state");
+
+      if (createdBy != null) {
+        query = query.eq("created_by", createdBy);
+      }
+
+      final counts = {for (final status in JobStatus.values) status: 0};
+
+      for (final row in await query) {
+        final state = row["state"] as Map<String, dynamic>?;
+        final status = JobStatusColumn.fromStored(state?["status"] as String?);
+
+        if (status != null) counts[status] = counts[status]! + 1;
+      }
+
+      return counts;
+    } on PostgrestException catch (e, stackTrace) {
+      AppLogger.error("Failed to count jobs by status", e, stackTrace);
       throw NetworkException(message: e.message, stackTrace: stackTrace);
     }
   }

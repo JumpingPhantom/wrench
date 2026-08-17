@@ -11,11 +11,30 @@ class JobsRepository {
 
   JobsRepository({required this.source});
 
-  /// Every job visible to the signed-in user, newest first.
-  Future<List<Job>> getAll() => source.getAllJobs();
+  /// One page of jobs, newest first, narrowed by [status] and [search] before
+  /// it leaves the source. A short page means the end of the list.
+  Future<List<Job>> getPage({
+    required int offset,
+    required int limit,
+    JobStatus? status,
+    String? search,
+  }) => source.getJobsPage(
+    offset: offset,
+    limit: limit,
+    status: status,
+    search: search,
+  );
 
   /// The newest jobs only, for overview surfaces that show a short list.
   Future<List<Job>> getRecent() => source.getRecentJobs();
+
+  /// A single job by id, for one that no loaded page holds.
+  Future<Job?> getById(int id) => source.getJob(id);
+
+  /// How many jobs sit in each status, across the whole table or just one
+  /// user's.
+  Future<Map<JobStatus, int>> statusCounts({String? createdBy}) =>
+      source.getStatusCounts(createdBy: createdBy);
 
   /// Stores [job] as a new entry, media included.
   Future<void> save(Job job) => source.saveJob(job);

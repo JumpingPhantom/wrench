@@ -318,4 +318,40 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get viewPhoto => 'عرض الصورة';
+
+  @override
+  String get progress => 'التقدّم';
+
+  @override
+  String get details => 'التفاصيل';
+
+  @override
+  String get created => 'أُنشئت';
+
+  @override
+  String get noJobsFoundHint => 'جرّب تصفية أخرى أو كلمة بحث مختلفة.';
+
+  @override
+  String get somethingWentWrong => 'حدث خطأ ما';
+
+  @override
+  String get retry => 'إعادة المحاولة';
+
+  @override
+  String get nextStep => 'الخطوة التالية';
+
+  @override
+  String get endOfList => 'هذه كل المهام';
+
+  @override
+  String get yourJobs => 'مهامك';
+
+  @override
+  String get account => 'الحساب';
+
+  @override
+  String get signOut => 'تسجيل الخروج';
+
+  @override
+  String get signOutPrompt => 'ستحتاج إلى تسجيل الدخول مرة أخرى لعرض مهامك.';
 }

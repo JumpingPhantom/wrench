@@ -451,5 +451,53 @@
   "notSignedIn": "يجب تسجيل الدخول لإنشاء مهمة",
   "@notSignedIn": {
     "description": "Error shown when submitting a job without an active session"
+  },
+  "progress": "التقدّم",
+  "@progress": {
+    "description": "Section heading above the job lifecycle track on the detail screen"
+  },
+  "details": "التفاصيل",
+  "@details": {
+    "description": "Section heading above a job's location, creator and actor rows"
+  },
+  "created": "أُنشئت",
+  "@created": {
+    "description": "Label for when a job was first created, followed by a relative time"
+  },
+  "noJobsFoundHint": "جرّب تصفية أخرى أو كلمة بحث مختلفة.",
+  "@noJobsFoundHint": {
+    "description": "Hint under the empty state on the jobs screen"
+  },
+  "somethingWentWrong": "حدث خطأ ما",
+  "@somethingWentWrong": {
+    "description": "Title of the error state shown when the jobs list fails to load"
+  },
+  "retry": "إعادة المحاولة",
+  "@retry": {
+    "description": "Button that reloads the jobs list after a failure"
+  },
+  "nextStep": "الخطوة التالية",
+  "@nextStep": {
+    "description": "Label above the button that advances a job to its next state"
+  },
+  "endOfList": "هذه كل المهام",
+  "@endOfList": {
+    "description": "Shown at the foot of the jobs list once every page has loaded"
+  },
+  "yourJobs": "مهامك",
+  "@yourJobs": {
+    "description": "Profile section heading above the signed-in user's job counts"
+  },
+  "account": "الحساب",
+  "@account": {
+    "description": "Profile section heading above settings and sign out"
+  },
+  "signOut": "تسجيل الخروج",
+  "@signOut": {
+    "description": "Signs the current user out of the app"
+  },
+  "signOutPrompt": "ستحتاج إلى تسجيل الدخول مرة أخرى لعرض مهامك.",
+  "@signOutPrompt": {
+    "description": "Body of the sign-out confirmation dialog"
   }
 }
