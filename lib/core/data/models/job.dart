@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
@@ -67,14 +65,14 @@ sealed class JobState with _$JobState {
       _$JobStateFromJson(json);
 }
 
-class _JobStateConverter implements JsonConverter<JobState, String> {
+class _JobStateConverter
+    implements JsonConverter<JobState, Map<String, dynamic>> {
   const _JobStateConverter();
 
   @override
-  JobState fromJson(String json) {
-    final decoded = jsonDecode(json) as Map<String, dynamic>;
-    final status = decoded['status'] as String?;
-    final payload = (decoded['payload'] as Map<String, dynamic>?) ?? const {};
+  JobState fromJson(dynamic json) {
+    final status = json['status'] as String?;
+    final payload = (json['payload'] as Map<String, dynamic>?) ?? const {};
 
     return switch (status) {
       'draft' => const JobState.draft(),
@@ -100,7 +98,7 @@ class _JobStateConverter implements JsonConverter<JobState, String> {
   }
 
   @override
-  String toJson(JobState state) {
+  Map<String, dynamic> toJson(JobState state) {
     final body = switch (state) {
       _Draft() => {'status': 'draft', 'payload': <String, dynamic>{}},
       _InProgress(:final startedBy, :final startedAt, :final workers) => {
@@ -132,6 +130,6 @@ class _JobStateConverter implements JsonConverter<JobState, String> {
       },
     };
 
-    return jsonEncode(body);
+    return body;
   }
 }

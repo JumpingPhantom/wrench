@@ -89,7 +89,7 @@ class _CreateJobScreenState extends ConsumerState<CreateJobScreen> {
       return;
     }
 
-    final currentUser = ref.watch(usersProvider.notifier).currentUserId;
+    final currentUser = ref.watch(currentUserIdProvider);
 
     if (currentUser == null) return;
 

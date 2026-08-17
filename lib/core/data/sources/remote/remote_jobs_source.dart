@@ -1,9 +1,10 @@
+// ignore_for_file: empty_catches, unused_catch_clause
+
 import 'dart:io';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/data/sources/jobs_source.dart';
-import 'package:wrench/core/logging/app_logger.dart';
 import 'package:wrench/core/network/supabase_client.dart';
 
 class RemoteJobsSource implements JobsSource {
@@ -15,10 +16,8 @@ class RemoteJobsSource implements JobsSource {
       final query = await client.from("jobs").select("*");
       jobs = query.map((res) => Job.fromJson(res)).toList();
 
-      AppLogger.info("RemRemoteJobsSource: $jobs");
       return jobs;
     } on PostgrestException catch (e) {
-      AppLogger.error(e.message);
       rethrow;
     }
   }
@@ -38,16 +37,12 @@ class RemoteJobsSource implements JobsSource {
         job = job.copyWith(mediaUrl: fileRef);
       } on StorageException catch (e) {
         // TODO: handle the case of failure and show a toast explaining what happened
-        AppLogger.error(e.message, StackTrace.current);
       }
     }
 
-    AppLogger.info("${job.toJson()}");
     try {
       await client.from("jobs").insert(job.toJson());
-    } on PostgrestException catch (e) {
-      AppLogger.error(e.message, StackTrace.current);
-    }
+    } on PostgrestException catch (e) {}
   }
 
   @override

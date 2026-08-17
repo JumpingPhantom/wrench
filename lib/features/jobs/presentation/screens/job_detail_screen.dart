@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/presentation/controllers/media_provider.dart';
+import 'package:wrench/core/presentation/controllers/users_provider.dart';
 import 'package:wrench/core/utils.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
@@ -15,6 +17,8 @@ class JobDetailScreen extends ConsumerWidget {
     final colorScheme = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
 
+    final mediaUrl = ref.watch(mediaUrlProvider(job.mediaUrl));
+
     return Scaffold(
       appBar: AppBar(title: Text(l10n.jobDetails)),
       body: SingleChildScrollView(
@@ -25,13 +29,20 @@ class JobDetailScreen extends ConsumerWidget {
             if (job.mediaUrl != null)
               ClipRRect(
                 borderRadius: BorderRadius.circular(16),
-                child: Image.network(
-                  job.mediaUrl!,
-                  width: double.infinity,
-                  height: 200,
-                  fit: BoxFit.cover,
-                  errorBuilder: (context, error, stackTrace) =>
-                      const SizedBox.shrink(),
+                child: mediaUrl.when(
+                  data: (data) {
+                    if (data != null) {
+                      return Image.network(
+                        data,
+                        width: double.infinity,
+                        height: 200,
+                        fit: BoxFit.cover,
+                      );
+                    }
+                    return const SizedBox.shrink();
+                  },
+                  loading: () => CircularProgressIndicator(),
+                  error: (e, st) => const SizedBox.shrink(),
                 ),
               ),
             if (job.mediaUrl != null) const SizedBox(height: 16),
@@ -67,7 +78,17 @@ class JobDetailScreen extends ConsumerWidget {
             const SizedBox(height: 12),
             _DetailRow(
               icon: Icons.person_outline,
-              label: l10n.createdBy(job.createdBy),
+              label: ref
+                  .watch(usersProvider)
+                  .when(
+                    data: (users) {
+                      return users
+                          .firstWhere((u) => u.id == job.createdBy)
+                          .fullName;
+                    },
+                    loading: () => "loading",
+                    error: (e, st) => "error",
+                  ),
             ),
             const SizedBox(height: 24),
             Text(
