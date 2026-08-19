@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/core/presentation/widgets/empty_state.dart';
+import 'package:wrench/core/presentation/widgets/error_state.dart';
 import 'package:wrench/features/home/presentation/widgets/overview_title.dart';
 import 'package:wrench/features/home/presentation/widgets/recent_jobs_body.dart';
 import 'package:wrench/features/home/presentation/widgets/recent_jobs_header.dart';
@@ -52,8 +53,14 @@ class HomeScreen extends ConsumerWidget {
           ],
         ),
       ),
-      AsyncError() => Scaffold(
-        body: Center(child: Text(l10n.somethingWentWrong)),
+      AsyncError(:final error) => Scaffold(
+        body: ErrorState(
+          error: error,
+          onRetry: () {
+            ref.invalidate(recentJobsProvider);
+            ref.invalidate(jobStatusCountsProvider);
+          },
+        ),
       ),
       _ => const Scaffold(body: Center(child: CircularProgressIndicator())),
     };

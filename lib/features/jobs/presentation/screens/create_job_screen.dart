@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/errors/exceptions.dart';
+import 'package:wrench/core/logging/app_logger.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/core/presentation/controllers/users_provider.dart';
 import 'package:wrench/core/presentation/widgets/detail_row.dart';
@@ -150,6 +151,12 @@ class _CreateJobScreenState extends ConsumerState<CreateJobScreen> {
       _reportFailure(l10n.photoUploadFailed);
       return;
     } on AppException {
+      _reportFailure(l10n.jobSaveFailed);
+      return;
+    } catch (e, stackTrace) {
+      // The button stays busy until something clears it, so nothing may leave
+      // this method uncaught — an unnamed failure would spin forever.
+      AppLogger.error("Unexpected failure saving the job", e, stackTrace);
       _reportFailure(l10n.jobSaveFailed);
       return;
     }

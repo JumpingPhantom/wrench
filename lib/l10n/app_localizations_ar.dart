@@ -395,4 +395,11 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get noJobsYetHint => 'أنشئ أول مهمة وستظهر هنا.';
+
+  @override
+  String get noConnection => 'لا يوجد اتصال';
+
+  @override
+  String get noConnectionHint =>
+      'يبدو أنك غير متصل بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.';
 }

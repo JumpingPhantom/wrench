@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/data/repositories/jobs_repository.dart';
+import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/core/presentation/controllers/users_provider.dart';
 import 'package:wrench/core/presentation/widgets/empty_state.dart';
@@ -17,7 +18,7 @@ import '../core/job_fixtures.dart';
 
 /// The create route is wired up for real, so the empty state's button is tested
 /// against where it actually lands rather than against a stub.
-Widget _app(List<Job> jobs) {
+Widget _app(List<Job> jobs, {FakeJobsSource? source}) {
   final router = GoRouter(
     routes: [
       GoRoute(path: "/", builder: (context, state) => const HomeScreen()),
@@ -31,7 +32,7 @@ Widget _app(List<Job> jobs) {
   return ProviderScope(
     overrides: [
       jobsRepositoryProvider.overrideWithValue(
-        JobsRepository(source: FakeJobsSource(jobs)),
+        JobsRepository(source: source ?? FakeJobsSource(jobs)),
       ),
       currentUserIdProvider.overrideWithValue("user-1"),
     ],
@@ -79,6 +80,32 @@ void main() {
 
       expect(find.text(l10n.whatNeedsDoing), findsOneWidget);
     });
+
+    testWidgets(
+      "offers a retry instead of a spinner when the network is down",
+      (tester) async {
+        final l10n = await _l10n();
+        final source = FakeJobsSource([jobWith(draft)])
+          ..readError = NetworkException(message: "No route to host");
+
+        await tester.pumpWidget(_app(const [], source: source));
+        await tester.pumpAndSettle();
+
+        // The screen has stopped waiting, and says why rather than spinning on.
+        expect(find.byType(CircularProgressIndicator), findsNothing);
+        expect(find.text(l10n.noConnection), findsOneWidget);
+        expect(find.text(l10n.noConnectionHint), findsOneWidget);
+        expect(find.text(l10n.retry), findsOneWidget);
+
+        // Back on the network, the same button loads the screen it failed on.
+        source.readError = null;
+        await tester.tap(find.text(l10n.retry));
+        await tester.pumpAndSettle();
+
+        expect(find.text(l10n.noConnection), findsNothing);
+        expect(find.byType(JobItem), findsOneWidget);
+      },
+    );
 
     testWidgets("shows the overview once there is a job to show", (
       tester,

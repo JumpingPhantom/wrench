@@ -37,7 +37,8 @@ class JobsCount extends ConsumerWidget {
           JobStatusPill(
             status: JobStatus.inProgress,
             label: l10n.inProgressCount(counts[JobStatus.inProgress] ?? 0),
-            onTap: () => context.go('/jobs?filter=${JobStatus.inProgress.name}'),
+            onTap: () =>
+                context.go('/jobs?filter=${JobStatus.inProgress.name}'),
           ),
           JobStatusPill(
             status: JobStatus.finished,

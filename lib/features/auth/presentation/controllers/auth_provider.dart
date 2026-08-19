@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:wrench/core/errors/exceptions.dart';
+import 'package:wrench/core/network/remote_request.dart';
 import 'package:wrench/core/network/supabase_client.dart';
 import 'package:wrench/features/auth/data/models/auth_state.dart';
 
@@ -24,9 +26,18 @@ class AuthNotifier extends Notifier<AppAuthState> {
     }
 
     try {
-      await client.auth.signInWithPassword(email: email, password: password);
+      await remoteRequest(
+        "sign in",
+        () => client.auth.signInWithPassword(email: email, password: password),
+      );
     } on AuthException catch (e) {
       state = AppAuthState.error(message: e.message);
+      return;
+    } on AppException catch (e) {
+      // Without the deadline the request carries, a phone holding a connection
+      // that goes nowhere leaves this notifier in `loading` — and the sign-in
+      // button spinning — until the platform gives up minutes later.
+      state = AppAuthState.error(message: e.message, offline: true);
       return;
     }
 

@@ -817,6 +817,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create the first job and it will show up here.'**
   String get noJobsYetHint;
+
+  /// Title shown when a request could not reach the backend
+  ///
+  /// In en, this message translates to:
+  /// **'No connection'**
+  String get noConnection;
+
+  /// Hint under the offline error state
+  ///
+  /// In en, this message translates to:
+  /// **'You appear to be offline. Check your connection and try again.'**
+  String get noConnectionHint;
 }
 
 class _AppLocalizationsDelegate

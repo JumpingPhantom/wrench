@@ -116,7 +116,10 @@ void main() {
       ];
 
       await container.read(jobsProvider.notifier).loadMore();
-      final ids = container.read(jobsProvider).requireValue.jobs
+      final ids = container
+          .read(jobsProvider)
+          .requireValue
+          .jobs
           .map((job) => job.id)
           .toList();
 

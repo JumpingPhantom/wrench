@@ -6,6 +6,7 @@ import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/data/sources/jobs_source.dart';
 import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/logging/app_logger.dart';
+import 'package:wrench/core/network/remote_request.dart';
 import 'package:wrench/core/network/supabase_client.dart';
 
 /// Supabase-backed [JobsSource]: rows in the `jobs` table, media in
@@ -26,28 +27,26 @@ class RemoteJobsSource implements JobsSource {
     JobStatus? status,
     String? search,
   }) async {
-    try {
-      var query = client.from("jobs").select("*");
+    var query = client.from("jobs").select("*");
 
-      if (status != null) {
-        query = query.eq("state->>status", status.storedName);
-      }
-
-      final term = _searchTerm(search);
-
-      if (term != null) {
-        query = query.or("title.ilike.%$term%,location.ilike.%$term%");
-      }
-
-      final rows = await query
-          .order("created_at", ascending: false)
-          .range(offset, offset + limit - 1);
-
-      return rows.map(Job.fromJson).toList();
-    } on PostgrestException catch (e, stackTrace) {
-      AppLogger.error("Failed to load jobs page at $offset", e, stackTrace);
-      throw NetworkException(message: e.message, stackTrace: stackTrace);
+    if (status != null) {
+      query = query.eq("state->>status", status.storedName);
     }
+
+    final term = _searchTerm(search);
+
+    if (term != null) {
+      query = query.or("title.ilike.%$term%,location.ilike.%$term%");
+    }
+
+    final rows = await remoteRequest(
+      "load jobs page at $offset",
+      () => query
+          .order("created_at", ascending: false)
+          .range(offset, offset + limit - 1),
+    );
+
+    return rows.map(Job.fromJson).toList();
   }
 
   /// Strips what `or()` reads as syntax before the term reaches it.
@@ -63,18 +62,12 @@ class RemoteJobsSource implements JobsSource {
 
   @override
   Future<Job?> getJob(int id) async {
-    try {
-      final row = await client
-          .from("jobs")
-          .select("*")
-          .eq("id", id)
-          .maybeSingle();
+    final row = await remoteRequest(
+      "load job $id",
+      () => client.from("jobs").select("*").eq("id", id).maybeSingle(),
+    );
 
-      return row == null ? null : Job.fromJson(row);
-    } on PostgrestException catch (e, stackTrace) {
-      AppLogger.error("Failed to load job $id", e, stackTrace);
-      throw NetworkException(message: e.message, stackTrace: stackTrace);
-    }
+    return row == null ? null : Job.fromJson(row);
   }
 
   /// Tallies statuses over a single column.
@@ -83,47 +76,41 @@ class RemoteJobsSource implements JobsSource {
   /// each, and the column is small enough that the saving is worth the rows.
   @override
   Future<Map<JobStatus, int>> getStatusCounts({String? createdBy}) async {
-    try {
-      var query = client.from("jobs").select("state");
+    var query = client.from("jobs").select("state");
 
-      if (createdBy != null) {
-        query = query.eq("created_by", createdBy);
-      }
-
-      final counts = {for (final status in JobStatus.values) status: 0};
-
-      for (final row in await query) {
-        final state = row["state"] as Map<String, dynamic>?;
-        final status = JobStatusColumn.fromStored(state?["status"] as String?);
-
-        if (status != null) counts[status] = counts[status]! + 1;
-      }
-
-      return counts;
-    } on PostgrestException catch (e, stackTrace) {
-      AppLogger.error("Failed to count jobs by status", e, stackTrace);
-      throw NetworkException(message: e.message, stackTrace: stackTrace);
+    if (createdBy != null) {
+      query = query.eq("created_by", createdBy);
     }
+
+    final rows = await remoteRequest("count jobs by status", () => query);
+    final counts = {for (final status in JobStatus.values) status: 0};
+
+    for (final row in rows) {
+      final state = row["state"] as Map<String, dynamic>?;
+      final status = JobStatusColumn.fromStored(state?["status"] as String?);
+
+      if (status != null) counts[status] = counts[status]! + 1;
+    }
+
+    return counts;
   }
 
   /// Applies [_recentJobsLimit] in the query rather than after the fact, so the
   /// request stays the same size however long the history gets.
   @override
   Future<List<Job>> getRecentJobs() async {
-    try {
-      // Postgres makes no ordering guarantee without an explicit ORDER BY, so
-      // the limit below would otherwise return an arbitrary four rows.
-      final rows = await client
+    // Postgres makes no ordering guarantee without an explicit ORDER BY, so
+    // the limit below would otherwise return an arbitrary four rows.
+    final rows = await remoteRequest(
+      "load recent jobs",
+      () => client
           .from("jobs")
           .select("*")
           .order("created_at", ascending: false)
-          .limit(_recentJobsLimit);
+          .limit(_recentJobsLimit),
+    );
 
-      return rows.map(Job.fromJson).toList();
-    } on PostgrestException catch (e, stackTrace) {
-      AppLogger.error("Failed to load recent jobs", e, stackTrace);
-      throw NetworkException(message: e.message, stackTrace: stackTrace);
-    }
+    return rows.map(Job.fromJson).toList();
   }
 
   /// Inserts [job], rewriting [Job.mediaUrl] from the local capture path to the
@@ -138,12 +125,10 @@ class RemoteJobsSource implements JobsSource {
       job = job.copyWith(mediaUrl: await _uploadMedia(localPath));
     }
 
-    try {
-      await client.from("jobs").insert(job.toJson());
-    } on PostgrestException catch (e, stackTrace) {
-      AppLogger.error("Failed to save job", e, stackTrace);
-      throw NetworkException(message: e.message, stackTrace: stackTrace);
-    }
+    await remoteRequest(
+      "save job",
+      () => client.from("jobs").insert(job.toJson()),
+    );
   }
 
   /// Sends only the mutable columns; media is not re-uploaded here, so an
@@ -166,19 +151,12 @@ class RemoteJobsSource implements JobsSource {
       ..remove("created_at")
       ..remove("created_by");
 
-    try {
-      final row = await client
-          .from("jobs")
-          .update(payload)
-          .eq("id", id)
-          .select()
-          .single();
+    final row = await remoteRequest(
+      "update job $id",
+      () => client.from("jobs").update(payload).eq("id", id).select().single(),
+    );
 
-      return Job.fromJson(row);
-    } on PostgrestException catch (e, stackTrace) {
-      AppLogger.error("Failed to update job $id", e, stackTrace);
-      throw NetworkException(message: e.message, stackTrace: stackTrace);
-    }
+    return Job.fromJson(row);
   }
 
   /// Uploads the captured file and returns its **bucket-relative** object path.
@@ -193,9 +171,13 @@ class RemoteJobsSource implements JobsSource {
         "${p.extension(localPath)}";
 
     try {
-      await client.storage
-          .from(mediaBucket)
-          .upload(objectPath, File(localPath));
+      await remoteRequest(
+        "upload job media",
+        () => client.storage
+            .from(mediaBucket)
+            .upload(objectPath, File(localPath)),
+        timeout: uploadTimeout,
+      );
 
       return objectPath;
     } on StorageException catch (e, stackTrace) {

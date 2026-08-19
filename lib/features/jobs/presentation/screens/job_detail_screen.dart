@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/errors/exceptions.dart';
+import 'package:wrench/core/logging/app_logger.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/core/presentation/controllers/users_provider.dart';
 import 'package:wrench/core/presentation/theme/job_status_style.dart';
 import 'package:wrench/core/presentation/widgets/detail_row.dart';
+import 'package:wrench/core/presentation/widgets/error_state.dart';
 import 'package:wrench/core/presentation/widgets/job_image.dart';
 import 'package:wrench/core/presentation/widgets/job_image_viewer.dart';
 import 'package:wrench/core/presentation/widgets/job_status_chip.dart';
@@ -46,9 +48,22 @@ class JobDetailScreen extends ConsumerWidget {
 
     if (found != null) return _JobDetailView(job: found);
 
-    return resolved.isLoading
-        ? _Message(l10n: l10n, child: const CircularProgressIndicator())
-        : _Message(text: l10n.jobNotFound, l10n: l10n);
+    // A lookup that failed is not a job that does not exist: saying "not found"
+    // when the phone is offline sends the user looking for the wrong problem.
+    return switch (resolved) {
+      AsyncError(:final error) => _Message(
+        l10n: l10n,
+        child: ErrorState(
+          error: error,
+          onRetry: () => ref.invalidate(jobByIdProvider(id)),
+        ),
+      ),
+      AsyncLoading() => _Message(
+        l10n: l10n,
+        child: const CircularProgressIndicator(),
+      ),
+      _ => _Message(text: l10n.jobNotFound, l10n: l10n),
+    };
   }
 }
 
@@ -120,6 +135,11 @@ class _JobDetailViewState extends ConsumerState<_JobDetailView> {
 
       if (mounted) setState(() => _transitioned = updated);
     } on AppException {
+      _showError(l10n.jobUpdateFailed);
+    } catch (e, stackTrace) {
+      // Nothing may leave this method uncaught: the button is busy until the
+      // `finally` below runs, and an escaping error would leave it spinning.
+      AppLogger.error("Unexpected failure applying $action", e, stackTrace);
       _showError(l10n.jobUpdateFailed);
     } finally {
       if (mounted) setState(() => _busy = false);
@@ -428,10 +448,7 @@ class _HeaderBar extends StatelessWidget {
                   children: [
                     Icon(Icons.block, size: 20, color: colors.error),
                     const SizedBox(width: 12),
-                    Text(
-                      l10n.cancelJob,
-                      style: TextStyle(color: colors.error),
-                    ),
+                    Text(l10n.cancelJob, style: TextStyle(color: colors.error)),
                   ],
                 ),
               ),
@@ -702,7 +719,9 @@ class _TimeRow extends StatelessWidget {
         Expanded(
           child: Text(
             text,
-            style: Theme.of(context).textTheme.bodySmall?.copyWith(color: color),
+            style: Theme.of(
+              context,
+            ).textTheme.bodySmall?.copyWith(color: color),
           ),
         ),
       ],

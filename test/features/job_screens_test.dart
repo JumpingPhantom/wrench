@@ -5,6 +5,7 @@ import 'package:wrench/app/theme.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/data/models/user.dart';
 import 'package:wrench/core/data/repositories/jobs_repository.dart';
+import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/core/presentation/controllers/settings_provider.dart';
 import 'package:wrench/core/presentation/controllers/users_provider.dart';
@@ -36,13 +37,14 @@ Widget _app(
   Widget home,
   List<Job> jobs, {
   Brightness brightness = Brightness.light,
+  FakeJobsSource? source,
 }) {
   return ProviderScope(
     // The real notifier over a fake source, so paging, filtering and counting
     // are the app's own code rather than a stand-in for it.
     overrides: [
       jobsRepositoryProvider.overrideWithValue(
-        JobsRepository(source: FakeJobsSource(jobs)),
+        JobsRepository(source: source ?? FakeJobsSource(jobs)),
       ),
       currentUserIdProvider.overrideWithValue("user-1"),
       usersProvider.overrideWith(
@@ -86,6 +88,28 @@ void main() {
 
       expect(find.byType(JobItem), findsNWidgets(jobs.length));
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets("offers a retry rather than a spinner with the network down", (
+      tester,
+    ) async {
+      final source = FakeJobsSource(jobs)
+        ..readError = NetworkException(message: "No route to host");
+
+      await tester.pumpWidget(_app(const JobsScreen(), jobs, source: source));
+      await tester.pumpAndSettle();
+
+      final l10n = await _l10n();
+
+      expect(find.text(l10n.noConnection), findsOneWidget);
+      expect(find.text(l10n.retry), findsOneWidget);
+      expect(find.byType(JobItem), findsNothing);
+
+      source.readError = null;
+      await tester.tap(find.text(l10n.retry));
+      await tester.pumpAndSettle();
+
+      expect(find.byType(JobItem), findsNWidgets(jobs.length));
     });
 
     testWidgets("opens on the filter the route asked for", (tester) async {
@@ -155,11 +179,9 @@ void main() {
       final job = _job(inProgress);
 
       await tester.pumpWidget(
-        _app(
-          JobDetailScreen(jobId: job.id, job: job),
-          [job],
-          brightness: Brightness.dark,
-        ),
+        _app(JobDetailScreen(jobId: job.id, job: job), [
+          job,
+        ], brightness: Brightness.dark),
       );
       await tester.pumpAndSettle();
 

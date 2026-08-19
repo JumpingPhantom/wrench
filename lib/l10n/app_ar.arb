@@ -561,5 +561,13 @@
   "noJobsYetHint": "أنشئ أول مهمة وستظهر هنا.",
   "@noJobsYetHint": {
     "description": "Empty state hint on the overview"
+  },
+  "noConnection": "لا يوجد اتصال",
+  "@noConnection": {
+    "description": "Title shown when a request could not reach the backend"
+  },
+  "noConnectionHint": "يبدو أنك غير متصل بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.",
+  "@noConnectionHint": {
+    "description": "Hint under the offline error state"
   }
 }

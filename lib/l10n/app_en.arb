@@ -561,5 +561,13 @@
   "noJobsYetHint": "Create the first job and it will show up here.",
   "@noJobsYetHint": {
     "description": "Empty state hint on the overview"
+  },
+  "noConnection": "No connection",
+  "@noConnection": {
+    "description": "Title shown when a request could not reach the backend"
+  },
+  "noConnectionHint": "You appear to be offline. Check your connection and try again.",
+  "@noConnectionHint": {
+    "description": "Hint under the offline error state"
   }
 }

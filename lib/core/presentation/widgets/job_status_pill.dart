@@ -48,9 +48,7 @@ class JobStatusPill extends StatelessWidget {
       color: style.container,
       borderRadius: BorderRadius.circular(999),
       clipBehavior: Clip.antiAlias,
-      child: onTap == null
-          ? content
-          : InkWell(onTap: onTap, child: content),
+      child: onTap == null ? content : InkWell(onTap: onTap, child: content),
     );
   }
 }

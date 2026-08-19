@@ -12,6 +12,11 @@ class FakeJobsSource implements JobsSource {
 
   List<Job> jobs;
 
+  /// When set, every read throws it instead of answering, which is how a test
+  /// drives a screen with the network down. Clearing it and retrying is how it
+  /// drives the recovery.
+  AppException? readError;
+
   /// When set, [saveJob] throws it instead of storing, which is how a test
   /// drives the failure a real save can hit (a photo that will not upload, a
   /// table that rejects the row) without a backend to break.
@@ -30,6 +35,7 @@ class FakeJobsSource implements JobsSource {
     JobStatus? status,
     String? search,
   }) async {
+    _failIfAsked();
     requests.add((
       offset: offset,
       limit: limit,
@@ -53,10 +59,15 @@ class FakeJobsSource implements JobsSource {
   }
 
   @override
-  Future<List<Job>> getRecentJobs() async => jobs.take(4).toList();
+  Future<List<Job>> getRecentJobs() async {
+    _failIfAsked();
+    return jobs.take(4).toList();
+  }
 
   @override
   Future<Job?> getJob(int id) async {
+    _failIfAsked();
+
     for (final job in jobs) {
       if (job.id == id) return job;
     }
@@ -65,6 +76,7 @@ class FakeJobsSource implements JobsSource {
 
   @override
   Future<Map<JobStatus, int>> getStatusCounts({String? createdBy}) async {
+    _failIfAsked();
     final counts = {for (final status in JobStatus.values) status: 0};
 
     for (final job in jobs) {
@@ -95,4 +107,9 @@ class FakeJobsSource implements JobsSource {
   @override
   Future<void> deleteJob(Job job) async =>
       jobs = jobs.where((existing) => existing.id != job.id).toList();
+
+  void _failIfAsked() {
+    final error = readError;
+    if (error != null) throw error;
+  }
 }

@@ -1,7 +1,9 @@
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wrench/core/data/sources/media_source.dart';
+import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/data/sources/remote/remote_jobs_source.dart';
 import 'package:wrench/core/logging/app_logger.dart';
+import 'package:wrench/core/network/remote_request.dart';
 import 'package:wrench/core/network/supabase_client.dart';
 
 /// Supabase-backed [MediaSource]: signs objects held in
@@ -20,13 +22,20 @@ class RemoteMediaSource extends MediaSource {
     if (path == null) return null;
 
     try {
-      return await client.storage
-          .from(RemoteJobsSource.mediaBucket)
-          .createSignedUrl(path, _signedUrlTtl.inSeconds);
+      return await remoteRequest(
+        "sign media URL for '$path'",
+        () => client.storage
+            .from(RemoteJobsSource.mediaBucket)
+            .createSignedUrl(path, _signedUrlTtl.inSeconds),
+      );
     } on StorageException catch (e, stackTrace) {
       // A missing or unreadable image degrades to a placeholder rather than
       // taking down the screen around it.
       AppLogger.error("Failed to sign media URL for '$path'", e, stackTrace);
+      return null;
+    } on AppException {
+      // So does an image the network could not fetch: the screen around it is
+      // already reporting that for itself.
       return null;
     }
   }

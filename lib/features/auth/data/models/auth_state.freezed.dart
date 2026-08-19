@@ -128,13 +128,13 @@ return error(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String userId)?  authenticated,TResult Function( String message)?  error,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( String userId)?  authenticated,TResult Function( String message,  bool offline)?  error,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthAuthenticated() when authenticated != null:
 return authenticated(_that.userId);case AuthError() when error != null:
-return error(_that.message);case _:
+return error(_that.message,_that.offline);case _:
   return orElse();
 
 }
@@ -152,13 +152,13 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String userId)  authenticated,required TResult Function( String message)  error,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( String userId)  authenticated,required TResult Function( String message,  bool offline)  error,}) {final _that = this;
 switch (_that) {
 case AuthInitial():
 return initial();case AuthLoading():
 return loading();case AuthAuthenticated():
 return authenticated(_that.userId);case AuthError():
-return error(_that.message);case _:
+return error(_that.message,_that.offline);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -175,13 +175,13 @@ return error(_that.message);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String userId)?  authenticated,TResult? Function( String message)?  error,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( String userId)?  authenticated,TResult? Function( String message,  bool offline)?  error,}) {final _that = this;
 switch (_that) {
 case AuthInitial() when initial != null:
 return initial();case AuthLoading() when loading != null:
 return loading();case AuthAuthenticated() when authenticated != null:
 return authenticated(_that.userId);case AuthError() when error != null:
-return error(_that.message);case _:
+return error(_that.message,_that.offline);case _:
   return null;
 
 }
@@ -323,10 +323,11 @@ as String,
 
 
 class AuthError implements AppAuthState {
-  const AuthError({required this.message});
+  const AuthError({required this.message, this.offline = false});
   
 
  final  String message;
+@JsonKey() final  bool offline;
 
 /// Create a copy of AppAuthState
 /// with the given fields replaced by the non-null parameter values.
@@ -338,16 +339,16 @@ $AuthErrorCopyWith<AuthError> get copyWith => _$AuthErrorCopyWithImpl<AuthError>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthError&&(identical(other.message, message) || other.message == message));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is AuthError&&(identical(other.message, message) || other.message == message)&&(identical(other.offline, offline) || other.offline == offline));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode => Object.hash(runtimeType,message,offline);
 
 @override
 String toString() {
-  return 'AppAuthState.error(message: $message)';
+  return 'AppAuthState.error(message: $message, offline: $offline)';
 }
 
 
@@ -358,7 +359,7 @@ abstract mixin class $AuthErrorCopyWith<$Res> implements $AppAuthStateCopyWith<$
   factory $AuthErrorCopyWith(AuthError value, $Res Function(AuthError) _then) = _$AuthErrorCopyWithImpl;
 @useResult
 $Res call({
- String message
+ String message, bool offline
 });
 
 
@@ -375,10 +376,11 @@ class _$AuthErrorCopyWithImpl<$Res>
 
 /// Create a copy of AppAuthState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? message = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? message = null,Object? offline = null,}) {
   return _then(AuthError(
 message: null == message ? _self.message : message // ignore: cast_nullable_to_non_nullable
-as String,
+as String,offline: null == offline ? _self.offline : offline // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

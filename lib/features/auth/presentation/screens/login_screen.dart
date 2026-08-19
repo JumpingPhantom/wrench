@@ -45,10 +45,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     ref.listen<AppAuthState>(authProvider, (previous, next) {
       next.whenOrNull(
         authenticated: (_) => context.go('/'),
-        error: (message) {
-          ScaffoldMessenger.of(
-            context,
-          ).showSnackBar(SnackBar(content: Text(message)));
+        // A network failure is reported in the user's own language; anything
+        // else is the backend's own wording about the credentials given.
+        error: (message, offline) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(content: Text(offline ? l10n.noConnectionHint : message)),
+          );
         },
       );
     });

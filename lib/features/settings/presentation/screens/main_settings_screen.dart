@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:wrench/core/presentation/controllers/settings_provider.dart';
 import 'package:wrench/core/presentation/widgets/detail_row.dart';
+import 'package:wrench/core/presentation/widgets/error_state.dart';
 import 'package:wrench/core/presentation/widgets/section_card.dart';
 import 'package:wrench/features/settings/presentation/widgets/settings_widgets.dart';
 import 'package:wrench/l10n/app_localizations.dart';
@@ -63,7 +64,10 @@ class MainSettingsScreen extends ConsumerWidget {
             ),
           ],
         ),
-        AsyncError() => Center(child: Text(l10n.somethingWentWrong)),
+        AsyncError(:final error) => ErrorState(
+          error: error,
+          onRetry: () => ref.invalidate(settingsProvider),
+        ),
         _ => const Center(child: CircularProgressIndicator()),
       },
     );

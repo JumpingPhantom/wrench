@@ -8,6 +8,7 @@ import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/core/presentation/widgets/empty_state.dart';
+import 'package:wrench/core/presentation/widgets/error_state.dart';
 import 'package:wrench/core/presentation/widgets/job_item.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_filter_bar.dart';
 import 'package:wrench/l10n/app_localizations.dart';
@@ -175,7 +176,10 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
                 onRefresh: _refresh,
                 l10n: l10n,
               ),
-              AsyncError() => _ErrorState(l10n: l10n, onRetry: _refresh),
+              AsyncError(:final error) => ErrorState(
+                error: error,
+                onRetry: _refresh,
+              ),
               _ => const _LoadingList(),
             },
           ),
@@ -339,55 +343,6 @@ class _EmptyState extends StatelessWidget {
       icon: Icons.search_off,
       title: l10n.noJobsFound,
       message: l10n.noJobsFoundHint,
-    );
-  }
-}
-
-class _ErrorState extends StatelessWidget {
-  const _ErrorState({required this.l10n, required this.onRetry});
-
-  final AppLocalizations l10n;
-  final Future<void> Function() onRetry;
-
-  @override
-  Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: colors.errorContainer,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.cloud_off,
-                size: 32,
-                color: colors.onErrorContainer,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              l10n.somethingWentWrong,
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 16),
-            FilledButton.tonalIcon(
-              onPressed: onRetry,
-              icon: const Icon(Icons.refresh),
-              label: Text(l10n.retry),
-            ),
-          ],
-        ),
-      ),
     );
   }
 }

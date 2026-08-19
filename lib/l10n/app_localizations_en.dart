@@ -397,4 +397,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noJobsYetHint => 'Create the first job and it will show up here.';
+
+  @override
+  String get noConnection => 'No connection';
+
+  @override
+  String get noConnectionHint =>
+      'You appear to be offline. Check your connection and try again.';
 }

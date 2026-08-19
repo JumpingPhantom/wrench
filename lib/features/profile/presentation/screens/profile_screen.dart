@@ -6,6 +6,7 @@ import 'package:wrench/core/data/models/user.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/core/presentation/controllers/users_provider.dart';
 import 'package:wrench/core/presentation/widgets/detail_row.dart';
+import 'package:wrench/core/presentation/widgets/error_state.dart';
 import 'package:wrench/core/presentation/widgets/job_status_pill.dart';
 import 'package:wrench/core/presentation/widgets/section_card.dart';
 import 'package:wrench/features/auth/presentation/controllers/auth_provider.dart';
@@ -27,7 +28,13 @@ class ProfileScreen extends ConsumerWidget {
       appBar: AppBar(title: Text(l10n.profile)),
       body: switch (ref.watch(currentUserProvider)) {
         AsyncData(value: final user?) => _ProfileBody(user: user, l10n: l10n),
-        AsyncData() || AsyncError() => Center(child: Text(l10n.unknownUser)),
+        // A profile that loaded and held nobody is a different answer from one
+        // that never loaded: only the second is worth retrying.
+        AsyncData() => Center(child: Text(l10n.unknownUser)),
+        AsyncError(:final error) => ErrorState(
+          error: error,
+          onRetry: () => ref.invalidate(usersProvider),
+        ),
         _ => const Center(child: CircularProgressIndicator()),
       },
     );
@@ -154,9 +161,7 @@ class _Identity extends StatelessWidget {
           end: Alignment.bottomRight,
           colors: [colors.primaryContainer, colors.surfaceContainerLow],
         ),
-        border: Border.all(
-          color: colors.outlineVariant.withValues(alpha: 0.5),
-        ),
+        border: Border.all(color: colors.outlineVariant.withValues(alpha: 0.5)),
       ),
       child: Column(
         children: [
