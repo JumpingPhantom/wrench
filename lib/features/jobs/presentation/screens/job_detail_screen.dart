@@ -297,13 +297,17 @@ class _JobDetailViewState extends ConsumerState<_JobDetailView> {
 
   /// A user's display name, falling back to a placeholder while the profile
   /// list loads or when it cannot be resolved at all.
+  ///
+  /// A lookup that failed says so rather than borrowing "unknown user": the two
+  /// read the same to a user but not to whoever is debugging, and reporting a
+  /// broken profile list as a missing person is what hid one for a while.
   String _userName(String id, AppLocalizations l10n) {
     return ref
         .watch(userByIdProvider(id))
         .when(
           data: (user) => user?.fullName ?? l10n.unknownUser,
           loading: () => "…",
-          error: (_, _) => l10n.unknownUser,
+          error: (_, _) => l10n.somethingWentWrong,
         );
   }
 }

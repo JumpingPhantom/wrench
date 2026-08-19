@@ -45,6 +45,41 @@ class OperationException extends AppException {
   String get label => "Operation error";
 }
 
+/// The backend answered, but with a payload this app could not read.
+///
+/// A column that is absent, a value outside the enum it maps to, a timestamp
+/// that will not parse: the table and the model disagree. Worth its own type
+/// because it is the one backend failure retrying cannot help — and because
+/// the parsers underneath raise [Error]s (a `TypeError` for a missing column,
+/// an `ArgumentError` for an unmapped enum value), which slip past every
+/// `on AppException` in the app and surface as an empty screen with no
+/// explanation.
+class ParsingException extends AppException {
+  ParsingException({
+    required super.message,
+    this.source,
+    this.cause,
+    super.stackTrace,
+  });
+
+  /// What was being read — a table name, usually.
+  final String? source;
+
+  /// What the parser threw underneath, kept so a caller can report the actual
+  /// mismatch rather than the fact that there was one.
+  final Object? cause;
+
+  @override
+  String get label => "Parsing error";
+
+  @override
+  String toString() {
+    final where = source == null ? "" : " in '$source'";
+    final why = cause == null ? "" : " ($cause)";
+    return "$label$where: $message$why";
+  }
+}
+
 /// The app is missing configuration it needs to run.
 class ConfigurationException extends AppException {
   ConfigurationException({required super.message, super.stackTrace});

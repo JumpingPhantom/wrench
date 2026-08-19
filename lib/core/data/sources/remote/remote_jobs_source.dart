@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/data/parsing.dart';
 import 'package:wrench/core/data/sources/jobs_source.dart';
 import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/logging/app_logger.dart';
@@ -46,7 +47,7 @@ class RemoteJobsSource implements JobsSource {
           .range(offset, offset + limit - 1),
     );
 
-    return rows.map(Job.fromJson).toList();
+    return parseRows("jobs", rows, Job.fromJson);
   }
 
   /// Strips what `or()` reads as syntax before the term reaches it.
@@ -67,7 +68,7 @@ class RemoteJobsSource implements JobsSource {
       () => client.from("jobs").select("*").eq("id", id).maybeSingle(),
     );
 
-    return row == null ? null : Job.fromJson(row);
+    return row == null ? null : parsePayload("jobs", () => Job.fromJson(row));
   }
 
   /// Tallies statuses over a single column.
@@ -83,16 +84,19 @@ class RemoteJobsSource implements JobsSource {
     }
 
     final rows = await remoteRequest("count jobs by status", () => query);
-    final counts = {for (final status in JobStatus.values) status: 0};
 
-    for (final row in rows) {
-      final state = row["state"] as Map<String, dynamic>?;
-      final status = JobStatusColumn.fromStored(state?["status"] as String?);
+    return parsePayload("jobs", () {
+      final counts = {for (final status in JobStatus.values) status: 0};
 
-      if (status != null) counts[status] = counts[status]! + 1;
-    }
+      for (final row in rows) {
+        final state = row["state"] as Map<String, dynamic>?;
+        final status = JobStatusColumn.fromStored(state?["status"] as String?);
 
-    return counts;
+        if (status != null) counts[status] = counts[status]! + 1;
+      }
+
+      return counts;
+    });
   }
 
   /// Applies [_recentJobsLimit] in the query rather than after the fact, so the
@@ -110,7 +114,7 @@ class RemoteJobsSource implements JobsSource {
           .limit(_recentJobsLimit),
     );
 
-    return rows.map(Job.fromJson).toList();
+    return parseRows("jobs", rows, Job.fromJson);
   }
 
   /// Inserts [job], rewriting [Job.mediaUrl] from the local capture path to the
@@ -156,7 +160,7 @@ class RemoteJobsSource implements JobsSource {
       () => client.from("jobs").update(payload).eq("id", id).select().single(),
     );
 
-    return Job.fromJson(row);
+    return parsePayload("jobs", () => Job.fromJson(row));
   }
 
   /// Uploads the captured file and returns its **bucket-relative** object path.
