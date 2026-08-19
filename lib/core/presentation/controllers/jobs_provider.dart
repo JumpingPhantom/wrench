@@ -1,10 +1,13 @@
 import 'dart:async';
+import 'dart:math' as math;
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/data/models/job_change.dart';
 import 'package:wrench/core/data/repositories/jobs_repository.dart';
 import 'package:wrench/core/data/sources/remote/remote_jobs_source.dart';
 import 'package:wrench/core/errors/exceptions.dart';
+import 'package:wrench/core/logging/app_logger.dart';
 import 'package:wrench/core/presentation/controllers/users_provider.dart';
 
 /// Where every job read and write in the app goes.
@@ -15,6 +18,37 @@ final jobsRepositoryProvider = Provider((ref) {
   return JobsRepository(source: RemoteJobsSource());
 });
 
+/// Changes to the stored jobs, as they happen.
+///
+/// One feed for the whole app rather than one per screen: it is a socket, and
+/// every view below wants the same events off it. Deliberately not auto-
+/// disposed for the same reason — the channel should survive moving between
+/// tabs. [AuthNotifier.logout] is what closes it.
+final jobChangesProvider = StreamProvider<JobChange>((ref) {
+  return ref.watch(jobsRepositoryProvider).watch();
+});
+
+/// Refetches this provider whenever the change feed reports anything.
+///
+/// For the views that are limited or counted at the source: there is nothing in
+/// them to patch, since the only way to know the newest four jobs after an
+/// insert is to ask for them again.
+///
+/// Each of them listens for itself rather than being driven from
+/// [JobsNotifier], because the overview watches the recent list without ever
+/// building the paged one — refreshing these from the jobs list would leave the
+/// home screen frozen for anyone who does not open that tab.
+extension _RefetchOnChange on Ref {
+  void refetchOnJobChange() {
+    listen(jobChangesProvider, (_, next) {
+      // Only a delivered event counts. An [AsyncError] carries the last value
+      // forward with it, and refetching over a feed that has just failed helps
+      // nobody.
+      if (next case AsyncData()) invalidateSelf();
+    });
+  }
+}
+
 /// What the jobs list is currently asking for.
 ///
 /// Both fields are applied by the database rather than to the loaded pages, so
@@ -24,6 +58,30 @@ class JobsQuery {
 
   final JobStatus? status;
   final String search;
+
+  /// Whether [job] belongs in a list narrowed by this query.
+  ///
+  /// The one place the app evaluates its own query, and it exists for the
+  /// change feed alone: a job arriving on it has to be placed without a round
+  /// trip to ask the database where it goes. A mirror of what
+  /// [RemoteJobsSource.getJobsPage] asks for — `ilike '%term%'` is a
+  /// case-insensitive substring match, which is what this is.
+  ///
+  /// The mirror is not exact. The source blanks the characters `or()` reads as
+  /// syntax before the term reaches it, so a search containing one of them is
+  /// matched slightly differently here than there. It costs one row sitting in
+  /// or out of a filtered list until the next fetch, and the next fetch is what
+  /// settles it.
+  bool matches(Job job) {
+    if (status != null && job.status != status) return false;
+
+    final term = search.trim().toLowerCase();
+
+    if (term.isEmpty) return true;
+
+    return job.title.toLowerCase().contains(term) ||
+        job.location.toLowerCase().contains(term);
+  }
 
   @override
   bool operator ==(Object other) =>
@@ -86,7 +144,19 @@ class JobsNotifier extends AsyncNotifier<JobsPage> {
   JobsQuery _query = const JobsQuery();
 
   @override
-  Future<JobsPage> build() => _firstPage(_query);
+  Future<JobsPage> build() {
+    // Listened to rather than watched: a change is reconciled into the pages
+    // already loaded, and rebuilding the whole notifier for one row would throw
+    // away the scroll position and every page after the first.
+    //
+    // Registered here, where Riverpod tears it down and sets it up again on
+    // each rebuild, so repeated invalidation does not stack up subscriptions.
+    ref.listen(jobChangesProvider, (_, next) {
+      if (next case AsyncData(:final value)) _reconcile(value);
+    });
+
+    return _firstPage(_query);
+  }
 
   Future<JobsPage> _firstPage(JobsQuery query) async {
     final jobs = await _jobsRepository.getPage(
@@ -104,6 +174,124 @@ class JobsNotifier extends AsyncNotifier<JobsPage> {
       hasMore: jobs.length == pageSize,
       query: query,
     );
+  }
+
+  /// Brings the loaded pages into line with one change from the feed.
+  ///
+  /// The derived views are left alone here: they refresh themselves off the
+  /// same feed, and they have to, since this notifier is not built at all for a
+  /// user who never opens the jobs list.
+  void _reconcile(JobChange change) {
+    final current = state.value;
+
+    if (current == null) {
+      // Nothing loaded to reconcile against. A feed that has just come back is
+      // still worth acting on though: whatever failed to load may well load now
+      // that there is a connection again.
+      if (change is JobsDesynced) ref.invalidateSelf();
+      return;
+    }
+
+    switch (change) {
+      case JobUpserted(:final job):
+        _upsert(current, job);
+      case JobRemoved(:final id):
+        state = AsyncData(
+          current.copyWith(
+            jobs: current.jobs.where((existing) => existing.id != id).toList(),
+          ),
+        );
+      case JobsDesynced():
+        unawaited(_resync(current));
+    }
+  }
+
+  /// Places [job] in the loaded pages, wherever the next fetch would put it.
+  void _upsert(JobsPage current, Job job) {
+    final index = current.jobs.indexWhere((existing) => existing.id == job.id);
+
+    if (index >= 0) {
+      final jobs = [...current.jobs];
+
+      // Its position cannot have moved: the list is ordered by `created_at`
+      // and `id`, and an update changes neither. What can change is whether the
+      // job still answers the active filter — one that no longer does leaves,
+      // rather than sitting in the list wearing a status the filter excludes.
+      if (current.query.matches(job)) {
+        jobs[index] = job;
+      } else {
+        jobs.removeAt(index);
+      }
+
+      state = AsyncData(current.copyWith(jobs: jobs));
+      return;
+    }
+
+    if (!current.query.matches(job)) return;
+
+    final at = _insertionPoint(current.jobs, job);
+
+    // A job that sorts past everything loaded belongs on a page nobody has
+    // asked for. Appending it would show it directly below a row it may be
+    // hundreds of jobs away from, so it is left for `loadMore` to fetch in
+    // place.
+    if (at == current.jobs.length && current.hasMore) return;
+
+    state = AsyncData(
+      current.copyWith(jobs: [...current.jobs]..insert(at, job)),
+    );
+  }
+
+  /// Fetches the loaded window again, after the feed admits it missed something.
+  ///
+  /// The window rather than the first page: somebody scrolled a long way down
+  /// did not ask to be sent back to the top, and the pages they have open are
+  /// exactly the ones that need to be true again.
+  Future<void> _resync(JobsPage current) async {
+    final query = _query;
+    final limit = math.max(pageSize, current.jobs.length);
+
+    try {
+      final jobs = await _jobsRepository.getPage(
+        offset: 0,
+        limit: limit,
+        status: query.status,
+        search: query.search,
+      );
+
+      final latest = state.value;
+
+      // A query set while this was in flight has its own first page coming, and
+      // these jobs answer the question it replaced.
+      if (latest == null || latest.query != query) return;
+
+      state = AsyncData(
+        latest.copyWith(jobs: jobs, hasMore: jobs.length == limit),
+      );
+    } on AppException catch (e) {
+      // Nobody asked for this fetch, so nobody is waiting on it to fail. Jobs
+      // that are merely stale beat an error page over jobs that are still on
+      // screen and mostly right; the next change, or a pull-to-refresh, retries.
+      AppLogger.error("Could not resync the jobs list", e);
+    }
+  }
+
+  /// Where [job] belongs in a list held newest first.
+  int _insertionPoint(List<Job> jobs, Job job) {
+    for (var i = 0; i < jobs.length; i++) {
+      if (_newestFirst(job, jobs[i]) <= 0) return i;
+    }
+
+    return jobs.length;
+  }
+
+  /// The order [RemoteJobsSource.getJobsPage] asks the database for: newest
+  /// first, with the id breaking ties. Mirrored here so a job placed by the
+  /// feed lands where a fetch would have put it.
+  int _newestFirst(Job a, Job b) {
+    final byTime = b.createdAt.compareTo(a.createdAt);
+
+    return byTime != 0 ? byTime : (b.id ?? 0).compareTo(a.id ?? 0);
   }
 
   /// Narrows the list, starting again from the first page.
@@ -144,7 +332,9 @@ class JobsNotifier extends AsyncNotifier<JobsPage> {
       );
 
       // A job saved since the first page shifts every later row down by one,
-      // which would otherwise hand back a row the list already holds.
+      // which would otherwise hand back a row the list already holds. The feed
+      // narrows this rather than widening it: a job it inserted here is one the
+      // database gained too, so the offset above still counts to the same place.
       final seen = current.jobs.map((job) => job.id).toSet();
       final fresh = next.where((job) => !seen.contains(job.id)).toList();
 
@@ -166,7 +356,9 @@ class JobsNotifier extends AsyncNotifier<JobsPage> {
   Future<void> saveJob(Job job) async {
     await _jobsRepository.save(job);
     // Back to the first page: the new job belongs at the top, and it shifts the
-    // position of every page after it.
+    // position of every page after it. Not left to the feed, which would land
+    // the same row a round trip later — the user who filed it should see it
+    // now, and reconciling it twice puts it in the one place either way.
     state = await AsyncValue.guard(() => _firstPage(_query));
     _invalidateDerived();
   }
@@ -188,25 +380,10 @@ class JobsNotifier extends AsyncNotifier<JobsPage> {
 
     final current = state.value;
 
-    if (current != null) {
-      // A job that no longer answers the active filter leaves the list rather
-      // than sitting in it wearing a status the filter excludes.
-      final filteredOut =
-          current.query.status != null &&
-          current.query.status != updated.status;
-
-      state = AsyncData(
-        current.copyWith(
-          jobs: [
-            for (final existing in current.jobs)
-              if (existing.id != updated.id)
-                existing
-              else if (!filteredOut)
-                updated,
-          ],
-        ),
-      );
-    }
+    // Patched here rather than left to the feed for the same reason as above:
+    // the move was made on this device, and it should land before the socket
+    // gets round to confirming it. The feed's copy arrives at the same row.
+    if (current != null) _upsert(current, updated);
 
     _invalidateDerived();
 
@@ -233,6 +410,9 @@ class JobsNotifier extends AsyncNotifier<JobsPage> {
 
   /// Drops the views computed from the same rows: the overview's recent list
   /// and the status totals behind the home counters, filter chips and profile.
+  ///
+  /// Only for this app's own writes. A change that arrived on the feed is
+  /// picked up by those views themselves.
   void _invalidateDerived() {
     ref.invalidate(recentJobsProvider);
     ref.invalidate(jobStatusCountsProvider);
@@ -246,9 +426,11 @@ final jobsProvider = AsyncNotifierProvider<JobsNotifier, JobsPage>(
 /// The newest jobs, for overview surfaces that only show a short list.
 ///
 /// This is a server-side limited query rather than a slice of [jobsProvider],
-/// so it stays cheap on accounts with a long history. [JobsNotifier] refreshes
-/// it after every mutation, which is why no screen has to.
+/// so it stays cheap on accounts with a long history. It is refreshed after
+/// every mutation this app makes and after every change the feed reports, which
+/// is why no screen has to.
 final recentJobsProvider = FutureProvider<List<Job>>((ref) {
+  ref.refetchOnJobChange();
   return ref.watch(jobsRepositoryProvider).getRecent();
 });
 
@@ -258,6 +440,7 @@ final recentJobsProvider = FutureProvider<List<Job>>((ref) {
 /// the pages loaded so far.
 final jobStatusCountsProvider =
     FutureProvider.family<Map<JobStatus, int>, String?>((ref, createdBy) {
+      ref.refetchOnJobChange();
       return ref
           .watch(jobsRepositoryProvider)
           .statusCounts(createdBy: createdBy);
@@ -269,6 +452,15 @@ final jobStatusCountsProvider =
 /// A paged list is no longer a complete index, so a job opened from a deep link
 /// or a restored route may live on a page nobody has scrolled to.
 final jobByIdProvider = FutureProvider.family<Job?, int>((ref, id) async {
+  // The loaded pages reconcile themselves, and watching them below is enough
+  // for a job on one. A job that is on none — the deep-linked one this provider
+  // exists for — has nothing watching it, so the feed is followed directly.
+  ref.listen(jobChangesProvider, (_, next) {
+    if (next case AsyncData(:final value) when _concernsJob(value, id)) {
+      ref.invalidateSelf();
+    }
+  });
+
   final loaded = ref.watch(jobsProvider).value?.jobs;
 
   for (final job in loaded ?? const <Job>[]) {
@@ -277,3 +469,13 @@ final jobByIdProvider = FutureProvider.family<Job?, int>((ref, id) async {
 
   return ref.watch(jobsRepositoryProvider).getById(id);
 });
+
+/// Whether [change] could have altered the job with [id].
+///
+/// A gap in the feed counts: it cannot say what it missed, so it has to be
+/// treated as possibly having missed this.
+bool _concernsJob(JobChange change, int id) => switch (change) {
+  JobUpserted(:final job) => job.id == id,
+  JobRemoved(id: final removed) => removed == id,
+  JobsDesynced() => true,
+};

@@ -3,6 +3,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/network/remote_request.dart';
 import 'package:wrench/core/network/supabase_client.dart';
+import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
 import 'package:wrench/features/auth/data/models/auth_state.dart';
 
 class AuthNotifier extends Notifier<AppAuthState> {
@@ -47,6 +48,15 @@ class AuthNotifier extends Notifier<AppAuthState> {
   void logout() {
     client.auth.signOut();
     state = const AppAuthState.initial();
+
+    // The jobs held in memory are this session's, and the realtime channel
+    // behind them is subscribed as this session's user. Both are dropped here
+    // rather than left for the next sign-in to notice, so the next user does
+    // not open the app onto the last one's work while their own loads.
+    ref.invalidate(jobChangesProvider);
+    ref.invalidate(jobsProvider);
+    ref.invalidate(recentJobsProvider);
+    ref.invalidate(jobStatusCountsProvider);
   }
 
   void authenticate() {

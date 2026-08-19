@@ -1,4 +1,5 @@
 import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/data/models/job_change.dart';
 import 'package:wrench/core/data/sources/jobs_source.dart';
 
 /// The app's entry point for job data.
@@ -35,6 +36,10 @@ class JobsRepository {
   /// user's.
   Future<Map<JobStatus, int>> statusCounts({String? createdBy}) =>
       source.getStatusCounts(createdBy: createdBy);
+
+  /// A feed of changes to the stored jobs, so callers can keep what they have
+  /// fetched in step with the source rather than asking again.
+  Stream<JobChange> watch() => source.watchJobs();
 
   /// Stores [job] as a new entry, media included.
   Future<void> save(Job job) => source.saveJob(job);

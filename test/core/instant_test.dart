@@ -44,6 +44,24 @@ void main() {
       expect(read.isUtc, isTrue);
     });
 
+    test("reads what the realtime feed sends, not just what REST does", () {
+      // A `timestamptz` reaches the change feed as Postgres prints it rather
+      // than as PostgREST does: a space for the `T`, and an offset of hours
+      // alone. Both are read here for the first time now that jobs arrive over
+      // realtime, and both have to name the same instant REST does.
+      expect(instantFromJson("2026-08-19 16:50:00+00"), instant);
+      expect(instantFromJson("2026-08-19 19:50:00+03"), instant);
+      expect(instantFromJson("2026-08-19 11:50:00-05"), instant);
+      expect(instantFromJson("2026-08-19 16:50:00.123456+00").isUtc, isTrue);
+    });
+
+    test("reads a zoneless time as UTC whichever way it is written", () {
+      // A `timestamp` column comes off the feed with the `T` put back and no
+      // zone at all, which is this app's own convention: UTC.
+      expect(instantFromJson("2026-08-19 16:50:00"), instant);
+      expect(instantFromJson("2026-08-19T16:50:00"), instant);
+    });
+
     test("round-trips whatever it wrote", () {
       final now = DateTime.now();
 

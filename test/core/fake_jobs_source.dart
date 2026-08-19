@@ -1,4 +1,7 @@
+import 'dart:async';
+
 import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/data/models/job_change.dart';
 import 'package:wrench/core/data/sources/jobs_source.dart';
 import 'package:wrench/core/errors/exceptions.dart';
 
@@ -27,6 +30,19 @@ class FakeJobsSource implements JobsSource {
   requests = [];
 
   int get reads => requests.length;
+
+  final _changes = StreamController<JobChange>.broadcast();
+
+  @override
+  Stream<JobChange> watchJobs() => _changes.stream;
+
+  /// Pushes [change] down the feed, standing in for the backend having said so.
+  ///
+  /// Broadcast controllers drop what they are given while nobody is listening,
+  /// so a test has to have read the provider before calling this.
+  void emit(JobChange change) => _changes.add(change);
+
+  Future<void> dispose() => _changes.close();
 
   @override
   Future<List<Job>> getJobsPage({

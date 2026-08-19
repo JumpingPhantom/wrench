@@ -1,4 +1,5 @@
 import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/data/models/job_change.dart';
 import 'package:wrench/core/errors/exceptions.dart';
 
 /// Where jobs are read from and written to.
@@ -45,6 +46,22 @@ abstract class JobsSource {
   ///
   /// Throws [NetworkException] if the counts cannot be read.
   Future<Map<JobStatus, int>> getStatusCounts({String? createdBy});
+
+  /// A feed of changes to the stored jobs, for as long as it is listened to.
+  ///
+  /// It reports what changed rather than handing back the jobs themselves: the
+  /// reads above are filtered, paged and counted at the source, and none of that
+  /// can be re-derived from a snapshot pushed the other way. A caller keeps the
+  /// jobs it fetched and reconciles these against them.
+  ///
+  /// Scoped like every other read here — an implementation must not report a
+  /// change to a job the same caller could not have fetched.
+  ///
+  /// Failures are reported as [JobChange.desynced] rather than as an error on
+  /// the stream: a feed that cannot say what it missed is still a working feed
+  /// once it reconnects, and closing it would end the app's only notice that it
+  /// is now holding stale jobs.
+  Stream<JobChange> watchJobs();
 
   /// Stores [job] as a new entry, uploading its media first if it has any.
   ///

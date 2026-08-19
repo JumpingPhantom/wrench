@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:path/path.dart' as p;
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:wrench/core/data/models/job.dart';
+import 'package:wrench/core/data/models/job_change.dart';
 import 'package:wrench/core/data/parsing.dart';
 import 'package:wrench/core/data/sources/jobs_source.dart';
 import 'package:wrench/core/errors/exceptions.dart';
@@ -14,13 +16,24 @@ import 'package:wrench/core/network/supabase_client.dart';
 /// [mediaBucket].
 ///
 /// Which rows come back is decided by row-level security rather than by any
-/// filter here, so the queries below never scope by user themselves.
+/// filter here, so the queries below never scope by user themselves. The same
+/// holds for [watchJobs], with one exception noted there.
 class RemoteJobsSource implements JobsSource {
   static const mediaBucket = "media";
   static const _recentJobsLimit = 4;
 
+  /// Topic the change feed subscribes to. `channel()` does not deduplicate by
+  /// name, so a feed removes its own channel when it ends rather than leaving a
+  /// second one on the socket for the next listener to trip over.
+  static const _changesChannel = "public:jobs";
+
   /// Reads one window of the table, narrowed by status and search before it
   /// leaves the database.
+  ///
+  /// Ordered newest first, with the id breaking ties: two jobs sharing a
+  /// timestamp have no order of their own, and Postgres is free to return them
+  /// differently on each request — which in a paged list can show one row twice
+  /// and skip another entirely.
   @override
   Future<List<Job>> getJobsPage({
     required int offset,
@@ -44,6 +57,7 @@ class RemoteJobsSource implements JobsSource {
       "load jobs page at $offset",
       () => query
           .order("created_at", ascending: false)
+          .order("id", ascending: false)
           .range(offset, offset + limit - 1),
     );
 
@@ -111,10 +125,122 @@ class RemoteJobsSource implements JobsSource {
           .from("jobs")
           .select("*")
           .order("created_at", ascending: false)
+          .order("id", ascending: false)
           .limit(_recentJobsLimit),
     );
 
     return parseRows("jobs", rows, Job.fromJson);
+  }
+
+  /// Changes to the `jobs` table, over a Supabase realtime channel.
+  ///
+  /// The channel is opened when the first listener arrives and torn down when
+  /// the last one leaves, so nothing holds a socket open for a screen that is
+  /// no longer watching.
+  ///
+  /// Row-level security applies here as it does to the queries above, with one
+  /// exception: Postgres sends no row with a deletion, only the key, so a
+  /// delete cannot be matched against a policy and reaches every subscriber.
+  /// That leaks an id and the fact that something was removed. Nothing else.
+  @override
+  Stream<JobChange> watchJobs() {
+    late final StreamController<JobChange> controller;
+    RealtimeChannel? channel;
+
+    // The first join is the feed starting; every later one is it coming back,
+    // and Postgres does not replay what was committed while it was away. So the
+    // second `subscribed` onwards is reported as a gap the listener must close
+    // by fetching again.
+    var joined = false;
+
+    // Set while the feed is being taken down on purpose, so the statuses that
+    // teardown produces are not reported as the connection failing.
+    var closing = false;
+
+    void open() {
+      channel = client
+          .channel(_changesChannel)
+          .onPostgresChanges(
+            event: PostgresChangeEvent.all,
+            schema: "public",
+            table: "jobs",
+            callback: (payload) => _emitChange(controller, payload),
+          )
+          .subscribe((status, error) {
+            switch (status) {
+              case RealtimeSubscribeStatus.subscribed:
+                if (joined) controller.add(const JobChange.desynced());
+                joined = true;
+              case RealtimeSubscribeStatus.channelError:
+              case RealtimeSubscribeStatus.timedOut:
+              case RealtimeSubscribeStatus.closed:
+                // Left to the client, which rejoins on its own. The rejoin is
+                // what reports the gap, so there is nothing to emit here.
+                if (closing) return;
+
+                AppLogger.warning(
+                  "Jobs change feed is ${status.name}"
+                  "${error == null ? "" : ": $error"}",
+                );
+            }
+          });
+    }
+
+    Future<void> close() async {
+      final open = channel;
+      channel = null;
+      joined = false;
+      closing = true;
+
+      if (open != null) await client.removeChannel(open);
+
+      closing = false;
+    }
+
+    controller = StreamController<JobChange>.broadcast(
+      onListen: open,
+      onCancel: close,
+    );
+
+    return controller.stream;
+  }
+
+  /// Turns one realtime payload into a [JobChange], or into nothing.
+  ///
+  /// A row that will not parse is logged and dropped rather than raised: the
+  /// feed is the app's only notice that its jobs have gone stale, and one
+  /// unreadable row must not take it down with it — the same rule [parseRows]
+  /// applies to a page.
+  void _emitChange(
+    StreamController<JobChange> controller,
+    PostgresChangePayload payload,
+  ) {
+    switch (payload.eventType) {
+      case PostgresChangeEvent.insert:
+      case PostgresChangeEvent.update:
+        try {
+          controller.add(
+            JobChange.upserted(
+              parsePayload("jobs", () => Job.fromJson(payload.newRecord)),
+            ),
+          );
+        } on ParsingException catch (e) {
+          AppLogger.error("Dropping an unreadable job from the change feed", e);
+        }
+      case PostgresChangeEvent.delete:
+        // Only the key comes back with a deletion, and only when the table's
+        // replica identity carries one. Without it there is no way to say which
+        // job went, so the whole window is treated as suspect instead.
+        final id = payload.oldRecord["id"];
+
+        controller.add(
+          id is int ? JobChange.removed(id) : const JobChange.desynced(),
+        );
+      case PostgresChangeEvent.all:
+        // Never delivered: `all` is what a subscription asks for, not what an
+        // event is.
+        break;
+    }
   }
 
   /// Inserts [job], rewriting [Job.mediaUrl] from the local capture path to the
