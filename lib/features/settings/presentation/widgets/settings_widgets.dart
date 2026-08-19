@@ -67,25 +67,14 @@ class ThemeTile extends StatelessWidget {
           width: double.infinity,
           child: SegmentedButton<ThemeMode>(
             segments: [
-              ButtonSegment(
-                value: ThemeMode.light,
-                label: Text(l10n.light),
-                icon: const Icon(Icons.light_mode, size: 18),
-              ),
-              ButtonSegment(
-                value: ThemeMode.dark,
-                label: Text(l10n.dark),
-                icon: const Icon(Icons.dark_mode, size: 18),
-              ),
-              ButtonSegment(
-                value: ThemeMode.system,
-                label: Text(l10n.system),
-                icon: const Icon(Icons.phone_android, size: 18),
-              ),
+              _segment(ThemeMode.light, Icons.light_mode, l10n.light),
+              _segment(ThemeMode.dark, Icons.dark_mode, l10n.dark),
+              _segment(ThemeMode.system, Icons.phone_android, l10n.system),
             ],
             selected: {currentMode},
             showSelectedIcon: false,
             style: SegmentedButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 4),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
@@ -94,6 +83,32 @@ class ThemeTile extends StatelessWidget {
           ),
         ),
       ],
+    );
+  }
+
+  /// The icon rides inside the label rather than in `ButtonSegment.icon`:
+  /// a segment that fills `icon` has its padding overridden with a fixed 28
+  /// logical pixels of horizontal inset, which on a narrow screen leaves the
+  /// longest label — `System` — too little room and wraps it mid-word. Owning
+  /// the row keeps the padding this widget asks for, and ellipsis is the
+  /// fallback when a large text scale still runs out of width.
+  ButtonSegment<ThemeMode> _segment(
+    ThemeMode value,
+    IconData icon,
+    String label,
+  ) {
+    return ButtonSegment(
+      value: value,
+      label: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(icon, size: 18),
+          const SizedBox(width: 6),
+          Flexible(
+            child: Text(label, maxLines: 1, overflow: TextOverflow.ellipsis),
+          ),
+        ],
+      ),
     );
   }
 }
