@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
+/// The photo slot: the shot once there is one, the invitation to take it until
+/// then.
 class PhotoSection extends StatelessWidget {
   const PhotoSection({
     super.key,
@@ -10,39 +12,24 @@ class PhotoSection extends StatelessWidget {
     required this.onCapture,
     required this.onRemove,
     required this.l10n,
-    required this.colorScheme,
   });
 
   final File? photo;
   final VoidCallback onCapture;
   final VoidCallback onRemove;
   final AppLocalizations l10n;
-  final ColorScheme colorScheme;
 
   @override
   Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.addPhoto,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 8),
-        if (photo != null)
-          PhotoPreview(
-            photo: photo!,
-            onCapture: onCapture,
-            onRemove: onRemove,
-            l10n: l10n,
-            colorScheme: colorScheme,
-          )
-        else
-          PhotoPicker(onTap: onCapture, l10n: l10n, colorScheme: colorScheme),
-      ],
+    final photo = this.photo;
+
+    if (photo == null) return PhotoPicker(onTap: onCapture, l10n: l10n);
+
+    return PhotoPreview(
+      photo: photo,
+      onCapture: onCapture,
+      onRemove: onRemove,
+      l10n: l10n,
     );
   }
 }
@@ -54,21 +41,19 @@ class PhotoPreview extends StatelessWidget {
     required this.onCapture,
     required this.onRemove,
     required this.l10n,
-    required this.colorScheme,
   });
 
   final File photo;
   final VoidCallback onCapture;
   final VoidCallback onRemove;
   final AppLocalizations l10n;
-  final ColorScheme colorScheme;
 
   @override
   Widget build(BuildContext context) {
     return ClipRRect(
       borderRadius: BorderRadius.circular(16),
       child: Stack(
-        alignment: Alignment.bottomRight,
+        alignment: AlignmentDirectional.bottomEnd,
         children: [
           Image.file(
             photo,
@@ -76,8 +61,8 @@ class PhotoPreview extends StatelessWidget {
             height: 220,
             fit: BoxFit.cover,
           ),
-          Positioned(
-            right: 8,
+          PositionedDirectional(
+            end: 8,
             bottom: 8,
             child: Row(
               children: [
@@ -160,15 +145,15 @@ class PhotoPicker extends StatelessWidget {
     super.key,
     required this.onTap,
     required this.l10n,
-    required this.colorScheme,
   });
 
   final VoidCallback onTap;
   final AppLocalizations l10n;
-  final ColorScheme colorScheme;
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Material(
       color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
       borderRadius: BorderRadius.circular(16),

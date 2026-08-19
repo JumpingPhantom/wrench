@@ -1,5 +1,6 @@
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/data/sources/jobs_source.dart';
+import 'package:wrench/core/errors/exceptions.dart';
 
 /// An in-memory [JobsSource] that pages, filters and searches the way the real
 /// one is expected to, so a test can drive the notifier without a backend.
@@ -10,6 +11,11 @@ class FakeJobsSource implements JobsSource {
   FakeJobsSource(this.jobs);
 
   List<Job> jobs;
+
+  /// When set, [saveJob] throws it instead of storing, which is how a test
+  /// drives the failure a real save can hit (a photo that will not upload, a
+  /// table that rejects the row) without a backend to break.
+  AppException? saveError;
 
   /// One entry per page request, in order.
   final List<({int offset, int limit, JobStatus? status, String? search})>
@@ -70,7 +76,12 @@ class FakeJobsSource implements JobsSource {
   }
 
   @override
-  Future<void> saveJob(Job job) async => jobs = [job, ...jobs];
+  Future<void> saveJob(Job job) async {
+    final error = saveError;
+    if (error != null) throw error;
+
+    jobs = [job, ...jobs];
+  }
 
   @override
   Future<Job> updateJob(Job job) async {

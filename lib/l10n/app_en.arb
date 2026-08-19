@@ -298,10 +298,6 @@
   "@location": {
     "description": "Location field label"
   },
-  "locationHint": "e.g. Zone 4, Building A",
-  "@locationHint": {
-    "description": "Location field hint"
-  },
   "pending": "Pending",
   "@pending": {
     "description": "Job filter: pending (jobs staged and awaiting approval)"
@@ -499,5 +495,63 @@
   "signOutPrompt": "You'll need to sign in again to see your jobs.",
   "@signOutPrompt": {
     "description": "Body of the sign-out confirmation dialog"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Advance to the next step of the create-job wizard"
+  },
+  "back": "Back",
+  "@back": {
+    "description": "Return to the previous step of the create-job wizard"
+  },
+  "stepJob": "Job",
+  "@stepJob": {
+    "description": "Create-job wizard: label of the first step"
+  },
+  "photo": "Photo",
+  "@photo": {
+    "description": "Create-job wizard: label of the photo step"
+  },
+  "whatNeedsDoing": "What needs doing?",
+  "@whatNeedsDoing": {
+    "description": "Create-job wizard: heading of the first step"
+  },
+  "whereIsIt": "Where is it?",
+  "@whereIsIt": {
+    "description": "Create-job wizard: heading of the location step"
+  },
+  "chooseLocation": "Choose a location",
+  "@chooseLocation": {
+    "description": "Location picker label"
+  },
+  "optional": "Optional",
+  "@optional": {
+    "description": "Marks a step or field that can be left empty"
+  },
+  "reviewJob": "Review",
+  "@reviewJob": {
+    "description": "Create-job wizard: heading of the summary card"
+  },
+  "createJobAction": "Create job",
+  "@createJobAction": {
+    "description": "Button that files the new job"
+  },
+  "jobCreated": "Job created",
+  "@jobCreated": {
+    "description": "Confirmation once a new job has been saved"
+  },
+  "stepOf": "Step {current} of {total}",
+  "@stepOf": {
+    "description": "Create-job wizard: which step of how many",
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "example": "2"
+      },
+      "total": {
+        "type": "int",
+        "example": "3"
+      }
+    }
   }
 }

@@ -1,223 +1,218 @@
 import 'package:flutter/material.dart';
+import 'package:wrench/core/constants/job_locations.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
+/// The look every input on the create-job form wears.
+///
+/// One helper rather than a decoration per field: three copies of the same
+/// twenty lines had already drifted apart once — the description field had
+/// quietly lost its error border, so the one field that could not report a
+/// problem was the one the form silently refused to submit without.
+InputDecoration jobFieldDecoration(
+  BuildContext context, {
+  required String hintText,
+  String? errorText,
+  EdgeInsetsGeometry contentPadding = const EdgeInsets.symmetric(
+    horizontal: 16,
+    vertical: 16,
+  ),
+}) {
+  final colors = Theme.of(context).colorScheme;
+
+  OutlineInputBorder border([BorderSide side = BorderSide.none]) {
+    return OutlineInputBorder(
+      borderRadius: BorderRadius.circular(16),
+      borderSide: side,
+    );
+  }
+
+  return InputDecoration(
+    hintText: hintText,
+    hintStyle: TextStyle(
+      color: colors.onSurfaceVariant.withValues(alpha: 0.6),
+    ),
+    errorText: errorText,
+    filled: true,
+    fillColor: colors.surfaceContainerHighest.withValues(alpha: 0.3),
+    alignLabelWithHint: true,
+    border: border(),
+    enabledBorder: border(
+      BorderSide(color: colors.outlineVariant.withValues(alpha: 0.3)),
+    ),
+    focusedBorder: border(BorderSide(color: colors.primary, width: 1.5)),
+    errorBorder: border(BorderSide(color: colors.error)),
+    focusedErrorBorder: border(BorderSide(color: colors.error, width: 1.5)),
+    contentPadding: contentPadding,
+  );
+}
+
+/// What the job is called, in one line.
 class TitleField extends StatelessWidget {
   const TitleField({
     super.key,
     required this.controller,
     required this.focusNode,
-    required this.submitted,
     required this.l10n,
     required this.onChanged,
+    this.errorText,
   });
 
   final TextEditingController controller;
   final FocusNode focusNode;
-  final bool submitted;
   final AppLocalizations l10n;
   final ValueChanged<String> onChanged;
 
+  /// Shown under the field once the step has been asked to advance without it.
+  final String? errorText;
+
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final hasError = submitted && controller.text.trim().isEmpty;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.jobTitle,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          textInputAction: TextInputAction.next,
-          onChanged: onChanged,
-          style: Theme.of(context).textTheme.bodyLarge,
-          decoration: InputDecoration(
-            hintText: l10n.jobTitleHint,
-            hintStyle: TextStyle(
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ),
-            errorText: hasError ? l10n.requiredField : null,
-            filled: true,
-            fillColor: colorScheme.surfaceContainerHighest.withValues(
-              alpha: 0.3,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: colorScheme.error),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
-            ),
-          ),
-        ),
-      ],
+    return TextField(
+      controller: controller,
+      focusNode: focusNode,
+      textInputAction: TextInputAction.next,
+      textCapitalization: TextCapitalization.sentences,
+      onChanged: onChanged,
+      style: Theme.of(context).textTheme.bodyLarge,
+      decoration: jobFieldDecoration(
+        context,
+        hintText: l10n.jobTitleHint,
+        errorText: errorText,
+      ),
     );
   }
 }
 
+/// The long half of the story, in as many lines as it takes.
 class DescriptionField extends StatelessWidget {
   const DescriptionField({
     super.key,
     required this.controller,
     required this.focusNode,
     required this.l10n,
+    required this.onChanged,
+    this.errorText,
   });
 
   final TextEditingController controller;
   final FocusNode focusNode;
   final AppLocalizations l10n;
+  final ValueChanged<String> onChanged;
+  final String? errorText;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
+    return TextField(
+      controller: controller,
+      focusNode: focusNode,
+      minLines: 4,
+      maxLines: 6,
+      textInputAction: TextInputAction.newline,
+      textCapitalization: TextCapitalization.sentences,
+      onChanged: onChanged,
+      style: Theme.of(context).textTheme.bodyLarge,
+      decoration: jobFieldDecoration(
+        context,
+        hintText: l10n.describeTheIssue,
+        errorText: errorText,
+        contentPadding: const EdgeInsets.all(16),
+      ),
+    );
+  }
+}
+
+/// Where the job is, as a choice out of [jobLocations] rather than a text box.
+///
+/// The chips are the whole vocabulary: a place that is not here cannot be filed
+/// against, which is the point — it is the only way a typo stops being possible.
+class LocationPicker extends StatelessWidget {
+  const LocationPicker({
+    super.key,
+    required this.selected,
+    required this.onSelected,
+    this.errorText,
+  });
+
+  final String? selected;
+  final ValueChanged<String> onSelected;
+  final String? errorText;
+
+  @override
+  Widget build(BuildContext context) {
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
+    final errorText = this.errorText;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          l10n.description,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
-        ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          maxLines: 6,
-          minLines: 4,
-          textInputAction: TextInputAction.newline,
-          style: Theme.of(context).textTheme.bodyLarge,
-          decoration: InputDecoration(
-            hintText: l10n.describeTheIssue,
-            hintStyle: TextStyle(
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ),
-            filled: true,
-            fillColor: colorScheme.surfaceContainerHighest.withValues(
-              alpha: 0.3,
-            ),
-            alignLabelWithHint: true,
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
+        Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final location in jobLocations)
+              _LocationChip(
+                label: location,
+                selected: location == selected,
+                onSelected: () => onSelected(location),
               ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
-            ),
-            contentPadding: const EdgeInsets.all(16),
-          ),
+          ],
         ),
+        if (errorText != null) ...[
+          const SizedBox(height: 12),
+          Text(
+            errorText,
+            style: textTheme.bodySmall?.copyWith(color: colors.error),
+          ),
+        ],
       ],
     );
   }
 }
 
-class LocationField extends StatelessWidget {
-  const LocationField({
-    super.key,
-    required this.controller,
-    required this.focusNode,
-    required this.submitted,
-    required this.l10n,
-    required this.onChanged,
+/// One place, wearing the primary role once it is the chosen one — the same
+/// chip treatment the jobs list uses for its status filters.
+class _LocationChip extends StatelessWidget {
+  const _LocationChip({
+    required this.label,
+    required this.selected,
+    required this.onSelected,
   });
 
-  final TextEditingController controller;
-  final FocusNode focusNode;
-  final bool submitted;
-  final AppLocalizations l10n;
-  final ValueChanged<String> onChanged;
+  final String label;
+  final bool selected;
+  final VoidCallback onSelected;
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-    final hasError = submitted && controller.text.trim().isEmpty;
+    final colors = Theme.of(context).colorScheme;
+    final textTheme = Theme.of(context).textTheme;
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          l10n.location,
-          style: Theme.of(context).textTheme.labelLarge?.copyWith(
-            color: colorScheme.onSurface,
-            fontWeight: FontWeight.w600,
-          ),
+    return ChoiceChip(
+      selected: selected,
+      showCheckmark: false,
+      onSelected: (_) => onSelected(),
+      backgroundColor: colors.surfaceContainerLow,
+      selectedColor: colors.primaryContainer,
+      side: BorderSide(
+        color: selected
+            ? Colors.transparent
+            : colors.outlineVariant.withValues(alpha: 0.5),
+      ),
+      avatar: selected
+          ? Icon(
+              Icons.location_on,
+              size: 16,
+              color: colors.onPrimaryContainer,
+            )
+          : null,
+      label: Text(
+        label,
+        style: textTheme.labelLarge?.copyWith(
+          color: selected ? colors.onPrimaryContainer : colors.onSurfaceVariant,
+          fontWeight: selected ? FontWeight.w600 : FontWeight.w500,
         ),
-        const SizedBox(height: 8),
-        TextField(
-          controller: controller,
-          focusNode: focusNode,
-          textInputAction: TextInputAction.next,
-          onChanged: onChanged,
-          style: Theme.of(context).textTheme.bodyLarge,
-          decoration: InputDecoration(
-            hintText: l10n.locationHint,
-            hintStyle: TextStyle(
-              color: colorScheme.onSurfaceVariant.withValues(alpha: 0.6),
-            ),
-            prefixIcon: const Icon(Icons.location_on_outlined),
-            errorText: hasError ? l10n.requiredField : null,
-            filled: true,
-            fillColor: colorScheme.surfaceContainerHighest.withValues(
-              alpha: 0.3,
-            ),
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide.none,
-            ),
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(
-                color: colorScheme.outlineVariant.withValues(alpha: 0.3),
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: colorScheme.primary, width: 1.5),
-            ),
-            errorBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(16),
-              borderSide: BorderSide(color: colorScheme.error),
-            ),
-            contentPadding: const EdgeInsets.symmetric(
-              horizontal: 16,
-              vertical: 16,
-            ),
-          ),
-        ),
-      ],
+      ),
     );
   }
 }

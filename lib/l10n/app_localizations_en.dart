@@ -210,9 +210,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get location => 'Location';
 
   @override
-  String get locationHint => 'e.g. Zone 4, Building A';
-
-  @override
   String get pending => 'Pending';
 
   @override
@@ -356,4 +353,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signOutPrompt => 'You\'ll need to sign in again to see your jobs.';
+
+  @override
+  String get next => 'Next';
+
+  @override
+  String get back => 'Back';
+
+  @override
+  String get stepJob => 'Job';
+
+  @override
+  String get photo => 'Photo';
+
+  @override
+  String get whatNeedsDoing => 'What needs doing?';
+
+  @override
+  String get whereIsIt => 'Where is it?';
+
+  @override
+  String get chooseLocation => 'Choose a location';
+
+  @override
+  String get optional => 'Optional';
+
+  @override
+  String get reviewJob => 'Review';
+
+  @override
+  String get createJobAction => 'Create job';
+
+  @override
+  String get jobCreated => 'Job created';
+
+  @override
+  String stepOf(int current, int total) {
+    return 'Step $current of $total';
+  }
 }

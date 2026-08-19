@@ -298,10 +298,6 @@
   "@location": {
     "description": "Location field label"
   },
-  "locationHint": "مثال: المنطقة 4، المبنى أ",
-  "@locationHint": {
-    "description": "Location field hint"
-  },
   "pending": "قيد الانتظار",
   "@pending": {
     "description": "Job filter: pending (jobs staged and awaiting approval)"
@@ -499,5 +495,63 @@
   "signOutPrompt": "ستحتاج إلى تسجيل الدخول مرة أخرى لعرض مهامك.",
   "@signOutPrompt": {
     "description": "Body of the sign-out confirmation dialog"
+  },
+  "next": "التالي",
+  "@next": {
+    "description": "Advance to the next step of the create-job wizard"
+  },
+  "back": "رجوع",
+  "@back": {
+    "description": "Return to the previous step of the create-job wizard"
+  },
+  "stepJob": "المهمة",
+  "@stepJob": {
+    "description": "Create-job wizard: label of the first step"
+  },
+  "photo": "صورة",
+  "@photo": {
+    "description": "Create-job wizard: label of the photo step"
+  },
+  "whatNeedsDoing": "ما المطلوب عمله؟",
+  "@whatNeedsDoing": {
+    "description": "Create-job wizard: heading of the first step"
+  },
+  "whereIsIt": "أين موقعها؟",
+  "@whereIsIt": {
+    "description": "Create-job wizard: heading of the location step"
+  },
+  "chooseLocation": "اختر الموقع",
+  "@chooseLocation": {
+    "description": "Location picker label"
+  },
+  "optional": "اختياري",
+  "@optional": {
+    "description": "Marks a step or field that can be left empty"
+  },
+  "reviewJob": "مراجعة",
+  "@reviewJob": {
+    "description": "Create-job wizard: heading of the summary card"
+  },
+  "createJobAction": "إنشاء المهمة",
+  "@createJobAction": {
+    "description": "Button that files the new job"
+  },
+  "jobCreated": "تم إنشاء المهمة",
+  "@jobCreated": {
+    "description": "Confirmation once a new job has been saved"
+  },
+  "stepOf": "الخطوة {current} من {total}",
+  "@stepOf": {
+    "description": "Create-job wizard: which step of how many",
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "example": "2"
+      },
+      "total": {
+        "type": "int",
+        "example": "3"
+      }
+    }
   }
 }

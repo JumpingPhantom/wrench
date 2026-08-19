@@ -80,7 +80,7 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
       await ref.read(jobsProvider.notifier).loadMore();
     } on AppException {
       if (!mounted) return;
-      _showError(AppLocalizations.of(context)!.somethingWentWrong);
+      _showSnack(AppLocalizations.of(context)!.somethingWentWrong);
     }
   }
 
@@ -119,22 +119,21 @@ class _JobsScreenState extends ConsumerState<JobsScreen> {
     await ref.read(jobsProvider.future);
   }
 
+  /// The create screen saves the job itself — and reports its own failures, on
+  /// the form the user would otherwise have to fill in again — so all that
+  /// comes back here is whether one was filed. The list has already refreshed
+  /// by then: [JobsNotifier.saveJob] reloads the first page and drops the
+  /// derived counts.
   Future<void> _openCreateJob() async {
-    final job = await context.push<Job>('/jobs/new');
-    if (job == null || !mounted) return;
+    final created = await context.push<bool>('/jobs/new');
+    if (created != true || !mounted) return;
 
     final l10n = AppLocalizations.of(context)!;
 
-    try {
-      await ref.read(jobsProvider.notifier).saveJob(job);
-    } on OperationException {
-      _showError(l10n.photoUploadFailed);
-    } on AppException {
-      _showError(l10n.jobSaveFailed);
-    }
+    _showSnack(l10n.jobCreated);
   }
 
-  void _showError(String message) {
+  void _showSnack(String message) {
     if (!mounted) return;
     ScaffoldMessenger.of(
       context,

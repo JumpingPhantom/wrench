@@ -464,12 +464,6 @@ abstract class AppLocalizations {
   /// **'Location'**
   String get location;
 
-  /// Location field hint
-  ///
-  /// In en, this message translates to:
-  /// **'e.g. Zone 4, Building A'**
-  String get locationHint;
-
   /// Job filter: pending (jobs staged and awaiting approval)
   ///
   /// In en, this message translates to:
@@ -739,6 +733,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You\'ll need to sign in again to see your jobs.'**
   String get signOutPrompt;
+
+  /// Advance to the next step of the create-job wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Next'**
+  String get next;
+
+  /// Return to the previous step of the create-job wizard
+  ///
+  /// In en, this message translates to:
+  /// **'Back'**
+  String get back;
+
+  /// Create-job wizard: label of the first step
+  ///
+  /// In en, this message translates to:
+  /// **'Job'**
+  String get stepJob;
+
+  /// Create-job wizard: label of the photo step
+  ///
+  /// In en, this message translates to:
+  /// **'Photo'**
+  String get photo;
+
+  /// Create-job wizard: heading of the first step
+  ///
+  /// In en, this message translates to:
+  /// **'What needs doing?'**
+  String get whatNeedsDoing;
+
+  /// Create-job wizard: heading of the location step
+  ///
+  /// In en, this message translates to:
+  /// **'Where is it?'**
+  String get whereIsIt;
+
+  /// Location picker label
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a location'**
+  String get chooseLocation;
+
+  /// Marks a step or field that can be left empty
+  ///
+  /// In en, this message translates to:
+  /// **'Optional'**
+  String get optional;
+
+  /// Create-job wizard: heading of the summary card
+  ///
+  /// In en, this message translates to:
+  /// **'Review'**
+  String get reviewJob;
+
+  /// Button that files the new job
+  ///
+  /// In en, this message translates to:
+  /// **'Create job'**
+  String get createJobAction;
+
+  /// Confirmation once a new job has been saved
+  ///
+  /// In en, this message translates to:
+  /// **'Job created'**
+  String get jobCreated;
+
+  /// Create-job wizard: which step of how many
+  ///
+  /// In en, this message translates to:
+  /// **'Step {current} of {total}'**
+  String stepOf(int current, int total);
 }
 
 class _AppLocalizationsDelegate

@@ -210,9 +210,6 @@ class AppLocalizationsAr extends AppLocalizations {
   String get location => 'الموقع';
 
   @override
-  String get locationHint => 'مثال: المنطقة 4، المبنى أ';
-
-  @override
   String get pending => 'قيد الانتظار';
 
   @override
@@ -354,4 +351,42 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get signOutPrompt => 'ستحتاج إلى تسجيل الدخول مرة أخرى لعرض مهامك.';
+
+  @override
+  String get next => 'التالي';
+
+  @override
+  String get back => 'رجوع';
+
+  @override
+  String get stepJob => 'المهمة';
+
+  @override
+  String get photo => 'صورة';
+
+  @override
+  String get whatNeedsDoing => 'ما المطلوب عمله؟';
+
+  @override
+  String get whereIsIt => 'أين موقعها؟';
+
+  @override
+  String get chooseLocation => 'اختر الموقع';
+
+  @override
+  String get optional => 'اختياري';
+
+  @override
+  String get reviewJob => 'مراجعة';
+
+  @override
+  String get createJobAction => 'إنشاء المهمة';
+
+  @override
+  String get jobCreated => 'تم إنشاء المهمة';
+
+  @override
+  String stepOf(int current, int total) {
+    return 'الخطوة $current من $total';
+  }
 }
