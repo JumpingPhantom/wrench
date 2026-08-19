@@ -11,7 +11,7 @@ _Job _$JobFromJson(Map<String, dynamic> json) => _Job(
   title: json['title'] as String,
   description: json['description'] as String,
   location: json['location'] as String,
-  createdAt: DateTime.parse(json['created_at'] as String),
+  createdAt: const UtcDateTime().fromJson(json['created_at'] as String),
   createdBy: json['created_by'] as String,
   state: const _JobStateConverter().fromJson(
     json['state'] as Map<String, dynamic>,
@@ -24,7 +24,7 @@ Map<String, dynamic> _$JobToJson(_Job instance) => <String, dynamic>{
   'title': instance.title,
   'description': instance.description,
   'location': instance.location,
-  'created_at': instance.createdAt.toIso8601String(),
+  'created_at': const UtcDateTime().toJson(instance.createdAt),
   'created_by': instance.createdBy,
   'state': const _JobStateConverter().toJson(instance.state),
   'media_url': instance.mediaUrl,

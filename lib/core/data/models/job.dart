@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:wrench/core/data/models/instant.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
 part "job.freezed.dart";
@@ -24,7 +25,7 @@ sealed class Job with _$Job {
     required String title,
     required String description,
     required String location,
-    required DateTime createdAt,
+    @UtcDateTime() required DateTime createdAt,
     required String createdBy,
     @_JobStateConverter() required JobState state,
     String? mediaUrl,
@@ -107,7 +108,7 @@ sealed class Job with _$Job {
       );
     }
 
-    final now = at ?? DateTime.now();
+    final now = at ?? DateTime.now().toUtc();
 
     return copyWith(
       state: switch (action) {
@@ -226,19 +227,19 @@ class _JobStateConverter
       JobStatus.draft => const JobState.draft(),
       JobStatus.inProgress => JobState.inProgress(
         startedBy: payload['started_by'] as String,
-        startedAt: DateTime.parse(payload['started_at'] as String),
+        startedAt: instantFromJson(payload['started_at'] as String),
         workers: (payload['workers'] as List<dynamic>?)?.cast<String>(),
       ),
       JobStatus.staged => JobState.staged(
-        stagedAt: DateTime.parse(payload['staged_at'] as String),
+        stagedAt: instantFromJson(payload['staged_at'] as String),
       ),
       JobStatus.finished => JobState.finished(
         approvedBy: payload['approved_by'] as String,
-        finishedAt: DateTime.parse(payload['finished_at'] as String),
+        finishedAt: instantFromJson(payload['finished_at'] as String),
       ),
       JobStatus.cancelled => JobState.cancelled(
         reason: payload['reason'] as String,
-        cancelledAt: DateTime.parse(payload['cancelled_at'] as String),
+        cancelledAt: instantFromJson(payload['cancelled_at'] as String),
         cancelledBy: payload['cancelled_by'] as String,
       ),
       null => throw FormatException('Unknown job status: $status'),
@@ -256,26 +257,26 @@ class _JobStateConverter
         'status': JobStatus.inProgress.storedName,
         'payload': {
           'started_by': startedBy,
-          'started_at': startedAt.toIso8601String(),
+          'started_at': instantToJson(startedAt),
           'workers': ?workers,
         },
       },
       _Staged(:final stagedAt) => {
         'status': JobStatus.staged.storedName,
-        'payload': {'staged_at': stagedAt.toIso8601String()},
+        'payload': {'staged_at': instantToJson(stagedAt)},
       },
       _Finished(:final approvedBy, :final finishedAt) => {
         'status': JobStatus.finished.storedName,
         'payload': {
           'approved_by': approvedBy,
-          'finished_at': finishedAt.toIso8601String(),
+          'finished_at': instantToJson(finishedAt),
         },
       },
       _Cancelled(:final reason, :final cancelledAt, :final cancelledBy) => {
         'status': JobStatus.cancelled.storedName,
         'payload': {
           'reason': reason,
-          'cancelled_at': cancelledAt.toIso8601String(),
+          'cancelled_at': instantToJson(cancelledAt),
           'cancelled_by': cancelledBy,
         },
       },

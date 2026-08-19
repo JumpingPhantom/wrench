@@ -137,7 +137,7 @@ class _CreateJobScreenState extends ConsumerState<CreateJobScreen> {
       description: _description,
       location: _location!,
       mediaUrl: _photo?.path,
-      createdAt: DateTime.now(),
+      createdAt: DateTime.now().toUtc(),
       createdBy: currentUser,
       state: JobState.draft(),
     );

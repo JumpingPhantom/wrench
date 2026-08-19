@@ -11,8 +11,8 @@ import 'package:wrench/core/presentation/widgets/error_state.dart';
 import 'package:wrench/core/presentation/widgets/job_image.dart';
 import 'package:wrench/core/presentation/widgets/job_image_viewer.dart';
 import 'package:wrench/core/presentation/widgets/job_status_chip.dart';
+import 'package:wrench/core/presentation/widgets/relative_time.dart';
 import 'package:wrench/core/presentation/widgets/section_card.dart';
-import 'package:wrench/core/utils.dart';
 import 'package:wrench/l10n/app_localizations.dart';
 
 /// Resolves which job to show before handing off to [_JobDetailView].
@@ -202,8 +202,8 @@ class _JobDetailViewState extends ConsumerState<_JobDetailView> {
                       color: colors.onSurfaceVariant,
                     ),
                     const SizedBox(width: 4),
-                    Text(
-                      job.createdAt.toRelativeTime(l10n),
+                    RelativeTime(
+                      timestamp: job.createdAt,
                       style: textTheme.labelMedium?.copyWith(
                         color: colors.onSurfaceVariant,
                       ),
@@ -610,15 +610,16 @@ class _ProgressTrack extends StatelessWidget {
         _TimeRow(
           icon: Icons.schedule,
           color: colors.onSurfaceVariant,
-          text: "${l10n.created} · ${job.createdAt.toRelativeTime(l10n)}",
+          timestamp: job.createdAt,
+          prefix: l10n.created,
         ),
         if (changedAt != null) ...[
           const SizedBox(height: 8),
           _TimeRow(
             icon: JobStatusStyle.of(job.status, colors).icon,
             color: JobStatusStyle.of(job.status, colors).accent,
-            text:
-                "${job.status.label(l10n)} · ${changedAt.toRelativeTime(l10n)}",
+            timestamp: changedAt,
+            prefix: job.status.label(l10n),
           ),
         ],
       ],
@@ -704,11 +705,17 @@ class _Connector extends StatelessWidget {
 }
 
 class _TimeRow extends StatelessWidget {
-  const _TimeRow({required this.icon, required this.color, required this.text});
+  const _TimeRow({
+    required this.icon,
+    required this.color,
+    required this.timestamp,
+    this.prefix,
+  });
 
   final IconData icon;
   final Color color;
-  final String text;
+  final DateTime timestamp;
+  final String? prefix;
 
   @override
   Widget build(BuildContext context) {
@@ -717,8 +724,9 @@ class _TimeRow extends StatelessWidget {
         Icon(icon, size: 15, color: color),
         const SizedBox(width: 8),
         Expanded(
-          child: Text(
-            text,
+          child: RelativeTime(
+            timestamp: timestamp,
+            prefix: prefix,
             style: Theme.of(
               context,
             ).textTheme.bodySmall?.copyWith(color: color),
@@ -758,7 +766,7 @@ class _Cancellation extends StatelessWidget {
           _TimeRow(
             icon: Icons.schedule,
             color: colors.error,
-            text: cancelledAt.toRelativeTime(l10n),
+            timestamp: cancelledAt,
           ),
         ],
       ],

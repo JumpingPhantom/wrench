@@ -3,8 +3,7 @@ import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/presentation/theme/job_status_style.dart';
 import 'package:wrench/core/presentation/widgets/job_image.dart';
 import 'package:wrench/core/presentation/widgets/job_status_chip.dart';
-import 'package:wrench/core/utils.dart';
-import 'package:wrench/l10n/app_localizations.dart';
+import 'package:wrench/core/presentation/widgets/relative_time.dart';
 
 /// One job in a list, shared by the home overview and the jobs screen.
 ///
@@ -19,7 +18,6 @@ class JobItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final colors = Theme.of(context).colorScheme;
     final textTheme = Theme.of(context).textTheme;
     final style = JobStatusStyle.from(context, job.status);
@@ -91,8 +89,8 @@ class JobItem extends StatelessWidget {
                               children: [
                                 JobStatusChip(status: job.status, dense: true),
                                 const Spacer(),
-                                Text(
-                                  job.createdAt.toRelativeTime(l10n),
+                                RelativeTime(
+                                  timestamp: job.createdAt,
                                   style: textTheme.labelSmall?.copyWith(
                                     color: colors.onSurfaceVariant,
                                   ),
