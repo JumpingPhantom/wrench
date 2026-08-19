@@ -805,6 +805,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Step {current} of {total}'**
   String stepOf(int current, int total);
+
+  /// Empty state title on the overview when nothing has been filed
+  ///
+  /// In en, this message translates to:
+  /// **'No jobs yet'**
+  String get noJobsYet;
+
+  /// Empty state hint on the overview
+  ///
+  /// In en, this message translates to:
+  /// **'Create the first job and it will show up here.'**
+  String get noJobsYetHint;
 }
 
 class _AppLocalizationsDelegate

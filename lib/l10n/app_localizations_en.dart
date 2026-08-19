@@ -391,4 +391,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String stepOf(int current, int total) {
     return 'Step $current of $total';
   }
+
+  @override
+  String get noJobsYet => 'No jobs yet';
+
+  @override
+  String get noJobsYetHint => 'Create the first job and it will show up here.';
 }

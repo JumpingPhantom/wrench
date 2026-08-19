@@ -271,7 +271,11 @@ class _CreateJobScreenState extends ConsumerState<CreateJobScreen> {
                     accent: colors.error,
                     child: Row(
                       children: [
-                        Icon(Icons.error_outline, size: 20, color: colors.error),
+                        Icon(
+                          Icons.error_outline,
+                          size: 20,
+                          color: colors.error,
+                        ),
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
@@ -472,7 +476,10 @@ class _StepTrack extends StatelessWidget {
                     children: [
                       _Connector(show: i > 0, done: i <= current),
                       _Node(index: i, current: current),
-                      _Connector(show: i < labels.length - 1, done: i < current),
+                      _Connector(
+                        show: i < labels.length - 1,
+                        done: i < current,
+                      ),
                     ],
                   ),
                 ),

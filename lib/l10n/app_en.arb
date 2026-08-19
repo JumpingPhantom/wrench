@@ -553,5 +553,13 @@
         "example": "3"
       }
     }
+  },
+  "noJobsYet": "No jobs yet",
+  "@noJobsYet": {
+    "description": "Empty state title on the overview when nothing has been filed"
+  },
+  "noJobsYetHint": "Create the first job and it will show up here.",
+  "@noJobsYetHint": {
+    "description": "Empty state hint on the overview"
   }
 }

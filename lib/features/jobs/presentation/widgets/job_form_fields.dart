@@ -28,9 +28,7 @@ InputDecoration jobFieldDecoration(
 
   return InputDecoration(
     hintText: hintText,
-    hintStyle: TextStyle(
-      color: colors.onSurfaceVariant.withValues(alpha: 0.6),
-    ),
+    hintStyle: TextStyle(color: colors.onSurfaceVariant.withValues(alpha: 0.6)),
     errorText: errorText,
     filled: true,
     fillColor: colors.surfaceContainerHighest.withValues(alpha: 0.3),
@@ -200,11 +198,7 @@ class _LocationChip extends StatelessWidget {
             : colors.outlineVariant.withValues(alpha: 0.5),
       ),
       avatar: selected
-          ? Icon(
-              Icons.location_on,
-              size: 16,
-              color: colors.onPrimaryContainer,
-            )
+          ? Icon(Icons.location_on, size: 16, color: colors.onPrimaryContainer)
           : null,
       label: Text(
         label,

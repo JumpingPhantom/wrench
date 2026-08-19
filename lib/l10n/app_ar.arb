@@ -553,5 +553,13 @@
         "example": "3"
       }
     }
+  },
+  "noJobsYet": "لا توجد مهام بعد",
+  "@noJobsYet": {
+    "description": "Empty state title on the overview when nothing has been filed"
+  },
+  "noJobsYetHint": "أنشئ أول مهمة وستظهر هنا.",
+  "@noJobsYetHint": {
+    "description": "Empty state hint on the overview"
   }
 }

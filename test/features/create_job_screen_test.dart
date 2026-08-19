@@ -92,7 +92,10 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextField).first, "Fix the pump");
-      await tester.enterText(find.byType(TextField).last, "Leaking at the seal");
+      await tester.enterText(
+        find.byType(TextField).last,
+        "Leaking at the seal",
+      );
       await tester.tap(find.text(l10n.next));
       await tester.pumpAndSettle();
 
@@ -119,7 +122,10 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextField).first, "Fix the pump");
-      await tester.enterText(find.byType(TextField).last, "Leaking at the seal");
+      await tester.enterText(
+        find.byType(TextField).last,
+        "Leaking at the seal",
+      );
       await tester.tap(find.text(l10n.next));
       await tester.pumpAndSettle();
       expect(find.text(l10n.whereIsIt), findsOneWidget);
@@ -141,7 +147,10 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextField).first, "Fix the pump");
-      await tester.enterText(find.byType(TextField).last, "Leaking at the seal");
+      await tester.enterText(
+        find.byType(TextField).last,
+        "Leaking at the seal",
+      );
       await tester.tap(find.text(l10n.next));
       await tester.pumpAndSettle();
 
@@ -199,7 +208,9 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
-    testWidgets("keeps the draft on screen when the save fails", (tester) async {
+    testWidgets("keeps the draft on screen when the save fails", (
+      tester,
+    ) async {
       final source = FakeJobsSource([])
         ..saveError = OperationException(message: "bucket is on fire");
       final l10n = await _l10n();
@@ -209,7 +220,10 @@ void main() {
       await tester.pumpAndSettle();
 
       await tester.enterText(find.byType(TextField).first, "Fix the pump");
-      await tester.enterText(find.byType(TextField).last, "Leaking at the seal");
+      await tester.enterText(
+        find.byType(TextField).last,
+        "Leaking at the seal",
+      );
       await tester.tap(find.text(l10n.next));
       await tester.pumpAndSettle();
       await tester.tap(find.widgetWithText(ChoiceChip, "Zone 4"));

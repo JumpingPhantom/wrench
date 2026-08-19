@@ -389,4 +389,10 @@ class AppLocalizationsAr extends AppLocalizations {
   String stepOf(int current, int total) {
     return 'الخطوة $current من $total';
   }
+
+  @override
+  String get noJobsYet => 'لا توجد مهام بعد';
+
+  @override
+  String get noJobsYetHint => 'أنشئ أول مهمة وستظهر هنا.';
 }

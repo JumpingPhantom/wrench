@@ -7,6 +7,7 @@ import 'package:go_router/go_router.dart';
 import 'package:wrench/core/data/models/job.dart';
 import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
+import 'package:wrench/core/presentation/widgets/empty_state.dart';
 import 'package:wrench/core/presentation/widgets/job_item.dart';
 import 'package:wrench/features/jobs/presentation/widgets/job_filter_bar.dart';
 import 'package:wrench/l10n/app_localizations.dart';
@@ -334,45 +335,10 @@ class _EmptyState extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final colors = Theme.of(context).colorScheme;
-    final textTheme = Theme.of(context).textTheme;
-
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                color: colors.surfaceContainerHighest,
-                shape: BoxShape.circle,
-              ),
-              child: Icon(
-                Icons.search_off,
-                size: 32,
-                color: colors.onSurfaceVariant,
-              ),
-            ),
-            const SizedBox(height: 20),
-            Text(
-              l10n.noJobsFound,
-              style: textTheme.titleMedium?.copyWith(
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-            const SizedBox(height: 6),
-            Text(
-              l10n.noJobsFoundHint,
-              textAlign: TextAlign.center,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colors.onSurfaceVariant,
-              ),
-            ),
-          ],
-        ),
-      ),
+    return EmptyState(
+      icon: Icons.search_off,
+      title: l10n.noJobsFound,
+      message: l10n.noJobsFoundHint,
     );
   }
 }

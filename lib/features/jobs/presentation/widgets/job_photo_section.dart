@@ -141,11 +141,7 @@ class PhotoAction extends StatelessWidget {
 }
 
 class PhotoPicker extends StatelessWidget {
-  const PhotoPicker({
-    super.key,
-    required this.onTap,
-    required this.l10n,
-  });
+  const PhotoPicker({super.key, required this.onTap, required this.l10n});
 
   final VoidCallback onTap;
   final AppLocalizations l10n;
