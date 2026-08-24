@@ -24,9 +24,29 @@ final jobsRepositoryProvider = Provider((ref) {
 /// every view below wants the same events off it. Deliberately not auto-
 /// disposed for the same reason — the channel should survive moving between
 /// tabs. [AuthNotifier.logout] is what closes it.
-final jobChangesProvider = StreamProvider<JobChange>((ref) {
-  return ref.watch(jobsRepositoryProvider).watch();
-});
+class JobChanges extends StreamNotifier<JobChange> {
+  @override
+  Stream<JobChange> build() => ref.watch(jobsRepositoryProvider).watch();
+
+  /// Every delivered event counts, including one equal to the last.
+  ///
+  /// Riverpod tells listeners only when the new state differs from the old by
+  /// `==`, and [JobChange] is a Freezed class, so it compares by value: two
+  /// reconnects in a row are both `JobsDesynced()`, and the second — the one
+  /// saying the feed has been away a second time — would be read as nothing
+  /// having happened and refetch nothing.
+  @override
+  bool updateShouldNotify(
+    AsyncValue<JobChange> previous,
+    AsyncValue<JobChange> next,
+  ) => true;
+}
+
+/// A notifier rather than a [StreamProvider] only so [updateShouldNotify]
+/// above has somewhere to live; there is no state here beyond the feed.
+final jobChangesProvider = StreamNotifierProvider<JobChanges, JobChange>(
+  JobChanges.new,
+);
 
 /// Refetches this provider whenever the change feed reports anything.
 ///

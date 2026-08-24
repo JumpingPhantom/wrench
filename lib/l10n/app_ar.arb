@@ -569,5 +569,41 @@
   "noConnectionHint": "يبدو أنك غير متصل بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.",
   "@noConnectionHint": {
     "description": "Hint under the offline error state"
+  },
+  "notifications": "الإشعارات",
+  "@notifications": {
+    "description": "Notifications screen title, and the app bar button's tooltip"
+  },
+  "noNotifications": "لا جديد",
+  "@noNotifications": {
+    "description": "Empty state title on the notifications screen"
+  },
+  "noNotificationsHint": "سنخبرك هنا عندما ينشئ أحد أفراد فريقك مهمة أو يرسلها للموافقة.",
+  "@noNotificationsHint": {
+    "description": "Empty state hint on the notifications screen"
+  },
+  "markAllRead": "تعليم الكل كمقروء",
+  "@markAllRead": {
+    "description": "Action that marks every unread notification read"
+  },
+  "notificationJobCreated": "أنشأ {actor} مهمة جديدة",
+  "@notificationJobCreated": {
+    "description": "Notification line for a job someone created",
+    "placeholders": {
+      "actor": {
+        "type": "String",
+        "example": "أحمد"
+      }
+    }
+  },
+  "notificationJobSubmitted": "أرسل {actor} مهمة للموافقة",
+  "@notificationJobSubmitted": {
+    "description": "Notification line for a job someone submitted for review",
+    "placeholders": {
+      "actor": {
+        "type": "String",
+        "example": "أحمد"
+      }
+    }
   }
 }

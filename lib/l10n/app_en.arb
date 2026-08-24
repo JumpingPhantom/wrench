@@ -569,5 +569,41 @@
   "noConnectionHint": "You appear to be offline. Check your connection and try again.",
   "@noConnectionHint": {
     "description": "Hint under the offline error state"
+  },
+  "notifications": "Notifications",
+  "@notifications": {
+    "description": "Notifications screen title, and the app bar button's tooltip"
+  },
+  "noNotifications": "Nothing to catch up on",
+  "@noNotifications": {
+    "description": "Empty state title on the notifications screen"
+  },
+  "noNotificationsHint": "You'll hear here when someone on your team files a job or sends one for approval.",
+  "@noNotificationsHint": {
+    "description": "Empty state hint on the notifications screen"
+  },
+  "markAllRead": "Mark all read",
+  "@markAllRead": {
+    "description": "Action that marks every unread notification read"
+  },
+  "notificationJobCreated": "{actor} filed a new job",
+  "@notificationJobCreated": {
+    "description": "Notification line for a job someone created",
+    "placeholders": {
+      "actor": {
+        "type": "String",
+        "example": "Ahmed"
+      }
+    }
+  },
+  "notificationJobSubmitted": "{actor} sent a job for approval",
+  "@notificationJobSubmitted": {
+    "description": "Notification line for a job someone submitted for review",
+    "placeholders": {
+      "actor": {
+        "type": "String",
+        "example": "Ahmed"
+      }
+    }
   }
 }

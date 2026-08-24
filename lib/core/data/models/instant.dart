@@ -49,3 +49,22 @@ class UtcDateTime implements JsonConverter<DateTime, String> {
   @override
   String toJson(DateTime object) => instantToJson(object);
 }
+
+/// [UtcDateTime] for a field that may be absent.
+///
+/// Separate class rather than a nullable type parameter on the one above:
+/// `json_serializable` matches a converter to a field by its exact type, so a
+/// `JsonConverter<DateTime, String>` cannot be applied to a `DateTime?`. Both
+/// read and write through the same two functions, so there is still one
+/// definition of the format.
+class NullableUtcDateTime implements JsonConverter<DateTime?, String?> {
+  const NullableUtcDateTime();
+
+  @override
+  DateTime? fromJson(String? json) =>
+      json == null ? null : instantFromJson(json);
+
+  @override
+  String? toJson(DateTime? object) =>
+      object == null ? null : instantToJson(object);
+}

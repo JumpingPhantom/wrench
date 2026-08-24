@@ -829,6 +829,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'You appear to be offline. Check your connection and try again.'**
   String get noConnectionHint;
+
+  /// Notifications screen title, and the app bar button's tooltip
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notifications;
+
+  /// Empty state title on the notifications screen
+  ///
+  /// In en, this message translates to:
+  /// **'Nothing to catch up on'**
+  String get noNotifications;
+
+  /// Empty state hint on the notifications screen
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ll hear here when someone on your team files a job or sends one for approval.'**
+  String get noNotificationsHint;
+
+  /// Action that marks every unread notification read
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all read'**
+  String get markAllRead;
+
+  /// Notification line for a job someone created
+  ///
+  /// In en, this message translates to:
+  /// **'{actor} filed a new job'**
+  String notificationJobCreated(String actor);
+
+  /// Notification line for a job someone submitted for review
+  ///
+  /// In en, this message translates to:
+  /// **'{actor} sent a job for approval'**
+  String notificationJobSubmitted(String actor);
 }
 
 class _AppLocalizationsDelegate

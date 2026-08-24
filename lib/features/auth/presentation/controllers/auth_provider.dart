@@ -4,6 +4,7 @@ import 'package:wrench/core/errors/exceptions.dart';
 import 'package:wrench/core/network/remote_request.dart';
 import 'package:wrench/core/network/supabase_client.dart';
 import 'package:wrench/core/presentation/controllers/jobs_provider.dart';
+import 'package:wrench/core/presentation/controllers/notifications_provider.dart';
 import 'package:wrench/features/auth/data/models/auth_state.dart';
 
 class AuthNotifier extends Notifier<AppAuthState> {
@@ -57,6 +58,14 @@ class AuthNotifier extends Notifier<AppAuthState> {
     ref.invalidate(jobsProvider);
     ref.invalidate(recentJobsProvider);
     ref.invalidate(jobStatusCountsProvider);
+
+    // Notifications are addressed to one recipient and the channel carrying
+    // them is subscribed as this session's user, so they are dropped here for
+    // the same reason: the next person to sign in must not open the app onto
+    // the last one's.
+    ref.invalidate(notificationChangesProvider);
+    ref.invalidate(notificationsProvider);
+    ref.invalidate(unreadNotificationCountProvider);
   }
 
   void authenticate() {

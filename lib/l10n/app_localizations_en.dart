@@ -404,4 +404,27 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get noConnectionHint =>
       'You appear to be offline. Check your connection and try again.';
+
+  @override
+  String get notifications => 'Notifications';
+
+  @override
+  String get noNotifications => 'Nothing to catch up on';
+
+  @override
+  String get noNotificationsHint =>
+      'You\'ll hear here when someone on your team files a job or sends one for approval.';
+
+  @override
+  String get markAllRead => 'Mark all read';
+
+  @override
+  String notificationJobCreated(String actor) {
+    return '$actor filed a new job';
+  }
+
+  @override
+  String notificationJobSubmitted(String actor) {
+    return '$actor sent a job for approval';
+  }
 }

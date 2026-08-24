@@ -107,10 +107,53 @@ additionally invalidate them directly so the result lands before the socket conf
 `jobChangesProvider` is intentionally **not** auto-disposed (one socket for the whole app,
 surviving tab changes); `AuthNotifier.logout` is what tears it down along with the cached jobs.
 
+Both change feeds (`jobChangesProvider`, `notificationChangesProvider`) are `StreamNotifier`s
+overriding `updateShouldNotify` to **always** notify, and must stay that way. Riverpod tells
+listeners only when the new state differs from the old by `==`, so a feed that delivers the
+same event twice — two `JobsDesynced()`, or any two events at all on the notifications feed,
+whose payload is `void` — silently drops the second. That bug made every notification after
+the channel's join event invisible until the app was restarted. A plain `StreamProvider` has
+no hook to override, which is the only reason these are notifiers.
+
+### Notifications
+
+A supervisor is told when one of their workers files a job or submits one for approval.
+`profiles.supervisor_id` (self-FK) is what routes it, and rows are written **only** by the
+`jobs_notify_supervisor` trigger — there is no insert policy and no insert grant, so a client
+cannot forge, skip, or misaddress one. Clients may write `read_at` and nothing else, enforced
+by a column grant rather than RLS (RLS has no column scope).
+
+The table stores **no user-facing text**: the app renders in en + ar, so a stored sentence
+would be unreadable in the other locale. Rows carry `kind` + `job_id` + `actor_id` and the
+widget composes the sentence.
+
+Its feed is deliberately simpler than the jobs one — `Stream<void>`, not a change union. Jobs
+reconcile events because refetching would discard scroll position and loaded pages; a capped
+notification list has neither, so any event (a reconnect included) just means "ask again".
+Unread count is a separate `count` query for the same reason `jobStatusCountsProvider` is:
+the list is capped, so counting it would under-report.
+
+The badge is `_NotificationsButton` in `main_scaffold.dart` — its own `ConsumerWidget` so a
+count change rebuilds the button rather than the shell every screen sits under. A count that
+failed to load shows no number rather than an error: the badge is an invitation, and the
+error belongs on the screen behind it.
+
+### Database schema
+
+Lives in `supabase/migrations/*.sql` — the only version-controlled record of it. Neither the
+`supabase` CLI nor `psql` is installed here, so migrations are applied through the Supabase
+dashboard's SQL editor unless someone installs the CLI (`supabase db push`). Every statement
+is written to be re-runnable (`if not exists`, `drop ... if exists`, and a guarded
+`alter publication`).
+
+One trap worth knowing: a policy on `profiles` that queries `profiles` recurses and aborts
+with `42P17`. `public.supervisor_of(uuid)` is `security definer` precisely to break that —
+use it instead of an inline subquery whenever a policy needs the supervisor relationship.
+
 ### Timestamps
 
-Every instant crosses the wire as UTC via `core/data/models/instant.dart` (`UtcDateTime`
-converter, `instantToJson`/`instantFromJson`). `toIso8601String()` on a local `DateTime`
+Every instant crosses the wire as UTC via `core/data/models/instant.dart` (`UtcDateTime` /
+`NullableUtcDateTime` converters, `instantToJson`/`instantFromJson`). `toIso8601String()` on a local `DateTime`
 writes no zone at all and Postgres then reads that wall clock as UTC. On the way back the zone
 suffix is detected in the *string*, because `DateTime.parse` flags only `…Z` as `isUtc`.
 Relative times ("2h ago") come from `DateTimeExt.toRelativeTime`, driven by
@@ -128,8 +171,9 @@ which signs a 1-hour URL and degrades to null (→ placeholder) rather than fail
 
 `routerProvider` redirects on `authProvider.notifier.isAuthenticated()`, which reads the
 Supabase session directly. `/`, `/jobs`, `/settings` sit inside a `ShellRoute` with the bottom
-nav (`MainScaffold`); `/profile`, `/jobs/new`, `/jobs/new/camera`, `/jobs/:id` sit outside it
-deliberately, so they get a back button and no highlighted destination. `/jobs/:id` takes the
+nav (`MainScaffold`); `/profile`, `/notifications`, `/jobs/new`, `/jobs/new/camera`,
+`/jobs/:id` sit outside it deliberately, so they get a back button and no highlighted
+destination. `/jobs/:id` takes the
 job via `extra` as an optimisation but must work from the id alone — `extra` is lost on a deep
 link or restored route, which is what `jobByIdProvider` exists for.
 

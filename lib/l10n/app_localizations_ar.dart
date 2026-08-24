@@ -402,4 +402,27 @@ class AppLocalizationsAr extends AppLocalizations {
   @override
   String get noConnectionHint =>
       'يبدو أنك غير متصل بالإنترنت. تحقق من اتصالك وحاول مرة أخرى.';
+
+  @override
+  String get notifications => 'الإشعارات';
+
+  @override
+  String get noNotifications => 'لا جديد';
+
+  @override
+  String get noNotificationsHint =>
+      'سنخبرك هنا عندما ينشئ أحد أفراد فريقك مهمة أو يرسلها للموافقة.';
+
+  @override
+  String get markAllRead => 'تعليم الكل كمقروء';
+
+  @override
+  String notificationJobCreated(String actor) {
+    return 'أنشأ $actor مهمة جديدة';
+  }
+
+  @override
+  String notificationJobSubmitted(String actor) {
+    return 'أرسل $actor مهمة للموافقة';
+  }
 }

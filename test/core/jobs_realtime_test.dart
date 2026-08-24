@@ -236,6 +236,29 @@ void main() {
       expect(source.requests.last.limit, JobsNotifier.pageSize + 5);
     });
 
+    test("a second desync refetches as well as the first", () async {
+      // JobChange compares by value, so two reconnects in a row are the same
+      // event twice over. The second one -- the feed saying it has been away
+      // again -- must still be acted on rather than read as a repeat.
+      final container = await loaded(_many(3));
+
+      source.emit(const JobChange.desynced());
+      await pumpEventQueue();
+
+      final afterFirst = source.requests.length;
+
+      source.jobs = [
+        for (final job in source.jobs)
+          if (job.id == 1) job.copyWith(title: "changed while away") else job,
+      ];
+
+      source.emit(const JobChange.desynced());
+      await pumpEventQueue();
+
+      expect(source.requests, hasLength(greaterThan(afterFirst)));
+      expect(pageOf(container).jobs[1].title, "changed while away");
+    });
+
     test("leaves the jobs on screen when the refetch fails", () async {
       final container = await loaded(_many(5));
 

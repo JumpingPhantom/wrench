@@ -17,6 +17,12 @@ abstract class User with _$User {
     required String id,
     required String fullName,
     required UserRole role,
+
+    /// The supervisor this worker reports to.
+    ///
+    /// Null for a supervisor, and for a worker nobody has assigned yet -- which
+    /// is a normal state, not a broken one.
+    String? supervisorId,
     String? avatarUrl,
     required DateTime createdAt,
     required DateTime updatedAt,
